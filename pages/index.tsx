@@ -1,21 +1,19 @@
-import styled from 'styled-components';
-import { Button, Input } from '@material-ui/core';
+// import styled from 'styled-components';
+import Main from '../src/blogfavo/.next/static/chunks/pages/List';
 
 export default function Home() {
   return (
-    <Container>
-      <Title>My page</Title>
-      <Input />
-      <Button>Click!</Button>
-    </Container>
+    <>
+      <Main />
+    </>
   );
 }
 
-const Container = styled.div`
-  text-align: center;
-`;
+// const Container = styled.div`
+//   text-align: center;
+// `;
 
-const Title = styled.h1`
-  color: red;
-  font-size: 50px;
-`;
+// const Title = styled.h1`
+//   color: red;
+//   font-size: 50px;
+// `;
