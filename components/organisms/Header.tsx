@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SettingMenu from './SettingMenu';
+import SettingMenu from '../molecules/SettingMenu';
 
 //material
 import Toolbar from '@material-ui/core/Toolbar';

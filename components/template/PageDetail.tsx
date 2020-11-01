@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import Main from './Main';
+import Main from '../pages/Main';
 
 // material
 import Button from '@material-ui/core/Button';

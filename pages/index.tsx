@@ -1,5 +1,5 @@
 // import styled from 'styled-components';
-import Main from '../src/blogfavo/.next/static/chunks/pages/List';
+import Main from '../components/List';
 
 export default function Home() {
   return (

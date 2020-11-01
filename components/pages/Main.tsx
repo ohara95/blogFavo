@@ -1,15 +1,15 @@
 import React, { FC } from 'react';
-import Header from './Header';
-import PageTop from './PageTop';
-import Footer from './Footer';
-import AddButton from './AddButton';
+import Header from '../organisms/Header';
+import PageTop from '../template/PageTop';
+import Footer from '../organisms/Footer';
+import AddButton from '../atoms/AddButton';
 
 const Main: FC = ({ children }) => {
   return (
     <>
       <Header />
       <main>
-        <PageTop />
+        <PageTop title="blogFavo" />
         {children}
       </main>
       <Footer />

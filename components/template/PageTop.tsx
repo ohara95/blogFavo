@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
@@ -38,7 +38,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const PageTop = () => {
+type Props = {
+  title: string;
+};
+
+const PageTop: FC<Props> = ({ title }) => {
   const classes = useStyles();
   return (
     <div className={classes.heroContent}>
@@ -50,7 +54,7 @@ const PageTop = () => {
           color="textPrimary"
           gutterBottom
         >
-          BlogFavo
+          {title}
         </Typography>
         <Grid container direction="row" justify="center" alignItems="center">
           <Paper component="form" className={classes.inputRoot}>
