@@ -7,7 +7,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@types/nanoid": "^2.1.0",
     "firebase": "^8.0.0",
+    "nanoid": "^3.1.16",
     "next": "latest",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
