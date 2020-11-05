@@ -1,7 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Controller } from 'react-hook-form';
-import Tag from './Tag';
-import Selector from './Selector';
+import { CategorySelector, Tag } from '../atoms';
 //material
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -33,7 +32,7 @@ type Props = {
   control?: any;
 };
 
-const DialogForm: FC<Props> = ({ register, errors, control }) => {
+export const DialogForm: FC<Props> = ({ register, errors, control }) => {
   const classes = useStyles();
   const [isPublic, setIsPublic] = useState(false);
 
@@ -100,7 +99,7 @@ const DialogForm: FC<Props> = ({ register, errors, control }) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <Selector />
+        <CategorySelector />
       </Grid>
       <Grid item xs={12}>
         <Tag />
@@ -133,5 +132,3 @@ const DialogForm: FC<Props> = ({ register, errors, control }) => {
     </Grid>
   );
 };
-
-export default DialogForm;

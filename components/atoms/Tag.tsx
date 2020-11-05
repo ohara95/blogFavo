@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { addTags } from '../../recoil/root';
+import { db } from '../../config/firebase';
 import { Tags } from '../../types';
 import useFirebase from '../../hooks/useFirebase';
 //material
@@ -21,25 +24,43 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: cyan[700],
       color: 'white',
       marginBottom: theme.spacing(1),
+      '&:hover': {
+        backgroundColor: cyan[500],
+      },
+    },
+    field: {
+      padding: theme.spacing(1),
+      border: 'none',
     },
   })
 );
 
-const TagTest = () => {
+export const Tag = () => {
   const classes = useStyles();
   const [tags] = useFirebase<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
   const [selectTags, setSelectTags] = useState<string[]>([]);
+  const setTags = useSetRecoilState(addTags);
 
-  const addArr = (arr: string[]) => {
-    //memo setできない manyRendering
-    console.log(arr);
-  };
+  useEffect(() => {
+    if (selectTags) {
+      setTags(selectTags);
+
+      selectTags.map((tag) => {
+        db.collection('tags').add({
+          name: tag,
+        });
+      });
+    }
+  }, [selectTags]);
 
   return (
     <>
       <InputLabel className={classes.margin}>Tag</InputLabel>
       <Autocomplete
+        onChange={(...el) => {
+          if (inputValue) setSelectTags(el[1]);
+        }}
         inputValue={inputValue}
         onInputChange={(event, newInputValue) => {
           //入力した値
@@ -48,6 +69,7 @@ const TagTest = () => {
         multiple
         options={tags.map((option) => option.name)}
         freeSolo
+        className={classes.padding}
         renderTags={(value: string[], getTagProps) =>
           value.map((option: string, index: number) => (
             <Chip
@@ -58,21 +80,10 @@ const TagTest = () => {
           ))
         }
         renderInput={(params) => {
-          const valueArr = params.InputProps.startAdornment as any[];
-          const tagName =
-            valueArr && valueArr.map((value) => value.props.label);
-          // if (valueArr && tagName) {
-          //   if (valueArr.length && tagName.length) {
-          //     setAddTags(tagName);
-          //   }
-          // }
-          addArr(tagName);
-
           return (
             <TextField
               {...params}
               variant="standard"
-              className={classes.padding}
               placeholder="追加してください"
             />
           );
@@ -81,5 +92,3 @@ const TagTest = () => {
     </>
   );
 };
-
-export default TagTest;

@@ -41,6 +41,7 @@ type Props = {
   number?: number;
   isCategory?: boolean;
   memo: string;
+  tag: string;
 };
 
 const PageDetail: FC<Props> = ({
@@ -49,6 +50,7 @@ const PageDetail: FC<Props> = ({
   number,
   isCategory = false,
   memo,
+  tag,
 }) => {
   const classes = useStyles();
 
@@ -74,6 +76,7 @@ const PageDetail: FC<Props> = ({
                     </Typography>
                   )}
                   <Typography>{memo}</Typography>
+                  <Typography>{tag}</Typography>
                 </CardContent>
                 <CardActions>
                   <Button size="small" color="primary">

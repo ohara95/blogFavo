@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { addCategory } from '../../recoil/root';
 import { Category } from '../../types';
 import { db } from '../../config/firebase';
 import useFirebase from '../../hooks/useFirebase';
+//material
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
 import Autocomplete, {
@@ -25,9 +28,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const TestSelect = () => {
+export const CategorySelector = () => {
   const [value, setValue] = useState<Category | null>(null);
   const [categoryList] = useFirebase<Category>('categoryList');
+  const setCategory = useSetRecoilState(addCategory);
   const classes = useStyles();
 
   useEffect(() => {
@@ -40,10 +44,10 @@ const TestSelect = () => {
         });
       }
     }
+    if (value) {
+      setCategory(value?.name);
+    }
   }, [value]);
-
-  //memo value.nameを送信時にdbに保存
-  console.log(value);
 
   return (
     <>
@@ -100,11 +104,10 @@ const TestSelect = () => {
             variant="outlined"
             fullWidth
             className={classes.padding}
+            placeholder="選択してください"
           />
         )}
       />
     </>
   );
 };
-
-export default TestSelect;
