@@ -1,20 +1,15 @@
-import React, { FC, useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Controller } from 'react-hook-form';
+import React, { useState, useEffect } from 'react';
+import { Category } from '../../types';
 import { db } from '../../config/firebase';
-import AddDialog from '../organisms/AddDialog';
-import SelectForm from '../atoms/selectForm';
 import useFirebase from '../../hooks/useFirebase';
-
-//material
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
-import { red } from '@material-ui/core/colors';
+import Autocomplete, {
+  createFilterOptions,
+} from '@material-ui/lab/Autocomplete';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+
+const filter = createFilterOptions<Category>();
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,83 +22,89 @@ const useStyles = makeStyles((theme: Theme) =>
     selectInput: {
       padding: '15px!important',
     },
-    error: {
-      color: red[500],
-    },
   })
 );
 
-type Props = {
-  title: string;
-  control: any;
-};
-
-type Category = {
-  name: string; //DB適当
-  id: string;
-};
-
-const Selector: FC<Props> = ({ title, control }) => {
-  const classes = useStyles();
-  const { register, errors } = useForm();
-  const [open, setOpen] = useState(false);
+const TestSelect = () => {
+  const [value, setValue] = useState<Category | null>(null);
   const [categoryList] = useFirebase<Category>('categoryList');
+  const classes = useStyles();
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  useEffect(() => {
+    if (value) {
+      if (categoryList.find((db) => db.name === value.name)) {
+        return;
+      } else {
+        db.collection('categoryList').add({
+          name: value.name,
+        });
+      }
+    }
+  }, [value]);
 
-  const onSubmit = (data: { addCategory: string }) => {
-    db.collection('categoryList')
-      .add({
-        name: data.addCategory,
-      })
-      .then(() => {
-        handleClose();
-      });
-  };
+  //memo value.nameを送信時にdbに保存
+  console.log(value);
 
   return (
     <>
-      <InputLabel className={classes.margin}>
-        {title}{' '}
-        <IconButton size="small" onClick={handleOpen}>
-          <AddIcon />
-        </IconButton>
-      </InputLabel>
-      <FormControl fullWidth className={classes.padding}>
-        <Controller
-          control={control}
-          name="category"
-          defaultValue="none"
-          as={
-            <Select
-              classes={{ outlined: classes.selectInput }}
-              variant="outlined"
-            >
-              <MenuItem value="none">選択してください</MenuItem>
-              {categoryList &&
-                categoryList.map((db) => {
-                  return (
-                    <MenuItem value={db.name} key={db.id}>
-                      {db.name}
-                    </MenuItem>
-                  );
-                })}
-            </Select>
+      <InputLabel className={classes.margin}>カテゴリー</InputLabel>
+
+      <Autocomplete
+        value={value}
+        onChange={(event, newValue) => {
+          if (typeof newValue === 'string') {
+            setValue({
+              name: newValue,
+            });
+          } else if (newValue && newValue.inputValue) {
+            // ユーザー入力から新しい値を作成
+            setValue({
+              name: newValue.inputValue,
+            });
+          } else {
+            setValue(newValue);
           }
-        />
-      </FormControl>
-      <AddDialog
-        onClickClose={handleClose}
-        open={open}
-        title="カテゴリー追加"
-        render={SelectForm}
-        register={register}
-        errors={errors}
-        onSubmit={onSubmit}
+        }}
+        filterOptions={(options, params) => {
+          const filtered = filter(options, params);
+
+          if (params.inputValue !== '') {
+            filtered.push({
+              inputValue: params.inputValue,
+              name: `追加 "${params.inputValue}"`,
+            });
+          }
+
+          return filtered;
+        }}
+        selectOnFocus
+        clearOnBlur
+        handleHomeEndKeys
+        options={categoryList}
+        getOptionLabel={(option) => {
+          // 入力から直接入力で選択された値
+          if (typeof option === 'string') {
+            return option;
+          }
+          //値を追加
+          if (option.inputValue) {
+            return option.inputValue;
+          }
+          return option.name;
+        }}
+        renderOption={(option) => option.name}
+        freeSolo
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            fullWidth
+            className={classes.padding}
+          />
+        )}
       />
     </>
   );
 };
 
-export default Selector;
+export default TestSelect;
