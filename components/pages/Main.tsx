@@ -2,14 +2,17 @@ import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FormValues } from '../../types';
 import { db } from '../../config/firebase';
+import { useRecoilValue } from 'recoil';
+import { addTags, addCategory } from '../../recoil/root';
 //components
-import Header from '../organisms/Header';
+import { Header, Footer } from '../organisms';
 import PageTop from '../template/PageTop';
-import Footer from '../organisms/Footer';
-import AddButton from '../atoms/AddButton';
+import { AddButton } from '../atoms';
 
 const Main: FC = ({ children }) => {
   const [open, setOpen] = useState(false);
+  const tag = useRecoilValue(addTags);
+  const category = useRecoilValue(addCategory);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -19,25 +22,24 @@ const Main: FC = ({ children }) => {
   >();
 
   const onSubmit = (data: FormValues) => {
-    console.log(data);
-
     db.collection('blog')
       .add({
         title: data.title,
         url: data.url,
         memo: data.memo,
-        category: data.category,
+        category,
+        tag,
         isPublic: data.isPublic,
       })
       .then(() => {
         reset();
         //memo 送信したらボタン選択解除したい
-        //連続で追加する場合によくない
-        // db.collection('tags')
-        //   .get()
-        //   .then((res) =>
-        //     res.docs.map((doc) => doc.ref.update({ isChecked: false }))
-        //   );
+        //(連続で追加する場合によくないので)
+        db.collection('tags')
+          .get()
+          .then((res) =>
+            res.docs.map((doc) => doc.ref.update({ isChecked: false }))
+          );
         alert('追加出来ました！');
       });
   };

@@ -5,6 +5,7 @@ import { ThemeProvider as MaterialUIThemeProvider } from '@material-ui/core/styl
 import { StylesProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { theme } from '../styles/theme';
+import { RecoilRoot } from 'recoil';
 
 /**
  * クライアント側のレンダリングカスタマイズ
@@ -22,13 +23,15 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <StylesProvider injectFirst>
-      <MaterialUIThemeProvider theme={theme}>
-        <StyledComponentsThemeProvider theme={theme}>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </StyledComponentsThemeProvider>
-      </MaterialUIThemeProvider>
-    </StylesProvider>
+    <RecoilRoot>
+      <StylesProvider injectFirst>
+        <MaterialUIThemeProvider theme={theme}>
+          <StyledComponentsThemeProvider theme={theme}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </StyledComponentsThemeProvider>
+        </MaterialUIThemeProvider>
+      </StylesProvider>
+    </RecoilRoot>
   );
 }

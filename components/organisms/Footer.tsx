@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Footer = () => {
+export const Footer = () => {
   const classes = useStyles();
   return (
     <footer className={classes.root}>
@@ -40,5 +40,3 @@ const Footer = () => {
     </footer>
   );
 };
-
-export default Footer;

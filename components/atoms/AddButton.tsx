@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import DialogForm from '../molecules/DialogForm';
-import AddDialog from '../organisms/AddDialog';
+import { DialogForm } from '../molecules';
+import { AddDialog } from '../organisms';
 
 // material
 import Fab from '@material-ui/core/Fab';
@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
     right: theme.spacing(3),
     backgroundColor: cyan[700],
     color: 'white',
+    '&:hover': {
+      backgroundColor: cyan[500],
+    },
   },
 }));
 
@@ -30,7 +33,7 @@ type Props = {
   control?: any;
 };
 
-const AddButton: FC<Props> = ({
+export const AddButton: FC<Props> = ({
   onClickOpen,
   open,
   onClickClose,
@@ -62,5 +65,3 @@ const AddButton: FC<Props> = ({
     </>
   );
 };
-
-export default AddButton;

@@ -3,6 +3,7 @@ export type FormValues = {
   url: string;
   memo: string;
   category: string;
+  tag: string[];
   isPublic: boolean;
 };
 
