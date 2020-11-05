@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
 import { db } from '../../config/firebase';
 import AddDialog from '../organisms/AddDialog';
-import SelectForm from '../atoms/selectForm';
+import SelectForm from '../atoms/SelectForm';
 import useFirebase from '../../hooks/useFirebase';
 
 //material

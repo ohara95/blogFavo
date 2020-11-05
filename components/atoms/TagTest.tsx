@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tags } from '../../types';
 import useFirebase from '../../hooks/useFirebase';
 //material
@@ -22,10 +22,6 @@ const useStyles = makeStyles((theme: Theme) =>
       color: 'white',
       marginBottom: theme.spacing(1),
     },
-    field: {
-      padding: theme.spacing(1),
-      border: 'none',
-    },
   })
 );
 
@@ -35,13 +31,15 @@ const TagTest = () => {
   const [inputValue, setInputValue] = useState('');
   const [selectTags, setSelectTags] = useState<string[]>([]);
 
+  const addArr = (arr: string[]) => {
+    //memo setできない manyRendering
+    console.log(arr);
+  };
+
   return (
     <>
       <InputLabel className={classes.margin}>Tag</InputLabel>
       <Autocomplete
-        onChange={(...el) => {
-          setSelectTags(el[1]);
-        }}
         inputValue={inputValue}
         onInputChange={(event, newInputValue) => {
           //入力した値
@@ -60,15 +58,23 @@ const TagTest = () => {
           ))
         }
         renderInput={(params) => {
+          const valueArr = params.InputProps.startAdornment as any[];
+          const tagName =
+            valueArr && valueArr.map((value) => value.props.label);
+          // if (valueArr && tagName) {
+          //   if (valueArr.length && tagName.length) {
+          //     setAddTags(tagName);
+          //   }
+          // }
+          addArr(tagName);
+
           return (
-            <>
-              <TextField
-                {...params}
-                variant="standard"
-                className={classes.padding}
-                placeholder="追加してください"
-              />
-            </>
+            <TextField
+              {...params}
+              variant="standard"
+              className={classes.padding}
+              placeholder="追加してください"
+            />
           );
         }}
       />
