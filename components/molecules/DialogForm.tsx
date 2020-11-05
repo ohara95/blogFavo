@@ -100,7 +100,7 @@ const DialogForm: FC<Props> = ({ register, errors, control }) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <Selector title="Category" control={control} />
+        <Selector />
       </Grid>
       <Grid item xs={12}>
         <Tag />
