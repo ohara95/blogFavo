@@ -11,3 +11,9 @@ export type Tags = {
   id: string;
   isChecked: boolean;
 };
+
+export type Category = {
+  name: string;
+  id?: string;
+  inputValue?: string;
+};
