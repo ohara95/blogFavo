@@ -1,15 +1,15 @@
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FormValues } from '../../types';
-import { db } from '../../config/firebase';
+import { FormValues } from '../../../types';
+import { db } from '../utils/firebase';
 import { useRecoilValue } from 'recoil';
-import { addTags, addCategory } from '../../recoil/root';
-import PageDetail from './components/PageDetail';
+import { addTags, addCategory } from '../../../recoil/root';
+import PageDetail from '../main/components/PageDetail';
 //components
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import PageTop from '../pages/components/PageTop';
-import AddButton from '../components/AddButton';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import PageTop from '../main/components/PageTop';
+import AddButton from '../../components/AddButton';
 
 const Main: FC = () => {
   const [open, setOpen] = useState(false);

@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import Main from '../Main';
 
 // material
 import Button from '@material-ui/core/Button';
@@ -56,7 +55,6 @@ const PageDetail: FC<Props> = ({
   console.log(data);
 
   return (
-    // <Main>
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
         {data.map((card) => (
@@ -102,7 +100,6 @@ const PageDetail: FC<Props> = ({
         ))}
       </Grid>
     </Container>
-    // </Main>
   );
 };
 
