@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import DialogForm from '../components/DialogForm';
-import AddDialog from '../components/AddDialog';
+import { DialogForm, AddDialog } from '../components';
 
 // material
 import Fab from '@material-ui/core/Fab';
@@ -33,7 +32,7 @@ type Props = {
   control?: any;
 };
 
-const AddButton: FC<Props> = ({
+export const AddButton: FC<Props> = ({
   onClickOpen,
   open,
   onClickClose,
@@ -65,5 +64,3 @@ const AddButton: FC<Props> = ({
     </>
   );
 };
-
-export default AddButton;

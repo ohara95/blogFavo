@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Tag = () => {
+export const Tag = () => {
   const classes = useStyles();
   const [tags] = useFirebase<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
@@ -92,5 +92,3 @@ const Tag = () => {
     </>
   );
 };
-
-export default Tag;

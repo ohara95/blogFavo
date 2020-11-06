@@ -4,12 +4,9 @@ import { FormValues } from '../../../types';
 import { db } from '../utils/firebase';
 import { useRecoilValue } from 'recoil';
 import { addTags, addCategory } from '../../../recoil/root';
-import PageDetail from '../main/components/PageDetail';
 //components
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import PageTop from '../main/components/PageTop';
-import AddButton from '../../components/AddButton';
+import { Header, Footer, AddButton } from '../../components';
+import { PageDetail, PageTop } from '../main/components';
 
 const Main: FC = () => {
   const [open, setOpen] = useState(false);

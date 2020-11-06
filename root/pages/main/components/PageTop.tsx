@@ -46,7 +46,7 @@ type Props = {
   title: string;
 };
 
-const PageTop: FC<Props> = ({ title }) => {
+export const PageTop: FC<Props> = ({ title }) => {
   const classes = useStyles();
   return (
     <div className={classes.heroContent}>
@@ -93,5 +93,3 @@ const PageTop: FC<Props> = ({ title }) => {
     </div>
   );
 };
-
-export default PageTop;

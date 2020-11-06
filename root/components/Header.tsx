@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SettingMenu from '../components/SettingMenu';
+import { SettingMenu } from '../components';
 
 //material
 import Toolbar from '@material-ui/core/Toolbar';
@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Header = () => {
+export const Header = () => {
   const classes = useStyles();
   const [open, setOpen] = useState<null | HTMLElement>(null);
 
@@ -70,5 +70,3 @@ const Header = () => {
     </>
   );
 };
-
-export default Header;

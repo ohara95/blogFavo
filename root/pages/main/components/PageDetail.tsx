@@ -43,7 +43,7 @@ type Props = {
   tag?: string;
 };
 
-const PageDetail: FC<Props> = ({
+export const PageDetail: FC<Props> = ({
   data,
   title,
   number,
@@ -52,7 +52,6 @@ const PageDetail: FC<Props> = ({
   tag,
 }) => {
   const classes = useStyles();
-  console.log(data);
 
   return (
     <Container className={classes.cardGrid} maxWidth="md">
@@ -102,5 +101,3 @@ const PageDetail: FC<Props> = ({
     </Container>
   );
 };
-
-export default PageDetail;

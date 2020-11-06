@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const CategorySelector = () => {
+export const CategorySelector = () => {
   const [value, setValue] = useState<Category | null>(null);
   const [categoryList] = useFirebase<Category>('categoryList');
   const setCategory = useSetRecoilState(addCategory);
@@ -111,5 +111,3 @@ const CategorySelector = () => {
     </>
   );
 };
-
-export default CategorySelector;
