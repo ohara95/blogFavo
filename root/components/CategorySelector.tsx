@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil';
 import { addCategory } from '../../recoil/root';
 import { Category } from '../../types';
 import { db } from '../../config/firebase';
-import useFirebase from '../../hooks/useFirebase';
+import useFirebase from '../hooks/useFirebase';
 //material
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const CategorySelector = () => {
+const CategorySelector = () => {
   const [value, setValue] = useState<Category | null>(null);
   const [categoryList] = useFirebase<Category>('categoryList');
   const setCategory = useSetRecoilState(addCategory);
@@ -111,3 +111,5 @@ export const CategorySelector = () => {
     </>
   );
 };
+
+export default CategorySelector;

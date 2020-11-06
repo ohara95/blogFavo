@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SettingMenu } from '../molecules';
+import SettingMenu from '../components/SettingMenu';
 
 //material
 import Toolbar from '@material-ui/core/Toolbar';
@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const Header = () => {
+const Header = () => {
   const classes = useStyles();
   const [open, setOpen] = useState<null | HTMLElement>(null);
 
@@ -70,3 +70,5 @@ export const Header = () => {
     </>
   );
 };
+
+export default Header;

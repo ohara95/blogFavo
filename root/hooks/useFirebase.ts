@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../config/firebase';
+import { db } from '../../config/firebase';
 
 const useFirebase = <T>(collection: string) => {
   const [state, setState] = useState<T[]>([]);

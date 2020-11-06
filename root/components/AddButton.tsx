@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { DialogForm } from '../molecules';
-import { AddDialog } from '../organisms';
+import DialogForm from '../components/DialogForm';
+import AddDialog from '../components/AddDialog';
 
 // material
 import Fab from '@material-ui/core/Fab';
@@ -33,7 +33,7 @@ type Props = {
   control?: any;
 };
 
-export const AddButton: FC<Props> = ({
+const AddButton: FC<Props> = ({
   onClickOpen,
   open,
   onClickClose,
@@ -65,3 +65,5 @@ export const AddButton: FC<Props> = ({
     </>
   );
 };
+
+export default AddButton;

@@ -18,7 +18,7 @@ type Props = {
   onSubmit?: any;
 };
 
-export const AddDialog: FC<Props> = ({
+const AddDialog: FC<Props> = ({
   title,
   open,
   onClickClose,
@@ -52,3 +52,5 @@ export const AddDialog: FC<Props> = ({
     </Dialog>
   );
 };
+
+export default AddDialog;

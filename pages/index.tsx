@@ -1,5 +1,5 @@
 // import styled from 'styled-components';
-import Main from '../components/List';
+import Main from '../root/pages/Main';
 
 export default function Home() {
   return (

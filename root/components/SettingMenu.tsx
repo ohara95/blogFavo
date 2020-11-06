@@ -7,7 +7,7 @@ type Props = {
   onClose: (event: {}, reason: 'backdropClick' | 'escapeKeyDown') => void;
 };
 
-export const SettingMenu: FC<Props> = ({ open, onClose }) => (
+const SettingMenu: FC<Props> = ({ open, onClose }) => (
   <Menu
     id="simple-menu"
     keepMounted
@@ -20,3 +20,5 @@ export const SettingMenu: FC<Props> = ({ open, onClose }) => (
     <MenuItem>Logout</MenuItem>
   </Menu>
 );
+
+export default SettingMenu;

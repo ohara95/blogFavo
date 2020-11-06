@@ -4,12 +4,14 @@ import { FormValues } from '../../types';
 import { db } from '../../config/firebase';
 import { useRecoilValue } from 'recoil';
 import { addTags, addCategory } from '../../recoil/root';
+import PageDetail from './components/PageDetail';
 //components
-import { Header, Footer } from '../organisms';
-import PageTop from '../template/PageTop';
-import { AddButton } from '../atoms';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import PageTop from '../pages/components/PageTop';
+import AddButton from '../components/AddButton';
 
-const Main: FC = ({ children }) => {
+const Main: FC = () => {
   const [open, setOpen] = useState(false);
   const tag = useRecoilValue(addTags);
   const category = useRecoilValue(addCategory);
@@ -44,12 +46,14 @@ const Main: FC = ({ children }) => {
       });
   };
 
+  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
   return (
     <>
       <Header />
       <main>
         <PageTop title="blogFavo" />
-        {children}
+        <PageDetail data={data} title="title" memo="memo" tag="tag" />;
       </main>
       <Footer />
       <AddButton

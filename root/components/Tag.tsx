@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil';
 import { addTags } from '../../recoil/root';
 import { db } from '../../config/firebase';
 import { Tags } from '../../types';
-import useFirebase from '../../hooks/useFirebase';
+import useFirebase from '../hooks/useFirebase';
 //material
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const Tag = () => {
+const Tag = () => {
   const classes = useStyles();
   const [tags] = useFirebase<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
@@ -92,3 +92,5 @@ export const Tag = () => {
     </>
   );
 };
+
+export default Tag;
