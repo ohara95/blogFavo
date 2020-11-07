@@ -3,7 +3,7 @@ import { useSetRecoilState } from 'recoil';
 import { addCategory } from '../../recoil/root';
 import { Category } from '../../types';
 import { db } from '../pages/utils/firebase';
-import useFirebase from '../pages/utils/useFirebase';
+import useFirebase from '../pages/utils/hooks/useFirebase';
 //material
 import TextField from '@material-ui/core/TextField';
 import InputLabel from '@material-ui/core/InputLabel';
