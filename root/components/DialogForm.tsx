@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { CategorySelector, Tag } from '../atoms';
+import { CategorySelector, Tag } from '../components';
+
 //material
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';

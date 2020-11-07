@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
@@ -45,7 +46,7 @@ type Props = {
   title: string;
 };
 
-const PageTop: FC<Props> = ({ title }) => {
+export const PageTop: FC<Props> = ({ title }) => {
   const classes = useStyles();
   return (
     <div className={classes.heroContent}>
@@ -92,5 +93,3 @@ const PageTop: FC<Props> = ({ title }) => {
     </div>
   );
 };
-
-export default PageTop;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { addTags } from '../../recoil/root';
-import { db } from '../../config/firebase';
+import { db } from '../pages/utils/firebase';
 import { Tags } from '../../types';
-import useFirebase from '../../hooks/useFirebase';
+import useFirebase from '../pages/utils/hooks/useFirebase';
 //material
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';

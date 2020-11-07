@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { DialogForm } from '../molecules';
-import { AddDialog } from '../organisms';
+import { DialogForm, AddDialog } from '../components';
 
 // material
 import Fab from '@material-ui/core/Fab';
