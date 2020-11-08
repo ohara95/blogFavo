@@ -10,7 +10,6 @@ import {
 } from '../styles/common';
 import { useForm } from 'react-hook-form';
 import { auth } from '../root/pages/utils/firebase';
-import { exit } from 'process';
 import firebase from 'firebase';
 
 type FormData = {
@@ -38,14 +37,16 @@ const SignUp = () => {
       setIsError(true);
     } else {
       setIsError(false);
-      exit;
+      return false;
     }
   };
 
   const handleSignUp = async (data: FormData) => {
     try {
       const { name, email, password, passwordConfirm } = data;
-      passwordCheck(password, passwordConfirm);
+      if(!passwordCheck(password, passwordConfirm)){
+        return;
+      }
       const createdUser = await auth.createUserWithEmailAndPassword(
         email,
         password
