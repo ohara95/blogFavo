@@ -1,5 +1,7 @@
 import React, { FC } from 'react';
-
+import { useRecoilState } from 'recoil';
+import { currentDisplayData } from '../../../../recoil/root';
+//material
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
@@ -36,9 +38,9 @@ const useStyles = makeStyles((theme) => ({
   themeColor: {
     backgroundColor: cyan[700],
     color: 'white',
-    '&:hover': {
-      backgroundColor: cyan[500],
-    },
+  },
+  currentColor: {
+    backgroundColor: cyan[500],
   },
 }));
 
@@ -48,6 +50,10 @@ type Props = {
 
 export const PageTop: FC<Props> = ({ title }) => {
   const classes = useStyles();
+  const [currentDisplay, setCurrentDisplay] = useRecoilState(
+    currentDisplayData
+  );
+
   return (
     <div className={classes.heroContent}>
       <Container maxWidth="sm">
@@ -78,12 +84,32 @@ export const PageTop: FC<Props> = ({ title }) => {
         <div className={classes.heroButtons}>
           <Grid container spacing={2} justify="center">
             <Grid item>
-              <Button variant="contained" className={classes.themeColor}>
+              <Button
+                variant="contained"
+                className={
+                  currentDisplay === 'list'
+                    ? classes.currentColor
+                    : classes.themeColor
+                }
+                onClick={() => {
+                  setCurrentDisplay('list');
+                }}
+              >
                 list
               </Button>
             </Grid>
             <Grid item>
-              <Button variant="contained" className={classes.themeColor}>
+              <Button
+                variant="contained"
+                className={
+                  currentDisplay === 'category'
+                    ? classes.currentColor
+                    : classes.themeColor
+                }
+                onClick={() => {
+                  setCurrentDisplay('category');
+                }}
+              >
                 category
               </Button>
             </Grid>

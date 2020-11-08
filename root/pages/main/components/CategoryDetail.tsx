@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-
+import React, { FC, useState } from 'react';
+import { Category } from '../../../../types';
 // material
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -12,6 +12,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
+import StarRoundedIcon from '@material-ui/icons/StarRounded';
+import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -35,29 +37,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  data: number[]; //適当
-  title: string;
-  number?: number;
-  isCategory?: boolean;
-  memo: string;
-  tag?: string;
+  data: Category[];
+  number: number;
 };
 
-export const PageDetail: FC<Props> = ({
-  data,
-  title,
-  number,
-  isCategory = false,
-  memo,
-  tag,
-}) => {
+export const CategoryDetail: FC<Props> = ({ data, number }) => {
   const classes = useStyles();
+  const [isClickStar, setIsClickStar] = useState(false);
+  const [isBookmark, setIsBookmark] = useState(false);
 
   return (
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
         {data.map((card) => (
-          <Grid item key={card} xs={12} sm={6} md={4}>
+          <Grid item key={card.id} xs={12} sm={6} md={4}>
             <Card className={classes.card}>
               <CardMedia
                 className={classes.cardMedia}
@@ -66,15 +59,8 @@ export const PageDetail: FC<Props> = ({
               />
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h5" component="h2">
-                  {title}
+                  {card.name ? card.name : 'title'}({number})
                 </Typography>
-                {isCategory && (
-                  <Typography gutterBottom variant="h5" component="h2">
-                    ({number})
-                  </Typography>
-                )}
-                <Typography>{memo}</Typography>
-                <Typography>{tag}</Typography>
               </CardContent>
               <CardActions>
                 <Button size="small" color="primary">
@@ -83,16 +69,32 @@ export const PageDetail: FC<Props> = ({
                 <Button size="small" color="primary">
                   edit
                 </Button>
-                {isCategory && (
-                  <>
-                    <Button size="small" color="primary">
-                      <StarBorderRoundedIcon />
-                    </Button>
-                    <Button size="small" color="primary">
-                      <TurnedInNotRoundedIcon />
-                    </Button>
-                  </>
-                )}
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={() => {
+                    setIsClickStar(!isClickStar);
+                  }}
+                >
+                  {isClickStar ? (
+                    <StarRoundedIcon />
+                  ) : (
+                    <StarBorderRoundedIcon />
+                  )}
+                </Button>
+                <Button
+                  size="small"
+                  color="primary"
+                  onClick={() => {
+                    setIsBookmark(!isBookmark);
+                  }}
+                >
+                  {isBookmark ? (
+                    <BookmarkRoundedIcon />
+                  ) : (
+                    <TurnedInNotRoundedIcon />
+                  )}
+                </Button>
               </CardActions>
             </Card>
           </Grid>
