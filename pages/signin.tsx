@@ -45,7 +45,7 @@ const SignIn = () => {
             error={'email' in errors}
           />
         </Label>
-        {errors.password && <InputError>{errors.password.message}</InputError>}
+        {errors.email && <InputError>{errors.email.message}</InputError>}
         <Label>
           Password
           <TextField
@@ -56,7 +56,7 @@ const SignIn = () => {
             error={'password' in errors}
           />
         </Label>
-        {errors.email && <InputError>{errors.email.message}</InputError>}
+        {errors.password && <InputError>{errors.password.message}</InputError>}
         <StyledButton type="submit" fullWidth>
           Sign In
         </StyledButton>
