@@ -5,6 +5,7 @@ export type FormValues = {
   category: string;
   tag: string[];
   isPublic: boolean;
+  id?: string;
 };
 
 export type Tags = {

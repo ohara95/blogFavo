@@ -1,17 +1,33 @@
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FormValues } from '../../../types';
+import { Category, FormValues } from '../../../types';
 import { db } from '../utils/firebase';
 import { useRecoilValue } from 'recoil';
-import { addTags, addCategory } from '../../../recoil/root';
+import { addTags, addCategory, currentDisplayData } from '../../../recoil/root';
+import useFirebase from '../utils/hooks/useFirebase';
+
 //components
 import { Header, Footer, AddButton } from '../../components';
-import { PageDetail, PageTop } from '../main/components';
+import { BlogDetail, PageTop, CategoryDetail } from '../main/components';
 
 const Main: FC = () => {
   const [open, setOpen] = useState(false);
   const tag = useRecoilValue(addTags);
   const category = useRecoilValue(addCategory);
+  const currentDisplay = useRecoilValue(currentDisplayData);
+  const [blog] = useFirebase<FormValues>('blog');
+  const [categoryList] = useFirebase<Category>('categoryList');
+
+  const data = [{ name: 'category', id: 'dfghj' }];
+
+  const displayData = (current: string) => {
+    if (!blog) return;
+    if (current === 'list') {
+      return blog;
+    } else if (current === 'category') {
+      return data;
+    }
+  };
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -43,14 +59,16 @@ const Main: FC = () => {
       });
   };
 
-  const data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
   return (
     <>
       <Header />
       <main>
         <PageTop title="blogFavo" />
-        <PageDetail data={data} title="title" memo="memo" tag="tag" />;
+        {currentDisplay === 'list' ? (
+          <BlogDetail data={blog} />
+        ) : (
+          <CategoryDetail data={categoryList} number={categoryList.length} />
+        )}
       </main>
       <Footer />
       <AddButton

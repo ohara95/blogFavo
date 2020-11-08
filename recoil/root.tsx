@@ -9,3 +9,8 @@ export const addCategory = atom<string>({
   key: 'addCategory',
   default: '',
 });
+
+export const currentDisplayData = atom({
+  key: 'currentDisplayData',
+  default: 'list',
+});
