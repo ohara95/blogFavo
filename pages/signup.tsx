@@ -65,54 +65,54 @@ const SignUp = () => {
       <h1>Sign up</h1>
       <AuthenticateForm onSubmit={handleSubmit(handleSignUp)}>
         <Label>
-          Name
+          名前
           <TextField
             fullWidth
             name="name"
-            inputRef={register({ required: 'Please enter.' })}
+            inputRef={register({ required: '名前を入力してください.' })}
             error={'name' in errors}
           />
           {errors.name && <InputError>{errors.name.message}</InputError>}
         </Label>
         <Label>
-          Email
+          メールアドレス
           <TextField
             fullWidth
             name="email"
-            inputRef={register({ required: 'Please enter.' })}
+            inputRef={register({ required: 'メールアドレスを入力してください.' })}
             error={'email' in errors}
           />
         </Label>
         {errors.email && <InputError>{errors.email.message}</InputError>}
         <Label>
-          Password
+          パスワード
           <TextField
             fullWidth
             name="password"
             type="password"
-            inputRef={register({ required: 'Please enter.' })}
+            inputRef={register({ required: 'パスワードを入力してください.' })}
             error={'password' in errors}
           />
         </Label>
         {errors.password && <InputError>{errors.password.message}</InputError>}
         <Label>
-          Password Confirm
+          パスワード再確認
           <TextField
             fullWidth
             name="passwordConfirm"
             type="password"
-            inputRef={register({ required: 'Please enter.' })}
+            inputRef={register({ required: 'パスワード再確認を入力してください.' })}
             error={'passwordConfirm' in errors}
           />
         </Label>
         {errors.passwordConfirm && (
           <InputError>{errors.passwordConfirm.message}</InputError>
         )}
-        {isError && <InputError>Password doesn't match.</InputError>}
+        {isError && <InputError>パスワードが一致しません</InputError>}
         <StyledButton type="submit" fullWidth>
-          Sign Up
+          登録
         </StyledButton>
-        <Link href="/signin">Already have an account? Sign in</Link>
+        <Link href="/signin">既にアカウントをお持ちの方はこちら</Link>
       </AuthenticateForm>
     </AuthenticateContainer>
   );

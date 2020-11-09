@@ -1,13 +1,17 @@
 import { Button } from '@material-ui/core';
 import styled from 'styled-components';
 import { COLOR } from './color';
+import { sp } from './media';
 
 export const AuthenticateContainer = styled.div`
   margin: 50px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 400px;
+  width: 400px;
+  ${sp`
+    width: 250px;
+  `}
 `;
 
 export const StyledButton = styled(Button)`

@@ -5,23 +5,24 @@ import {
   AuthenticateForm,
   AuthenticateContainer,
   StyledButton,
-  SpaceBetween,
   Label,
   InputError,
 } from '../styles/common';
 import { useForm } from 'react-hook-form';
 import { auth } from '../root/pages/utils/firebase';
+import styled from 'styled-components';
+import { sp } from '../styles/media';
 
 type FormData = {
   email: string;
   password: string;
 };
 
-const SignIn = () => {
+export default function SignIn() {
   const { register, handleSubmit, reset, errors } = useForm<FormData>();
 
   /** サインイン */
-  const handleSignIn = async(data: FormData) => {
+  const handleSignIn = async (data: FormData) => {
     try {
       const { email, password } = data;
       await auth.signInWithEmailAndPassword(email, password);
@@ -37,22 +38,24 @@ const SignIn = () => {
       <h1>Sign in</h1>
       <AuthenticateForm onSubmit={handleSubmit(handleSignIn)}>
         <Label>
-          Email
+          メールアドレス
           <TextField
             fullWidth
             name="email"
-            inputRef={register({ required: 'Please enter.' })}
+            inputRef={register({
+              required: 'メールアドレスを入力してください',
+            })}
             error={'email' in errors}
           />
         </Label>
         {errors.email && <InputError>{errors.email.message}</InputError>}
         <Label>
-          Password
+          パスワード
           <TextField
             fullWidth
             name="password"
             type="password"
-            inputRef={register({ required: 'Please enter.' })}
+            inputRef={register({ required: 'パスワードを入力してください' })}
             error={'password' in errors}
           />
         </Label>
@@ -60,13 +63,19 @@ const SignIn = () => {
         <StyledButton type="submit" fullWidth>
           Sign In
         </StyledButton>
-        <SpaceBetween>
-          <Link href="/forgot">Forgot password?</Link>
-          <Link href="/signup">{"Don't have an account? Sign Up"}</Link>
-        </SpaceBetween>
+        <AuthenticateLink>
+          <Link href="/forgot">パスワードを忘れた</Link>
+          <Link href="/signup">アカウントを持っていない方はこちら</Link>
+        </AuthenticateLink>
       </AuthenticateForm>
     </AuthenticateContainer>
   );
-};
+}
 
-export default SignIn;
+const AuthenticateLink = styled.div`
+  display: flex;
+  justify-content: space-between;
+  ${sp`
+    flex-direction: column;
+  `}
+`;
