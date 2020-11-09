@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { TextField } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import {
   AuthenticateForm,
   AuthenticateContainer,
   StyledButton,
-  Label,
-  InputError,
 } from '../styles/common';
 import { useForm } from 'react-hook-form';
 import { auth } from '../root/pages/utils/firebase';
 import styled from 'styled-components';
 import { sp } from '../styles/media';
+import { Toast } from '../root/components/Toast';
+import { InputWithLabel } from '../root/components/InputWithLabel';
 
 type FormData = {
   email: string;
@@ -20,54 +20,75 @@ type FormData = {
 
 export default function SignIn() {
   const { register, handleSubmit, reset, errors } = useForm<FormData>();
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   /** サインイン */
   const handleSignIn = async (data: FormData) => {
     try {
       const { email, password } = data;
+      setLoading(true);
       await auth.signInWithEmailAndPassword(email, password);
       reset();
-    } catch (error) {
-      console.log(error);
-      alert('Failed to sign in.');
+    } catch {
+      setOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const inputList = [
+    {
+      name: 'email',
+      label: 'メールアドレス',
+      error: 'email' in errors,
+    },
+    {
+      name: 'password',
+      label: 'パスワード',
+      error: 'password' in errors,
+    },
+  ];
 
   return (
     <AuthenticateContainer>
       <h1>Sign in</h1>
       <AuthenticateForm onSubmit={handleSubmit(handleSignIn)}>
-        <Label>
-          メールアドレス
-          <TextField
-            fullWidth
-            name="email"
-            inputRef={register({
-              required: 'メールアドレスを入力してください',
-            })}
-            error={'email' in errors}
+        {inputList.map(({ name, label, error }) => (
+          <InputWithLabel
+            label={label}
+            register={register}
+            error={error}
+            name={name}
           />
-        </Label>
-        {errors.email && <InputError>{errors.email.message}</InputError>}
-        <Label>
-          パスワード
-          <TextField
-            fullWidth
-            name="password"
-            type="password"
-            inputRef={register({ required: 'パスワードを入力してください' })}
-            error={'password' in errors}
-          />
-        </Label>
-        {errors.password && <InputError>{errors.password.message}</InputError>}
-        <StyledButton type="submit" fullWidth>
-          Sign In
+        ))}
+        <StyledButton
+          type="submit"
+          fullWidth
+          disabled={loading}
+          loading={loading}
+        >
+          {loading ? <CircularProgress size={14} /> : 'ログイン'}
         </StyledButton>
         <AuthenticateLink>
           <Link href="/forgot">パスワードを忘れた</Link>
           <Link href="/signup">アカウントを持っていない方はこちら</Link>
         </AuthenticateLink>
       </AuthenticateForm>
+
+      {/* トースト */}
+      <Toast
+        vertical="top"
+        horizontal="center"
+        open={open}
+        serverity="error"
+        message="ログインに失敗しました"
+        handleClose={handleClose}
+      />
     </AuthenticateContainer>
   );
 }

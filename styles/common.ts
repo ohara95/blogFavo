@@ -14,15 +14,17 @@ export const AuthenticateContainer = styled.div`
   `}
 `;
 
-export const StyledButton = styled(Button)`
+export const StyledButton = styled(Button)<{ loading?: boolean }>`
   margin: 24px 0 16px;
   color: ${COLOR.WHITE};
   background-color: ${COLOR.TURQUOISE};
   box-shadow: ${COLOR.BLACK} 0px 1px 3px;
+  height: 36px;
   &:hover {
     background-color: ${COLOR.LIGHT_GRAY};
     box-shadow: none;
   }
+  ${({ loading }) => loading && { backgroundColor: COLOR.LIGHT_GRAY }}
 `;
 
 export const AuthenticateForm = styled.form`
@@ -33,11 +35,6 @@ export const AuthenticateForm = styled.form`
 export const SpaceBetween = styled.div`
   display: flex;
   justify-content: space-between;
-`;
-
-export const Label = styled.label`
-  margin-top: 20px;
-  display: block;
 `;
 
 export const InputError = styled.p`

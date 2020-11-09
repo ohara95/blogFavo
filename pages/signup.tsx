@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { TextField } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import {
   AuthenticateContainer,
   AuthenticateForm,
-  Label,
   StyledButton,
   InputError,
 } from '../styles/common';
 import { useForm } from 'react-hook-form';
 import { auth } from '../root/pages/utils/firebase';
 import firebase from 'firebase';
+import { Toast } from '../root/components/Toast';
+import { InputWithLabel } from '../root/components/InputWithLabel';
 
 type FormData = {
   name: string;
@@ -22,6 +23,8 @@ type FormData = {
 const SignUp = () => {
   const { register, handleSubmit, reset, errors } = useForm<FormData>();
   const [isError, setIsError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const createUser = (user: firebase.User, name: string) => {
     return user.updateProfile({
@@ -31,22 +34,29 @@ const SignUp = () => {
     });
   };
 
-  /** パスワードが一致しない場合エラーを出す */
+  /** パスワードの一致をBooleanで返す */
   const passwordCheck = (password: string, password_confirm: string) => {
     if (password !== password_confirm) {
       setIsError(true);
+      return false;
     } else {
       setIsError(false);
-      return false;
+      return true;
     }
   };
 
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  /** Sign Up */
   const handleSignUp = async (data: FormData) => {
     try {
       const { name, email, password, passwordConfirm } = data;
-      if(!passwordCheck(password, passwordConfirm)){
+      if (!passwordCheck(password, passwordConfirm)) {
         return;
       }
+      setLoading(true);
       const createdUser = await auth.createUserWithEmailAndPassword(
         email,
         password
@@ -54,66 +64,69 @@ const SignUp = () => {
       const user = createdUser.user as firebase.User;
       await createUser(user, name);
       reset();
-    } catch (error) {
-      console.log(error);
-      alert('Failed to sign up.');
+    } catch {
+      setOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const inputList = [
+    {
+      name: 'name',
+      label: '名前',
+      error: 'name' in errors,
+    },
+    {
+      name: 'email',
+      label: 'メールアドレス',
+      error: 'email' in errors,
+    },
+    {
+      name: 'password',
+      label: 'パスワード',
+      error: 'password' in errors,
+    },
+    {
+      name: 'passwordConfirm',
+      label: 'パスワード再確認',
+      error: 'passwordConfirm' in errors,
+    },
+  ];
 
   return (
     <AuthenticateContainer>
       <h1>Sign up</h1>
       <AuthenticateForm onSubmit={handleSubmit(handleSignUp)}>
-        <Label>
-          名前
-          <TextField
-            fullWidth
-            name="name"
-            inputRef={register({ required: '名前を入力してください.' })}
-            error={'name' in errors}
+        {inputList.map(({ name, label, error }) => (
+          <InputWithLabel
+            label={label}
+            register={register}
+            error={error}
+            name={name}
           />
-          {errors.name && <InputError>{errors.name.message}</InputError>}
-        </Label>
-        <Label>
-          メールアドレス
-          <TextField
-            fullWidth
-            name="email"
-            inputRef={register({ required: 'メールアドレスを入力してください.' })}
-            error={'email' in errors}
-          />
-        </Label>
-        {errors.email && <InputError>{errors.email.message}</InputError>}
-        <Label>
-          パスワード
-          <TextField
-            fullWidth
-            name="password"
-            type="password"
-            inputRef={register({ required: 'パスワードを入力してください.' })}
-            error={'password' in errors}
-          />
-        </Label>
-        {errors.password && <InputError>{errors.password.message}</InputError>}
-        <Label>
-          パスワード再確認
-          <TextField
-            fullWidth
-            name="passwordConfirm"
-            type="password"
-            inputRef={register({ required: 'パスワード再確認を入力してください.' })}
-            error={'passwordConfirm' in errors}
-          />
-        </Label>
-        {errors.passwordConfirm && (
-          <InputError>{errors.passwordConfirm.message}</InputError>
-        )}
+        ))}
         {isError && <InputError>パスワードが一致しません</InputError>}
-        <StyledButton type="submit" fullWidth>
-          登録
+        <StyledButton
+          type="submit"
+          fullWidth
+          disabled={loading}
+          loading={loading}
+        >
+          {loading ? <CircularProgress size={14} /> : '登録'}
         </StyledButton>
         <Link href="/signin">既にアカウントをお持ちの方はこちら</Link>
       </AuthenticateForm>
+
+      {/* トースト */}
+      <Toast
+        vertical="top"
+        horizontal="center"
+        open={open}
+        serverity="error"
+        message="登録に失敗しました"
+        handleClose={handleClose}
+      />
     </AuthenticateContainer>
   );
 };
