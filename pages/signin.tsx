@@ -64,13 +64,14 @@ export default function SignIn() {
             register={register}
             error={error}
             name={name}
+            key={name}
           />
         ))}
         <StyledButton
           type="submit"
           fullWidth
           disabled={loading}
-          loading={loading}
+          loading={loading ? true : undefined} // warningが出るため
         >
           {loading ? <CircularProgress size={14} /> : 'ログイン'}
         </StyledButton>

@@ -104,6 +104,7 @@ const SignUp = () => {
             register={register}
             error={error}
             name={name}
+            key={name}
           />
         ))}
         {isError && <InputError>パスワードが一致しません</InputError>}
@@ -111,7 +112,7 @@ const SignUp = () => {
           type="submit"
           fullWidth
           disabled={loading}
-          loading={loading}
+          loading={loading ? true : undefined} // warningが出るため
         >
           {loading ? <CircularProgress size={14} /> : '登録'}
         </StyledButton>
