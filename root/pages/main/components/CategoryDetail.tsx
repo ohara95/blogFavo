@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Category } from '../../../../types';
+import { Category, FormValues } from '../../../../types';
 // material
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -14,6 +14,7 @@ import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
+import { cyan } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -34,14 +35,19 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
+  defaultColor: {
+    paddingTop: '56.25%', // 16:9
+    backgroundColor: cyan['A700'],
+    width: '100%',
+  },
 }));
 
 type Props = {
   data: Category[];
-  number: number;
+  blogData: FormValues[];
 };
 
-export const CategoryDetail: FC<Props> = ({ data, number }) => {
+export const CategoryDetail: FC<Props> = ({ data, blogData }) => {
   const classes = useStyles();
   const [isClickStar, setIsClickStar] = useState(false);
   const [isBookmark, setIsBookmark] = useState(false);
@@ -52,14 +58,26 @@ export const CategoryDetail: FC<Props> = ({ data, number }) => {
         {data.map((card) => (
           <Grid item key={card.id} xs={12} sm={6} md={4}>
             <Card className={classes.card}>
-              <CardMedia
-                className={classes.cardMedia}
-                image="https://source.unsplash.com/random"
-                title="Image title"
-              />
+              {card.url ? (
+                <CardMedia
+                  className={classes.cardMedia}
+                  image={card.url}
+                  title="Image title"
+                />
+              ) : (
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                  className={classes.defaultColor}
+                />
+              )}
               <CardContent className={classes.cardContent}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {card.name ? card.name : 'title'}({number})
+                <Typography gutterBottom variant="h6" component="h6">
+                  {/* カテゴリー数表示 */}
+                  {card.name ? card.name : 'title'}(
+                  {blogData.filter((db) => db.category === card.name).length})
                 </Typography>
               </CardContent>
               <CardActions>

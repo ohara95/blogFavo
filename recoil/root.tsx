@@ -14,3 +14,8 @@ export const currentDisplayData = atom({
   key: 'currentDisplayData',
   default: 'list',
 });
+
+export const imageData = atom({
+  key: 'imageData',
+  default: '',
+});
