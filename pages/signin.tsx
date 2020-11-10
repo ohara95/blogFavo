@@ -19,8 +19,9 @@ type FormData = {
 };
 
 export default function SignIn() {
-  const { register, handleSubmit, reset, errors } = useForm<FormData>();
-  const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, reset, errors, formState } = useForm<
+    FormData
+  >();
   const [open, setOpen] = useState(false);
 
   const handleClose = () => {
@@ -31,13 +32,10 @@ export default function SignIn() {
   const handleSignIn = async (data: FormData) => {
     try {
       const { email, password } = data;
-      setLoading(true);
       await auth.signInWithEmailAndPassword(email, password);
       reset();
     } catch {
       setOpen(true);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -46,11 +44,13 @@ export default function SignIn() {
       name: 'email',
       label: 'メールアドレス',
       error: 'email' in errors,
+      type: 'email',
     },
     {
       name: 'password',
       label: 'パスワード',
       error: 'password' in errors,
+      type: 'password',
     },
   ];
 
@@ -58,22 +58,23 @@ export default function SignIn() {
     <AuthenticateContainer>
       <h1>Sign in</h1>
       <AuthenticateForm onSubmit={handleSubmit(handleSignIn)}>
-        {inputList.map(({ name, label, error }) => (
+        {inputList.map(({ name, label, error, type }) => (
           <InputWithLabel
             label={label}
             register={register}
             error={error}
             name={name}
             key={name}
+            type={type as 'text' | 'email' | 'password' | undefined}
           />
         ))}
         <StyledButton
           type="submit"
           fullWidth
-          disabled={loading}
-          loading={loading ? true : undefined} // warningが出るため
+          disabled={formState.isSubmitting}
+          loading={formState.isSubmitting ? true : undefined} // warningが出るため
         >
-          {loading ? <CircularProgress size={14} /> : 'ログイン'}
+          {formState.isSubmitting ? <CircularProgress size={14} /> : 'ログイン'}
         </StyledButton>
         <AuthenticateLink>
           <Link href="/forgot">パスワードを忘れた</Link>

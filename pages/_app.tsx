@@ -26,11 +26,11 @@ export default function App({ Component, pageProps }: AppProps) {
     }
     auth.onAuthStateChanged((user) => {
       if (user) {
-          router.push('/');
+        router.push('/');
       } else {
-        router.push('/signup')
+        router.push('/signup');
       }
-  });
+    });
   }, []);
 
   return (

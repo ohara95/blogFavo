@@ -21,9 +21,10 @@ type FormData = {
 };
 
 export default function SignUp() {
-  const { register, handleSubmit, reset, errors } = useForm<FormData>();
+  const { register, handleSubmit, reset, errors, formState } = useForm<
+    FormData
+  >();
   const [isError, setIsError] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   /** メールアドレスとパスワードでユーザーを作成、名前も設定 */
@@ -47,7 +48,6 @@ export default function SignUp() {
   /** Sign Up */
   const handleSignUp = async (data: FormData) => {
     try {
-      setLoading(true);
       const { name, email, password, passwordConfirm } = data;
 
       // パスワードの不一致の場合return
@@ -62,8 +62,6 @@ export default function SignUp() {
       reset();
     } catch {
       setOpen(true);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -72,21 +70,25 @@ export default function SignUp() {
       name: 'name',
       label: '名前',
       error: 'name' in errors,
+      type: 'text',
     },
     {
       name: 'email',
       label: 'メールアドレス',
       error: 'email' in errors,
+      type: 'email',
     },
     {
       name: 'password',
       label: 'パスワード',
       error: 'password' in errors,
+      type: 'password',
     },
     {
       name: 'passwordConfirm',
       label: 'パスワード再確認',
       error: 'passwordConfirm' in errors,
+      type: 'password',
     },
   ];
 
@@ -94,23 +96,24 @@ export default function SignUp() {
     <AuthenticateContainer>
       <h1>Sign up</h1>
       <AuthenticateForm onSubmit={handleSubmit(handleSignUp)}>
-        {inputList.map(({ name, label, error }) => (
+        {inputList.map(({ name, label, error, type }) => (
           <InputWithLabel
             label={label}
             register={register}
             error={error}
             name={name}
             key={name}
+            type={type as 'text' | 'email' | 'password' | undefined}
           />
         ))}
         {isError && <InputError>パスワードが一致しません</InputError>}
         <StyledButton
           type="submit"
           fullWidth
-          disabled={loading}
-          loading={loading ? true : undefined} // warningが出るため
+          disabled={formState.isSubmitting}
+          loading={formState.isSubmitting ? true : undefined} // warningが出るため
         >
-          {loading ? <CircularProgress size={14} /> : '登録'}
+          {formState.isSubmitting ? <CircularProgress size={14} /> : '登録'}
         </StyledButton>
         <Link href="/signin">既にアカウントをお持ちの方はこちら</Link>
       </AuthenticateForm>
