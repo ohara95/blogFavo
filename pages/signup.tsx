@@ -20,29 +20,24 @@ type FormData = {
   passwordConfirm: string;
 };
 
-const SignUp = () => {
+export default function SignUp() {
   const { register, handleSubmit, reset, errors } = useForm<FormData>();
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const createUser = (user: firebase.User, name: string) => {
+  /** メールアドレスとパスワードでユーザーを作成、名前も設定 */
+  const createUser = async (email: string, password: string, name: string) => {
+    const createdUser = await auth.createUserWithEmailAndPassword(
+      email,
+      password
+    );
+    const user = createdUser.user as firebase.User;
     return user.updateProfile({
       displayName: name,
       photoURL:
         'https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg',
     });
-  };
-
-  /** パスワードの一致をBooleanで返す */
-  const passwordCheck = (password: string, password_confirm: string) => {
-    if (password !== password_confirm) {
-      setIsError(true);
-      return false;
-    } else {
-      setIsError(false);
-      return true;
-    }
   };
 
   const handleClose = () => {
@@ -52,17 +47,18 @@ const SignUp = () => {
   /** Sign Up */
   const handleSignUp = async (data: FormData) => {
     try {
+      setLoading(true);
       const { name, email, password, passwordConfirm } = data;
-      if (!passwordCheck(password, passwordConfirm)) {
+
+      // パスワードの不一致の場合return
+      if (password !== passwordConfirm) {
+        setIsError(true);
         return;
       }
-      setLoading(true);
-      const createdUser = await auth.createUserWithEmailAndPassword(
-        email,
-        password
-      );
-      const user = createdUser.user as firebase.User;
-      await createUser(user, name);
+      setIsError(false);
+
+      // ユーザー作成
+      await createUser(email, password, name);
       reset();
     } catch {
       setOpen(true);
@@ -130,6 +126,4 @@ const SignUp = () => {
       />
     </AuthenticateContainer>
   );
-};
-
-export default SignUp;
+}
