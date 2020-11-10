@@ -120,6 +120,7 @@ export const DialogForm: FC<Props> = ({ register, errors, control }) => {
             as={
               <Checkbox
                 checked={isPublic}
+                defaultChecked={false}
                 onClick={(e) => {
                   setIsPublic((e.target as HTMLInputElement).checked);
                 }}
