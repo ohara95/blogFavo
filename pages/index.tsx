@@ -10,12 +10,3 @@ export default function Home() {
     </>
   );
 }
-
-// const Container = styled.div`
-//   text-align: center;
-// `;
-
-// const Title = styled.h1`
-//   color: red;
-//   font-size: 50px;
-// `;

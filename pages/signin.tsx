@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { CircularProgress } from '@material-ui/core';
 import {
   AuthenticateForm,
@@ -32,6 +33,7 @@ export default function SignIn() {
   const onClickOpen = ()=>{
     setAddBlog(ADD_BLOG)
   }
+  const router = useRouter();
 
   const handleClose = () => {
     setOpen(false);
@@ -43,6 +45,7 @@ export default function SignIn() {
       const { email, password } = data;
       await auth.signInWithEmailAndPassword(email, password);
       reset();
+      router.push('/');
     } catch {
       setOpen(true);
     }

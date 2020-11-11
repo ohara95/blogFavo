@@ -8,7 +8,7 @@ import {
   InputError,
 } from '../styles/common';
 import { useForm } from 'react-hook-form';
-import { auth } from '../root/utils/firebase';
+import { auth, db } from '../root/utils/firebase';
 import firebase from 'firebase';
 import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
@@ -35,6 +35,11 @@ export default function SignUp() {
       password
     );
     const user = createdUser.user as firebase.User;
+    await db.collection('users').add({
+      name,
+      icon: 'https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg',
+      id: user?.uid,
+    });
     return user.updateProfile({
       displayName: name,
       photoURL:
