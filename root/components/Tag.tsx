@@ -62,7 +62,7 @@ export const Tag = () => {
           if (inputValue) setSelectTags(el[1]);
         }}
         inputValue={inputValue}
-        onInputChange={(event, newInputValue) => {
+        onInputChange={(_, newInputValue) => {
           //入力した値
           setInputValue(newInputValue);
         }}

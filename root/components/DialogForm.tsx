@@ -1,5 +1,4 @@
-import React, { FC, useState } from 'react';
-import { Controller } from 'react-hook-form';
+import React, { FC } from 'react';
 import { CategorySelector, Tag } from '../components';
 
 //material
@@ -31,11 +30,18 @@ type Props = {
   register: any;
   errors: any;
   control?: any;
+  checked: boolean;
+  handleChange: () => void;
 };
 
-export const DialogForm: FC<Props> = ({ register, errors, control }) => {
+export const DialogForm: FC<Props> = ({
+  register,
+  errors,
+  control,
+  checked,
+  handleChange,
+}) => {
   const classes = useStyles();
-  const [isPublic, setIsPublic] = useState(false);
 
   return (
     <Grid container spacing={3}>
@@ -100,7 +106,7 @@ export const DialogForm: FC<Props> = ({ register, errors, control }) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <CategorySelector />
+        <CategorySelector control={control} />
       </Grid>
       <Grid item xs={12}>
         <Tag />
@@ -113,22 +119,7 @@ export const DialogForm: FC<Props> = ({ register, errors, control }) => {
           alignItems="center"
         >
           <InputLabel className={classes.margin}>非公開</InputLabel>
-          <Controller
-            control={control}
-            name="isPublic"
-            className={classes.margin}
-            as={
-              <Checkbox
-                checked={isPublic}
-                defaultChecked={false}
-                onClick={(e) => {
-                  setIsPublic((e.target as HTMLInputElement).checked);
-                }}
-                inputRef={register}
-              />
-            }
-            color="primary"
-          />
+          <Checkbox color="primary" checked={checked} onChange={handleChange} />
         </Grid>
       </Grid>
     </Grid>

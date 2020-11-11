@@ -28,6 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <MaterialUIThemeProvider theme={theme}>
           <StyledComponentsThemeProvider theme={theme}>
             <CssBaseline />
+            <Dialogs/>
             <Component {...pageProps} />
           </StyledComponentsThemeProvider>
         </MaterialUIThemeProvider>

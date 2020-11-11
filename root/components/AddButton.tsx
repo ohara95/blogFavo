@@ -26,10 +26,6 @@ type Props = {
   open: boolean;
   onClickClose: () => void;
   title: string;
-  handleSubmit: any;
-  register: any;
-  errors: any;
-  control?: any;
 };
 
 export const AddButton: FC<Props> = ({
@@ -37,10 +33,6 @@ export const AddButton: FC<Props> = ({
   open,
   onClickClose,
   title,
-  handleSubmit,
-  register,
-  errors,
-  control,
 }) => {
   const classes = useStyles();
 
@@ -56,10 +48,6 @@ export const AddButton: FC<Props> = ({
         onClickClose={onClickClose}
         open={open}
         render={DialogForm}
-        register={register}
-        errors={errors}
-        control={control}
-        handleSubmit={handleSubmit}
       />
     </>
   );

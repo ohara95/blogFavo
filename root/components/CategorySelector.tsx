@@ -11,6 +11,8 @@ import Autocomplete, {
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { FC } from 'react';
+import { Controller } from 'react-hook-form';
 
 const filter = createFilterOptions<Category>();
 
@@ -28,7 +30,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const CategorySelector = () => {
+type Props = {
+  control: any;
+};
+
+export const CategorySelector: FC<Props> = ({ control }) => {
   const [value, setValue] = useState<Category | null>(null);
   const [categoryList] = useFirebase<Category>('categoryList');
   const setCategory = useSetRecoilState(addCategory);
@@ -36,16 +42,11 @@ export const CategorySelector = () => {
 
   useEffect(() => {
     if (value) {
-      if (categoryList.find((db) => db.name === value.name)) {
-        return;
-      } else {
-        db.collection('categoryList').add({
-          name: value.name,
-        });
-      }
-    }
-    if (value) {
-      setCategory(value?.name);
+      setCategory(value!.name);
+      if (categoryList.find((db) => db.name === value.name)) return;
+      db.collection('categoryList').add({
+        name: value.name,
+      });
     }
   }, [value]);
 
@@ -55,7 +56,7 @@ export const CategorySelector = () => {
 
       <Autocomplete
         value={value}
-        onChange={(event, newValue) => {
+        onChange={(_, newValue) => {
           if (typeof newValue === 'string') {
             setValue({
               name: newValue,
@@ -99,12 +100,19 @@ export const CategorySelector = () => {
         renderOption={(option) => option.name}
         freeSolo
         renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="outlined"
-            fullWidth
-            className={classes.padding}
-            placeholder="選択してください"
+          <Controller
+            as={
+              <TextField
+                {...params}
+                variant="outlined"
+                fullWidth
+                className={classes.padding}
+                placeholder="選択してください"
+              />
+            }
+            name='category'
+            control={control}
+            defaultValue=''
           />
         )}
       />
