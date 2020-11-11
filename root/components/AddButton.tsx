@@ -5,6 +5,8 @@ import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { cyan } from '@material-ui/core/colors';
 import AddIcon from '@material-ui/icons/Add';
+import { dialogData } from '../../recoil/dialog';
+import { useSetRecoilState } from 'recoil';
 
 const useStyles = makeStyles((theme) => ({
   absolute: {
@@ -20,15 +22,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  onClickOpen: () => void;
+  dialogKey: string;
 };
 
-export const AddButton: FC<Props> = ({ onClickOpen }) => {
+export const AddButton: FC<Props> = ({ dialogKey }) => {
   const classes = useStyles();
+  const setDialog = useSetRecoilState(dialogData);
+
+  const handleClickOpen = () => {
+    setDialog((prev) => ({
+      ...prev,
+      [dialogKey]: true,
+    }));
+  };
 
   return (
     <>
-      <IconButton onClick={onClickOpen}>
+      <IconButton onClick={handleClickOpen}>
         <Fab className={classes.absolute}>
           <AddIcon />
         </Fab>

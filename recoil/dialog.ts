@@ -1,8 +1,14 @@
-import { atom } from "recoil";
+import { atom } from 'recoil';
 
 export const ADD_BLOG = 'addBlog';
 
-export const openDialog = atom({
-    key: 'openDialog',
-    default: '',
-})
+export type DialogState = {
+  addBlog: boolean;
+};
+
+export const dialogData = atom<DialogState>({
+  key: 'dialogData',
+  default: {
+    [ADD_BLOG]: false,
+  },
+});

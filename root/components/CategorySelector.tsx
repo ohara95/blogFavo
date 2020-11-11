@@ -12,7 +12,6 @@ import Autocomplete, {
 } from '@material-ui/lab/Autocomplete';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { FC } from 'react';
-import { Controller } from 'react-hook-form';
 
 const filter = createFilterOptions<Category>();
 

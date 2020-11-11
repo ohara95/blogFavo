@@ -14,8 +14,7 @@ import { sp } from '../styles/media';
 import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
 import { InputType } from '../types';
-import { ADD_BLOG, openDialog } from '../recoil/dialog';
-import { useSetRecoilState } from 'recoil';
+import { ADD_BLOG } from '../recoil/dialog';
 import { AddButton } from '../root/components';
 
 type FormData = {
@@ -28,11 +27,6 @@ export default function SignIn() {
     FormData
   >();
   const [open, setOpen] = useState(false);
-  const setAddBlog = useSetRecoilState(openDialog)
-
-  const onClickOpen = ()=>{
-    setAddBlog(ADD_BLOG)
-  }
   const router = useRouter();
 
   const handleClose = () => {
@@ -104,7 +98,7 @@ export default function SignIn() {
         message="ログインに失敗しました"
         handleClose={handleClose}
       />
-      <AddButton onClickOpen={onClickOpen} />
+      <AddButton dialogKey={ADD_BLOG} />
     </AuthenticateContainer>
   );
 }

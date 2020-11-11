@@ -1,6 +1,5 @@
-import React, { FC } from 'react';
+import React from 'react';
 //material
-import Button from '@material-ui/core/Button';
 import { useForm } from 'react-hook-form';
 import { FormValues, InputType } from '../../types';
 import { useRecoilState } from 'recoil';
@@ -11,19 +10,13 @@ import { InputWithLabel } from './InputWithLabel';
 import { CategorySelector } from './CategorySelector';
 import { Tag } from './Tag';
 import { Checkbox, InputLabel } from '@material-ui/core';
-import { useSetRecoilState } from 'recoil';
-import { openDialog } from '../../recoil/dialog';
+import { ADD_BLOG } from '../../recoil/dialog';
 
 export const AddBlogDialog = () => {
   const { register, errors, handleSubmit, reset } = useForm<FormValues>();
   const [tag, setTag] = useRecoilState(addTags);
   const [category, setCategory] = useRecoilState(addCategory);
   const [checked, setChecked] = useState(false);
-  const setDialog = useSetRecoilState(openDialog);
-
-  const handleClose = () => {
-    setDialog('');
-  };
 
   const onSubmit = async (data: FormValues) => {
     console.log(data);
@@ -35,6 +28,10 @@ export const AddBlogDialog = () => {
     //     category,
     //     tag,
     //     isPublic,
+    //     postedUser: db.collection('users').doc(user?.uid),
+    //       postedAt: firebase.firestore.Timestamp.now(),
+    //       isFavo: false,
+    //       laterRead: false,
     //   });
     //   reset();
     //   //memo 送信したらボタン選択解除したい
@@ -49,6 +46,22 @@ export const AddBlogDialog = () => {
     setCategory('');
     setChecked(false);
     reset();
+    // if (currentDisplay === 'category') {
+    //   try {
+    //     if (categoryList.find((db) => db.name === data.category)) {
+    //       return alert('カテゴリー名が存在します');
+    //     }
+    //     await db.collection('categoryList').add({
+    //       name: data.category,
+    //       imageUrl,
+    //       createdUser: db.collection('users').doc(user?.uid),
+    //     });
+    //     alert('追加出来ました！');
+    //     reset();
+    //     setImageUrl('');
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
   };
 
   const inputList: InputType[] = [
@@ -83,28 +96,24 @@ export const AddBlogDialog = () => {
   ];
 
   return (
-    <DialogBase title="ブログ追加">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {inputList.map((props) => (
-          <InputWithLabel key={props.name} {...props} />
-        ))}
-        <CategorySelector />
-        <Tag />
-        <InputLabel>
-          非公開
-          <Checkbox
-            color="primary"
-            checked={checked}
-            onChange={(e) => setChecked(e.target.checked)}
-          />
-        </InputLabel>
-        <Button onClick={handleClose} color="primary">
-          キャンセル
-        </Button>
-        <Button type="submit" color="primary" autoFocus>
-          追加
-        </Button>
-      </form>
+    <DialogBase
+      title="ブログ追加"
+      handleSubmit={handleSubmit(onSubmit)}
+      dialogKey={ADD_BLOG}
+    >
+      {inputList.map((props) => (
+        <InputWithLabel key={props.name} {...props} />
+      ))}
+      <CategorySelector />
+      <Tag />
+      <InputLabel>
+        非公開
+        <Checkbox
+          color="primary"
+          checked={checked}
+          onChange={(e) => setChecked(e.target.checked)}
+        />
+      </InputLabel>
     </DialogBase>
   );
 };
