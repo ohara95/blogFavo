@@ -1,5 +1,6 @@
-import React, { FC } from 'react';
-import { CategorySelector, Tag } from '../components';
+import React, { FC, useState } from 'react';
+import { Controller } from 'react-hook-form';
+import { CategorySelector, Tag } from '.';
 
 //material
 import Grid from '@material-ui/core/Grid';
@@ -34,13 +35,7 @@ type Props = {
   handleChange: () => void;
 };
 
-export const DialogForm: FC<Props> = ({
-  register,
-  errors,
-  control,
-  checked,
-  handleChange,
-}) => {
+export const AddBlogForm: FC<Props> = ({ register, errors, control }) => {
   const classes = useStyles();
 
   return (

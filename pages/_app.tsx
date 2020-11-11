@@ -6,12 +6,16 @@ import { StylesProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { theme } from '../styles/theme';
 import { RecoilRoot } from 'recoil';
+import { auth } from '../root/utils/firebase';
+import { useRouter } from 'next/dist/client/router';
 
 /**
  * クライアント側のレンダリングカスタマイズ
  * 全てのpageをラップ
  */
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
   /**
    * サーバー側に挿入されたCSSを削除
    */
@@ -20,6 +24,13 @@ export default function App({ Component, pageProps }: AppProps) {
     if (jssStyles && jssStyles.parentNode) {
       jssStyles.parentNode.removeChild(jssStyles);
     }
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        router.push('/');
+      } else {
+        router.push('/signup');
+      }
+    });
   }, []);
 
   return (
