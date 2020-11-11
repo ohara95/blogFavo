@@ -7,7 +7,7 @@ import {
   StyledButton,
 } from '../styles/common';
 import { useForm } from 'react-hook-form';
-import { auth } from '../root/pages/utils/firebase';
+import { auth } from '../root/utils/firebase';
 import styled from 'styled-components';
 import { sp } from '../styles/media';
 import { Toast } from '../root/components/Toast';

@@ -1,15 +1,11 @@
 import React, { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Category, FormValues } from '../../../types';
-import { db } from '../utils/firebase';
-import { useRecoilValue, useRecoilState } from 'recoil';
-import {
-  addTags,
-  addCategory,
-  currentDisplayData,
-  imageData,
-} from '../../../recoil/root';
-import useFirebase from '../utils/hooks/useFirebase';
+
+import { db } from '../../utils/firebase';
+import { useRecoilValue,useRecoilState  } from 'recoil';
+import { addTags, addCategory, currentDisplayData,imageData } from '../../../recoil/root';
+import { useFirebase } from '../../utils/hooks';
 
 //components
 import { Header, Footer, AddButton } from '../../components';
