@@ -24,7 +24,7 @@ export default function SignIn() {
     FormData
   >();
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleClose = () => {
     setOpen(false);
@@ -36,9 +36,14 @@ export default function SignIn() {
       const { email, password } = data;
       await auth.signInWithEmailAndPassword(email, password);
       reset();
-      router.push('/');
-    } catch {
-      setOpen(true);
+    } catch (err) {
+      if (err.code === 'auth/user-not-found') {
+        setErrorMessage('メールアドレスが間違っています');
+        setOpen(true);
+      } else if (err.code === 'auth/wrong-password') {
+        setErrorMessage('パスワードが間違っています');
+        setOpen(true);
+      }
     }
   };
 
@@ -80,7 +85,7 @@ export default function SignIn() {
           {formState.isSubmitting ? <CircularProgress size={14} /> : 'ログイン'}
         </StyledButton>
         <AuthenticateLink>
-          <Link href="/forgot">パスワードを忘れた</Link>
+          <Link href="/forget">パスワードを忘れた</Link>
           <Link href="/signup">アカウントを持っていない方はこちら</Link>
         </AuthenticateLink>
       </AuthenticateForm>
@@ -91,7 +96,7 @@ export default function SignIn() {
         horizontal="center"
         open={open}
         serverity="error"
-        message="ログインに失敗しました"
+        message={errorMessage}
         handleClose={handleClose}
       />
     </AuthenticateContainer>
