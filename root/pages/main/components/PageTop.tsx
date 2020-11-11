@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentDisplayData } from '../../../../recoil/root';
+import { auth } from '../../../utils/firebase';
 //material
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -68,10 +69,7 @@ export const PageTop: FC<Props> = ({ title }) => {
         </Typography>
         <Grid container direction="row" justify="center" alignItems="center">
           <Paper component="form" className={classes.inputRoot}>
-            <InputBase
-              className={classes.input}
-              placeholder="search blog ... "
-            />
+            <InputBase className={classes.input} placeholder="検索" />
             <IconButton
               type="submit"
               className={classes.iconButton}
@@ -88,8 +86,8 @@ export const PageTop: FC<Props> = ({ title }) => {
                 variant="contained"
                 className={
                   currentDisplay === 'list'
-                    ? classes.currentColor
-                    : classes.themeColor
+                    ? classes.themeColor
+                    : classes.currentColor
                 }
                 onClick={() => {
                   setCurrentDisplay('list');
@@ -103,8 +101,8 @@ export const PageTop: FC<Props> = ({ title }) => {
                 variant="contained"
                 className={
                   currentDisplay === 'category'
-                    ? classes.currentColor
-                    : classes.themeColor
+                    ? classes.themeColor
+                    : classes.currentColor
                 }
                 onClick={() => {
                   setCurrentDisplay('category');
