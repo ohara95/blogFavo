@@ -85,9 +85,9 @@ export const AddBlogDialog = () => {
   return (
     <DialogBase title="ブログ追加">
       <form onSubmit={handleSubmit(onSubmit)}>
-        {inputList.map((props) => {
-          <InputWithLabel {...props} />;
-        })}
+        {inputList.map((props) => (
+          <InputWithLabel key={props.name} {...props} />
+        ))}
         <CategorySelector />
         <Tag />
         <InputLabel>
