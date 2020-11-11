@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { auth } from '../pages/utils/firebase';
+import { auth } from '../utils/firebase';
 
 type Props = {
   open: null | HTMLElement;

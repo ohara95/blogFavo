@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 
-const useFirebase = <T>(collection: string) => {
+export const useFirebase = <T>(collection: string) => {
   const [state, setState] = useState<T[]>([]);
   useEffect(() => {
     db.collection(collection).onSnapshot((snap) => {
@@ -16,5 +16,3 @@ const useFirebase = <T>(collection: string) => {
   }, []);
   return [state];
 };
-
-export default useFirebase;

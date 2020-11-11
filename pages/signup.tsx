@@ -8,7 +8,7 @@ import {
   InputError,
 } from '../styles/common';
 import { useForm } from 'react-hook-form';
-import { auth } from '../root/pages/utils/firebase';
+import { auth } from '../root/utils/firebase';
 import firebase from 'firebase';
 import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
