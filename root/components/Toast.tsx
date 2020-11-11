@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Snackbar } from '@material-ui/core';
-import { FC } from 'react';
 import { Alert } from '@material-ui/lab';
 import styled from 'styled-components';
 

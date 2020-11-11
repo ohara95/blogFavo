@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useRecoilState } from 'recoil';
 import { imageData } from '../../recoil/root';
-import { ImageUpload } from '../pages/utils/ImageUpload';
+import { ImageUpload } from '../utils/ImageUpload';
 import { storage } from '../utils/firebase';
 
 //material

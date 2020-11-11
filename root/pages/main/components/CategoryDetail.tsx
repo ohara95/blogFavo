@@ -1,5 +1,6 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { Category, FormValues } from '../../../../types';
+import firebase from '../../../utils/firebase';
 // material
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -10,10 +11,6 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
-import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
-import StarRoundedIcon from '@material-ui/icons/StarRounded';
-import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 import { cyan } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
@@ -45,12 +42,17 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
   data: Category[];
   blogData: FormValues[];
+  deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
+  user: firebase.User | null;
 };
 
-export const CategoryDetail: FC<Props> = ({ data, blogData }) => {
+export const CategoryDetail: FC<Props> = ({
+  data,
+  blogData,
+  deleteItem,
+  user,
+}) => {
   const classes = useStyles();
-  const [isClickStar, setIsClickStar] = useState(false);
-  const [isBookmark, setIsBookmark] = useState(false);
 
   return (
     <Container className={classes.cardGrid} maxWidth="md">
@@ -58,10 +60,10 @@ export const CategoryDetail: FC<Props> = ({ data, blogData }) => {
         {data.map((card) => (
           <Grid item key={card.id} xs={12} sm={6} md={4}>
             <Card className={classes.card}>
-              {card.url ? (
+              {card.imageUrl ? (
                 <CardMedia
                   className={classes.cardMedia}
-                  image={card.url}
+                  image={card.imageUrl}
                   title="Image title"
                 />
               ) : (
@@ -75,7 +77,6 @@ export const CategoryDetail: FC<Props> = ({ data, blogData }) => {
               )}
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h6" component="h6">
-                  {/* カテゴリー数表示 */}
                   {card.name ? card.name : 'title'}(
                   {blogData.filter((db) => db.category === card.name).length})
                 </Typography>
@@ -84,35 +85,22 @@ export const CategoryDetail: FC<Props> = ({ data, blogData }) => {
                 <Button size="small" color="primary">
                   blog
                 </Button>
-                <Button size="small" color="primary">
-                  edit
-                </Button>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={() => {
-                    setIsClickStar(!isClickStar);
-                  }}
-                >
-                  {isClickStar ? (
-                    <StarRoundedIcon />
-                  ) : (
-                    <StarBorderRoundedIcon />
-                  )}
-                </Button>
-                <Button
-                  size="small"
-                  color="primary"
-                  onClick={() => {
-                    setIsBookmark(!isBookmark);
-                  }}
-                >
-                  {isBookmark ? (
-                    <BookmarkRoundedIcon />
-                  ) : (
-                    <TurnedInNotRoundedIcon />
-                  )}
-                </Button>
+                {user && (
+                  <>
+                    <Button size="small" color="primary">
+                      edit
+                    </Button>
+                    <Button
+                      size="small"
+                      color="secondary"
+                      onClick={() => {
+                        deleteItem(card.id, 'categoryList');
+                      }}
+                    >
+                      delete
+                    </Button>
+                  </>
+                )}
               </CardActions>
             </Card>
           </Grid>

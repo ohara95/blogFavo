@@ -68,10 +68,7 @@ export const PageTop: FC<Props> = ({ title }) => {
         </Typography>
         <Grid container direction="row" justify="center" alignItems="center">
           <Paper component="form" className={classes.inputRoot}>
-            <InputBase
-              className={classes.input}
-              placeholder="search blog ... "
-            />
+            <InputBase className={classes.input} placeholder="検索" />
             <IconButton
               type="submit"
               className={classes.iconButton}
@@ -88,8 +85,8 @@ export const PageTop: FC<Props> = ({ title }) => {
                 variant="contained"
                 className={
                   currentDisplay === 'list'
-                    ? classes.currentColor
-                    : classes.themeColor
+                    ? classes.themeColor
+                    : classes.currentColor
                 }
                 onClick={() => {
                   setCurrentDisplay('list');
@@ -103,8 +100,8 @@ export const PageTop: FC<Props> = ({ title }) => {
                 variant="contained"
                 className={
                   currentDisplay === 'category'
-                    ? classes.currentColor
-                    : classes.themeColor
+                    ? classes.themeColor
+                    : classes.currentColor
                 }
                 onClick={() => {
                   setCurrentDisplay('category');
