@@ -1,6 +1,5 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC } from 'react';
 import { FormValues } from '../../../../types';
-import firebase, { db } from '../../../utils/firebase';
 // material
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';

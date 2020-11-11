@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { auth } from '../utils/firebase';
 import { useRouter } from 'next/dist/client/router';
+//material
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 type Props = {
   open: null | HTMLElement;

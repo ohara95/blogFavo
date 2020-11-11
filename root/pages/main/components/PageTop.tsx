@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { useRecoilState } from 'recoil';
 import { currentDisplayData } from '../../../../recoil/root';
-import { auth } from '../../../utils/firebase';
 //material
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';

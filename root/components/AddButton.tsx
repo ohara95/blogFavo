@@ -1,8 +1,6 @@
 import React, { FC } from 'react';
 import { useRecoilValue } from 'recoil';
-import { AddBlogForm, AddDialog } from '../components';
-//memo namedExportができない...なぜ
-import { AddCategoryForm } from './AddCategoryForm';
+import { AddBlogForm, AddDialog, AddCategoryForm } from '../components';
 import { currentDisplayData } from '../../recoil/root';
 
 // material

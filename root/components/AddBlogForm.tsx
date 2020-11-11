@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Controller } from 'react-hook-form';
-import { CategorySelector, Tag } from '.';
+import { CategorySelector, Tag } from '../components';
 
 //material
 import Grid from '@material-ui/core/Grid';
