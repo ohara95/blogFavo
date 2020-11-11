@@ -18,4 +18,5 @@ export type Category = {
   name: string;
   id?: string;
   inputValue?: string;
+  url?: string;
 };
