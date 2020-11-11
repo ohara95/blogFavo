@@ -13,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import { purple } from '@material-ui/core/colors';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
+import StarRoundedIcon from '@material-ui/icons/StarRounded';
+import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -41,9 +43,20 @@ const useStyles = makeStyles((theme) => ({
 
 type Props = {
   data: FormValues[];
+  activePage: 'my' | 'user';
+  handleIconClick: (
+    id: string | undefined,
+    type: 'isFavo' | 'laterRead'
+  ) => void;
+  deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
 };
 
-export const BlogDetail: FC<Props> = ({ data }) => {
+export const BlogDetail: FC<Props> = ({
+  data,
+  activePage,
+  handleIconClick,
+  deleteItem,
+}) => {
   const classes = useStyles();
 
   return (
@@ -59,6 +72,7 @@ export const BlogDetail: FC<Props> = ({ data }) => {
               />
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h5" component="h2">
+                  {card.postedUser?.onSnapshot((snap) => snap.data())}
                   {card.title ? card.title : 'title'}
                 </Typography>
                 <Typography>{card.memo ? card.memo : 'memo'}</Typography>
@@ -72,6 +86,7 @@ export const BlogDetail: FC<Props> = ({ data }) => {
                       style={{
                         color: purple[200],
                         border: `1px ${purple[200]} solid`,
+                        marginTop: 10,
                       }}
                     >
                       {card.tag}
@@ -83,9 +98,50 @@ export const BlogDetail: FC<Props> = ({ data }) => {
                 <Button size="small" color="primary">
                   blog
                 </Button>
-                <Button size="small" color="primary">
-                  edit
-                </Button>
+                {activePage === 'my' && (
+                  <>
+                    <Button size="small" color="primary">
+                      edit
+                    </Button>
+                    <Button
+                      size="small"
+                      color="secondary"
+                      onClick={() => deleteItem(card.id, 'blog')}
+                    >
+                      delete
+                    </Button>
+                  </>
+                )}
+                {activePage === 'user' && (
+                  <>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => {
+                        handleIconClick(card?.id, 'isFavo');
+                      }}
+                    >
+                      {card.isFavo ? (
+                        <StarRoundedIcon />
+                      ) : (
+                        <StarBorderRoundedIcon />
+                      )}
+                    </Button>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => {
+                        handleIconClick(card?.id, 'laterRead');
+                      }}
+                    >
+                      {card.laterRead ? (
+                        <BookmarkRoundedIcon />
+                      ) : (
+                        <TurnedInNotRoundedIcon />
+                      )}
+                    </Button>
+                  </>
+                )}
               </CardActions>
             </Card>
           </Grid>
@@ -94,8 +150,3 @@ export const BlogDetail: FC<Props> = ({ data }) => {
     </Container>
   );
 };
-
-// const Title = styled.h1`
-//   color: red;
-//   font-size: 50px;
-// `;

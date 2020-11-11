@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
+import { auth } from '../utils/firebase';
+import { useRouter } from 'next/dist/client/router';
+//material
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { auth } from '../utils/firebase';
 
 type Props = {
   open: null | HTMLElement;
@@ -9,11 +11,17 @@ type Props = {
 };
 
 export const SettingMenu: FC<Props> = ({ open, onClose }) => {
-  const handleSignOut = async () => {
-    try {
-      await auth.signOut();
-    } catch {
-      alert('サインアウトに失敗しました');
+  const router = useRouter();
+  const user = auth.currentUser;
+  const handleAction = async () => {
+    if (user) {
+      try {
+        await auth.signOut();
+      } catch {
+        alert('サインアウトに失敗しました');
+      }
+    } else {
+      router.push('/signin');
     }
   };
 
@@ -27,7 +35,7 @@ export const SettingMenu: FC<Props> = ({ open, onClose }) => {
     >
       <MenuItem>Profile</MenuItem>
       <MenuItem>setting</MenuItem>
-      <MenuItem onClick={handleSignOut}>Logout</MenuItem>
+      <MenuItem onClick={handleAction}>{user ? 'Logout' : 'signin'}</MenuItem>
     </Menu>
   );
 };

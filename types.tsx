@@ -1,3 +1,5 @@
+import firebase from './root/utils/firebase';
+
 export type FormValues = {
   title: string;
   url: string;
@@ -6,6 +8,10 @@ export type FormValues = {
   tag: string[];
   isPublic: boolean;
   id?: string;
+  postedAt?: firebase.firestore.Timestamp;
+  postedUser?: firebase.firestore.DocumentReference;
+  isFavo?: boolean;
+  laterRead: boolean;
 };
 
 export type Tags = {
@@ -18,5 +24,12 @@ export type Category = {
   name: string;
   id?: string;
   inputValue?: string;
-  url?: string;
+  imageUrl?: string;
+  createdUser?: firebase.firestore.DocumentReference;
+};
+
+export type User = {
+  name: string;
+  imageUrl?: string;
+  id: string;
 };
