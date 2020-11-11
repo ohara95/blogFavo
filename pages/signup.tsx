@@ -12,6 +12,7 @@ import { auth } from '../root/utils/firebase';
 import firebase from 'firebase';
 import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
+import { InputType } from '../types';
 
 type FormData = {
   name: string;
@@ -65,30 +66,39 @@ export default function SignUp() {
     }
   };
 
-  const inputList = [
+  const inputList: InputType[] = [
     {
       name: 'name',
       label: '名前',
-      error: 'name' in errors,
-      type: 'text',
+      error: errors.name,
+      inputRef: register({ required: '名前を入力してください' }),
     },
     {
       name: 'email',
       label: 'メールアドレス',
-      error: 'email' in errors,
+      error: errors.email,
       type: 'email',
+      inputRef: register({
+        required: 'メールアドレスを入力してください',
+        pattern: {
+          value: /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/,
+          message: 'メールアドレスの形式が不正です',
+        },
+      }),
     },
     {
       name: 'password',
       label: 'パスワード',
-      error: 'password' in errors,
+      error: errors.password,
       type: 'password',
+      inputRef: register({ required: 'パスワードを入力してください' }),
     },
     {
       name: 'passwordConfirm',
       label: 'パスワード再確認',
-      error: 'passwordConfirm' in errors,
+      error: errors.passwordConfirm,
       type: 'password',
+      inputRef: register({ required: 'パスワード再確認を入力してください' }),
     },
   ];
 
@@ -96,15 +106,8 @@ export default function SignUp() {
     <AuthenticateContainer>
       <h1>Sign up</h1>
       <AuthenticateForm onSubmit={handleSubmit(handleSignUp)}>
-        {inputList.map(({ name, label, error, type }) => (
-          <InputWithLabel
-            label={label}
-            register={register}
-            error={error}
-            name={name}
-            key={name}
-            type={type as 'text' | 'email' | 'password' | undefined}
-          />
+        {inputList.map((props) => (
+          <InputWithLabel key={props.name} {...props} />
         ))}
         {isError && <InputError>パスワードが一致しません</InputError>}
         <StyledButton

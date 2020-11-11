@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { sp } from '../styles/media';
 import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
+import { InputType } from '../types';
 
 type FormData = {
   email: string;
@@ -39,18 +40,26 @@ export default function SignIn() {
     }
   };
 
-  const inputList = [
+  const inputList: InputType[] = [
     {
       name: 'email',
       label: 'メールアドレス',
-      error: 'email' in errors,
+      error: errors.email,
       type: 'email',
+      inputRef: register({
+        required: 'メールアドレスを入力してください',
+        pattern: {
+          value: /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/,
+          message: 'メールアドレスの形式が不正です',
+        },
+      }),
     },
     {
       name: 'password',
       label: 'パスワード',
-      error: 'password' in errors,
+      error: errors.password,
       type: 'password',
+      inputRef: register({ required: 'パスワードを入力してください' }),
     },
   ];
 
@@ -58,15 +67,8 @@ export default function SignIn() {
     <AuthenticateContainer>
       <h1>Sign in</h1>
       <AuthenticateForm onSubmit={handleSubmit(handleSignIn)}>
-        {inputList.map(({ name, label, error, type }) => (
-          <InputWithLabel
-            label={label}
-            register={register}
-            error={error}
-            name={name}
-            key={name}
-            type={type as 'text' | 'email' | 'password' | undefined}
-          />
+        {inputList.map((props) => (
+          <InputWithLabel key={props.name} {...props} />
         ))}
         <StyledButton
           type="submit"

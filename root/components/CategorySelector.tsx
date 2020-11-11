@@ -30,11 +30,9 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-type Props = {
-  control: any;
-};
+type Props = {};
 
-export const CategorySelector: FC<Props> = ({ control }) => {
+export const CategorySelector: FC<Props> = ({}) => {
   const [value, setValue] = useState<Category | null>(null);
   const [categoryList] = useFirebase<Category>('categoryList');
   const setCategory = useSetRecoilState(addCategory);
@@ -100,19 +98,12 @@ export const CategorySelector: FC<Props> = ({ control }) => {
         renderOption={(option) => option.name}
         freeSolo
         renderInput={(params) => (
-          <Controller
-            as={
-              <TextField
-                {...params}
-                variant="outlined"
-                fullWidth
-                className={classes.padding}
-                placeholder="選択してください"
-              />
-            }
-            name='category'
-            control={control}
-            defaultValue=''
+          <TextField
+            {...params}
+            variant="outlined"
+            fullWidth
+            className={classes.padding}
+            placeholder="選択してください"
           />
         )}
       />

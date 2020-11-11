@@ -1,35 +1,29 @@
 import React, { FC } from 'react';
 //material
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { useForm } from 'react-hook-form';
-import { FormValues } from '../../types';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { FormValues, InputType } from '../../types';
+import { useRecoilState } from 'recoil';
 import { addCategory, addTags } from '../../recoil/root';
 import { useState } from 'react';
+import { DialogBase } from './DialogBase';
+import { InputWithLabel } from './InputWithLabel';
+import { CategorySelector } from './CategorySelector';
+import { Tag } from './Tag';
+import { Checkbox, InputLabel } from '@material-ui/core';
+import { useSetRecoilState } from 'recoil';
+import { openDialog } from '../../recoil/dialog';
 
-type Props = {
-  onClickClose: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  open: boolean;
-  title: string;
-  render: FC<{ register: any; errors: any; control?: any }>;
-};
-
-export const AddDialog: FC<Props> = ({
-  title,
-  open,
-  onClickClose,
-  render: Render,
-}) => {
-  const { control, register, errors, handleSubmit, reset } = useForm<
-    FormValues
-  >();
+export const AddBlogDialog = () => {
+  const { register, errors, handleSubmit, reset } = useForm<FormValues>();
   const [tag, setTag] = useRecoilState(addTags);
   const [category, setCategory] = useRecoilState(addCategory);
-  const [checked,setChecked] = useState()
+  const [checked, setChecked] = useState(false);
+  const setDialog = useSetRecoilState(openDialog);
+
+  const handleClose = () => {
+    setDialog('');
+  };
 
   const onSubmit = async (data: FormValues) => {
     console.log(data);
@@ -53,29 +47,64 @@ export const AddDialog: FC<Props> = ({
     // }
     setTag([]);
     setCategory('');
+    setChecked(false);
     reset();
   };
 
+  const inputList: InputType[] = [
+    {
+      name: 'title',
+      label: 'Title*',
+      error: errors.title,
+      inputRef: register({
+        required: '必須項目です',
+      }),
+    },
+    {
+      name: 'url',
+      label: 'URL*',
+      error: errors.url,
+      inputRef: register({
+        required: '必須項目です',
+        pattern: {
+          value: /https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+/g,
+          message: '正しい書式で入力してください',
+        },
+      }),
+    },
+    {
+      name: 'memo',
+      label: 'Memo',
+      variant: 'outlined',
+      multiline: true,
+      rows: 5,
+      inputRef: register,
+    },
+  ];
+
   return (
-    <Dialog open={open} onClose={onClickClose}>
-      <DialogTitle>{title}</DialogTitle>
+    <DialogBase title="ブログ追加">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent>
-          {control ? (
-            <Render {...{ register, errors, control }} />
-          ) : (
-            <Render {...{ register, errors }} />
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClickClose} color="primary">
-            キャンセル
-          </Button>
-          <Button type="submit" color="primary" autoFocus>
-            追加
-          </Button>
-        </DialogActions>
+        {inputList.map((props) => {
+          <InputWithLabel {...props} />;
+        })}
+        <CategorySelector />
+        <Tag />
+        <InputLabel>
+          非公開
+          <Checkbox
+            color="primary"
+            checked={checked}
+            onChange={(e) => setChecked(e.target.checked)}
+          />
+        </InputLabel>
+        <Button onClick={handleClose} color="primary">
+          キャンセル
+        </Button>
+        <Button type="submit" color="primary" autoFocus>
+          追加
+        </Button>
       </form>
-    </Dialog>
+    </DialogBase>
   );
 };

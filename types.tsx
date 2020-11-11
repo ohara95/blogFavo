@@ -20,3 +20,14 @@ export type Category = {
   inputValue?: string;
   url?: string;
 };
+
+export type InputType = {
+  name: string;
+  label: string;
+  error?: any;
+  type?: 'text' | 'email' | 'password';
+  inputRef?: any;
+  variant?: 'outlined'
+  multiline?: boolean;
+  rows?: number;
+}

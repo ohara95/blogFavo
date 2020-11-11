@@ -8,6 +8,7 @@ import { theme } from '../styles/theme';
 import { RecoilRoot } from 'recoil';
 import { auth } from '../root/utils/firebase';
 import { useRouter } from 'next/dist/client/router';
+import { Dialogs } from '../root/components/Dialogs';
 
 /**
  * クライアント側のレンダリングカスタマイズ
@@ -39,7 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <MaterialUIThemeProvider theme={theme}>
           <StyledComponentsThemeProvider theme={theme}>
             <CssBaseline />
-            <Dialogs/>
+            <Dialogs />
             <Component {...pageProps} />
           </StyledComponentsThemeProvider>
         </MaterialUIThemeProvider>

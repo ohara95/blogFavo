@@ -1,9 +1,4 @@
 import React, { FC } from 'react';
-import { useRecoilValue } from 'recoil';
-import { AddBlogForm, AddDialog } from '../components';
-//memo namedExportができない...なぜ
-import { AddCategoryForm } from './AddCategoryForm';
-import { currentDisplayData } from '../../recoil/root';
 
 // material
 import Fab from '@material-ui/core/Fab';
@@ -27,19 +22,10 @@ const useStyles = makeStyles((theme) => ({
 
 type Props = {
   onClickOpen: () => void;
-  open: boolean;
-  onClickClose: () => void;
-  title: string;
 };
 
-export const AddButton: FC<Props> = ({
-  onClickOpen,
-  open,
-  onClickClose,
-  title,
-}) => {
+export const AddButton: FC<Props> = ({ onClickOpen }) => {
   const classes = useStyles();
-  const currentPage = useRecoilValue(currentDisplayData);
 
   return (
     <>
@@ -48,16 +34,6 @@ export const AddButton: FC<Props> = ({
           <AddIcon />
         </Fab>
       </IconButton>
-      <AddDialog
-        title={title}
-        onClickClose={onClickClose}
-        open={open}
-        render={currentPage === 'list' ? AddBlogForm : AddCategoryForm}
-        register={register}
-        errors={errors}
-        control={control}
-        handleSubmit={handleSubmit}
-      />
     </>
   );
 };
