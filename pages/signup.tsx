@@ -26,6 +26,7 @@ export default function SignUp() {
   >();
   const [isError, setIsError] = useState(false);
   const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   /** メールアドレスとパスワードでユーザーを作成、名前も設定 */
   const createUser = async (email: string, password: string, name: string) => {
@@ -60,8 +61,14 @@ export default function SignUp() {
       // ユーザー作成
       await createUser(email, password, name);
       reset();
-    } catch {
-      setOpen(true);
+    } catch (err) {
+      if (err.code === 'auth/invalid-email') {
+        setErrorMessage('メールアドレスの書式をお確かめください');
+        setOpen(true);
+      } else if (err.code === 'auth/weak-password') {
+        setErrorMessage('パスワードが短すぎます');
+        setOpen(true);
+      }
     }
   };
 
@@ -124,7 +131,7 @@ export default function SignUp() {
         horizontal="center"
         open={open}
         serverity="error"
-        message="登録に失敗しました"
+        message={errorMessage}
         handleClose={handleClose}
       />
     </AuthenticateContainer>

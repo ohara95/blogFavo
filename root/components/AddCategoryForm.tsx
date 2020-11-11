@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { useRecoilState } from 'recoil';
 import { imageData } from '../../recoil/root';
 import { ImageUpload } from '../pages/utils/ImageUpload';
-import { storage } from '../pages/utils/firebase';
+import { storage } from '../utils/firebase';
 
 //material
 import Grid from '@material-ui/core/Grid';
