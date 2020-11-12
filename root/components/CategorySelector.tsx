@@ -4,28 +4,13 @@ import { db } from '../utils/firebase';
 import { useFirebase } from '../utils/hooks';
 //material
 import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
 import Autocomplete, {
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { FC } from 'react';
+import { Label, LabelText } from '../../styles/common';
 
 const filter = createFilterOptions<Category>();
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    margin: {
-      margin: theme.spacing(1),
-    },
-    padding: {
-      padding: theme.spacing(1),
-    },
-    selectInput: {
-      padding: '15px!important',
-    },
-  })
-);
 
 type Props = {
   category: Category | null;
@@ -34,7 +19,6 @@ type Props = {
 
 export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
   const [categoryList] = useFirebase<Category>('categoryList');
-  const classes = useStyles();
 
   useEffect(() => {
     if (category) {
@@ -46,9 +30,8 @@ export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
   }, [category]);
 
   return (
-    <>
-      <InputLabel className={classes.margin}>カテゴリー</InputLabel>
-
+    <Label>
+      <LabelText>カテゴリー</LabelText>
       <Autocomplete
         value={category}
         onChange={(_, newValue) => {
@@ -99,11 +82,10 @@ export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
             {...params}
             variant="outlined"
             fullWidth
-            className={classes.padding}
             placeholder="選択してください"
           />
         )}
       />
-    </>
+    </Label>
   );
 };

@@ -7,14 +7,14 @@ import { DialogBase } from './DialogBase';
 import { InputWithLabel } from './InputWithLabel';
 import { CategorySelector } from './CategorySelector';
 import { Tag } from './Tag';
-import { Checkbox, InputLabel } from '@material-ui/core';
+import { Checkbox } from '@material-ui/core';
 import { ADD_BLOG } from '../../recoil/dialog';
 import firebase, { auth, db } from '../utils/firebase';
+import { Label, LabelText } from '../../styles/common';
 
 export const AddBlogDialog = () => {
   const { register, errors, handleSubmit, reset } = useForm<FormValues>();
   const [tag, setTag] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState('');
   const [category, setCategory] = useState<Category | null>(null);
   const [isPublic, setIsPublic] = useState(false);
   const user = auth.currentUser;
@@ -42,7 +42,6 @@ export const AddBlogDialog = () => {
       alert('追加出来ました！');
       setCategory(null);
       setTag([]);
-      setInputValue('');
       setIsPublic(false);
       reset();
     } catch (error) {
@@ -86,26 +85,20 @@ export const AddBlogDialog = () => {
       title="ブログ追加"
       handleSubmit={handleSubmit(onSubmit)}
       dialogKey={ADD_BLOG}
-      hasActions
     >
       {inputList.map((props) => (
         <InputWithLabel key={props.name} {...props} />
       ))}
       <CategorySelector category={category} setCategory={setCategory} />
-      <Tag
-        tag={tag}
-        setTag={setTag}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-      />
-      <InputLabel>
-        非公開
+      <Tag tag={tag} setTag={setTag} />
+      <Label>
+        <LabelText>非公開</LabelText>
         <Checkbox
           color="primary"
           checked={isPublic}
           onChange={(e) => setIsPublic(e.target.checked)}
         />
-      </InputLabel>
+      </Label>
     </DialogBase>
   );
 };
