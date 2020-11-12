@@ -13,8 +13,6 @@ import { sp } from '../styles/media';
 import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
 import { InputType } from '../types';
-import { ADD_BLOG } from '../recoil/dialog';
-import { AddButton } from '../root/components';
 
 type FormData = {
   email: string;
@@ -102,7 +100,6 @@ export default function SignIn() {
         message={errorMessage}
         handleClose={handleClose}
       />
-      <AddButton dialogKey={ADD_BLOG} />
     </AuthenticateContainer>
   );
 }

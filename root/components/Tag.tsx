@@ -8,6 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
 import { Label, LabelText } from '../../styles/common';
 import styled from 'styled-components';
+import { COLOR } from '../../styles/color';
 
 type Props = {
   tag: string[];
@@ -50,7 +51,7 @@ export const Tag: FC<Props> = ({ tag, setTag }) => {
         renderTags={(_, getTagProps) =>
           tag.map((option: string, index: number) => {
             console.log(option);
-            return <Chip label={option} {...getTagProps({ index })} />;
+            return <StyledChip label={option} {...getTagProps({ index })} />;
           })
         }
         renderInput={(params) => {
@@ -75,4 +76,8 @@ const StyledAutocomplete = styled(Autocomplete)`
 
 const StyledTextField = styled(TextField)`
   height: 40px;
+`;
+
+const StyledChip = styled(Chip)`
+  background-color: ${COLOR.TURQUOISE};
 `;

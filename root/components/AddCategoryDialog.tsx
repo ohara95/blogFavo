@@ -5,7 +5,6 @@ import { ImageUpload } from '../utils/ImageUpload';
 import { auth, db, storage } from '../utils/firebase';
 
 //material
-import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import { DialogBase } from './DialogBase';
 import { InputWithLabel } from './InputWithLabel';
@@ -13,6 +12,9 @@ import { useFirebase } from '../utils/hooks';
 import { Category } from '../../types';
 import { ADD_CATEGORY } from '../../recoil/dialog';
 import { useForm } from 'react-hook-form';
+import { LabelText } from '../../styles/common';
+import styled from 'styled-components';
+import { COLOR } from '../../styles/color';
 
 type FormData = {
   category: string;
@@ -68,28 +70,50 @@ export const AddCategoryDialog = () => {
         error={errors.category}
         label="カテゴリー名*"
       />
-      <InputLabel>カテゴリー画像登録</InputLabel>
-      <input
-        accept="image/*"
-        id="contained-button-file"
-        multiple
-        type="file"
-        onChange={handleImageUpload}
-      />
-      <label htmlFor="contained-button-file">
-        <Button variant="contained" component="span" style={{ marginLeft: 10 }}>
-          Upload
-        </Button>
-      </label>
-      <Button
-        variant="contained"
-        component="span"
-        style={{ marginLeft: 10 }}
-        onClick={deleteImage}
-      >
-        取消
-      </Button>
-      {imageUrl && <img src={imageUrl} style={{ width: '50%' }} />}
+      <ActionsWrapper>
+        <LabelText>カテゴリー画像登録</LabelText>
+        <InputHidden
+          accept="image/*"
+          multiple
+          id="contained-button-file"
+          type="file"
+          onChange={handleImageUpload}
+        />
+        <label htmlFor="contained-button-file">
+          <UploadButton component="span" variant="contained">
+            Upload
+          </UploadButton>
+        </label>
+        <DeleteButton variant="contained" onClick={deleteImage}>
+          取消
+        </DeleteButton>
+      </ActionsWrapper>
+      {imageUrl && <Img src={imageUrl} />}
     </DialogBase>
   );
 };
+
+const InputHidden = styled.input`
+  display: none;
+`;
+
+const UploadButton = styled(Button)<{ component: string }>`
+  background-color: ${COLOR.TURQUOISE};
+  color: ${COLOR.WHITE};
+  margin: 10px;
+`;
+
+const DeleteButton = styled(Button)`
+  background-color: ${COLOR.RED};
+  color: ${COLOR.WHITE};
+`;
+
+const Img = styled.img`
+  width: 50%;
+`;
+
+const ActionsWrapper = styled.div`
+  padding: 12px;
+  display: flex;
+  align-items: center;
+`;
