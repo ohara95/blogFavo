@@ -110,6 +110,8 @@ const DeleteButton = styled(Button)`
 
 const Img = styled.img`
   width: 50%;
+  display: block;
+  margin: 0 auto;
 `;
 
 const ActionsWrapper = styled.div`
