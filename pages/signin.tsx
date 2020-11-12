@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { CircularProgress } from '@material-ui/core';
 import {
   AuthenticateForm,

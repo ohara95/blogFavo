@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { addCategory } from '../../recoil/root';
+import React, { useEffect } from 'react';
 import { Category } from '../../types';
 import { db } from '../utils/firebase';
 import { useFirebase } from '../utils/hooks';
@@ -29,42 +27,42 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-type Props = {};
+type Props = {
+  category: Category | null;
+  setCategory: (category: Category | null) => void;
+};
 
-export const CategorySelector: FC<Props> = ({}) => {
-  const [value, setValue] = useState<Category | null>(null);
+export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
   const [categoryList] = useFirebase<Category>('categoryList');
-  const setCategory = useSetRecoilState(addCategory);
   const classes = useStyles();
 
   useEffect(() => {
-    if (value) {
-      setCategory(value!.name);
-      if (categoryList.find((db) => db.name === value.name)) return;
+    if (category) {
+      if (categoryList.find((db) => db.name === category.name)) return;
       db.collection('categoryList').add({
-        name: value.name,
+        name: category.name,
       });
     }
-  }, [value]);
+  }, [category]);
 
   return (
     <>
       <InputLabel className={classes.margin}>カテゴリー</InputLabel>
 
       <Autocomplete
-        value={value}
+        value={category}
         onChange={(_, newValue) => {
           if (typeof newValue === 'string') {
-            setValue({
+            setCategory({
               name: newValue,
             });
           } else if (newValue && newValue.inputValue) {
             // ユーザー入力から新しい値を作成
-            setValue({
+            setCategory({
               name: newValue.inputValue,
             });
           } else {
-            setValue(newValue);
+            setCategory(newValue);
           }
         }}
         filterOptions={(options, params) => {

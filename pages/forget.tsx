@@ -12,6 +12,10 @@ import {
   StyledButton,
 } from '../styles/common';
 
+type FormData = {
+  email: string;
+};
+
 const ForgetPassword = () => {
   const { register, handleSubmit, errors, formState } = useForm<FormData>();
   const [open, setOpen] = useState(false);
@@ -20,8 +24,7 @@ const ForgetPassword = () => {
 
   const handleClose = () => setOpen(false);
 
-  const handleSend = async (data: { email: string }) => {
-    const { email } = data;
+  const handleSend = async ({ email }: FormData) => {
     try {
       await auth.sendPasswordResetEmail(email);
       router.push('/signin');
@@ -33,15 +36,6 @@ const ForgetPassword = () => {
     }
   };
 
-  const inputList = [
-    {
-      name: 'email',
-      label: 'メールアドレス',
-      error: 'email' in errors,
-      type: 'email',
-    },
-  ];
-
   return (
     <AuthenticateContainer>
       <h1>パスワード再設定</h1>
@@ -49,16 +43,19 @@ const ForgetPassword = () => {
         <Typography variant="subtitle1">
           アカウントに関連付けられているメールアドレスを入力すると、パスワードをリセットするためのリンクが記載されたメールが送信されます。
         </Typography>
-        {inputList.map(({ name, label, error, type }) => (
-          <InputWithLabel
-            label={label}
-            register={register}
-            error={error}
-            name={name}
-            key={name}
-            type={type as 'text' | 'email' | 'password' | undefined}
-          />
-        ))}
+        <InputWithLabel
+          label="メールアドレス"
+          inputRef={register({
+            required: 'メールアドレスを入力してください',
+            pattern: {
+              value: /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/,
+              message: 'メールアドレスの形式が不正です',
+            },
+          })}
+          error={errors.email}
+          name="email"
+          type="email"
+        />
         <StyledButton
           type="submit"
           fullWidth

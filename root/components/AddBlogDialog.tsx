@@ -1,9 +1,7 @@
 import React from 'react';
 //material
 import { useForm } from 'react-hook-form';
-import { FormValues, InputType } from '../../types';
-import { useRecoilState } from 'recoil';
-import { addCategory, addTags } from '../../recoil/root';
+import { Category, FormValues, InputType } from '../../types';
 import { useState } from 'react';
 import { DialogBase } from './DialogBase';
 import { InputWithLabel } from './InputWithLabel';
@@ -11,57 +9,45 @@ import { CategorySelector } from './CategorySelector';
 import { Tag } from './Tag';
 import { Checkbox, InputLabel } from '@material-ui/core';
 import { ADD_BLOG } from '../../recoil/dialog';
+import firebase, { auth, db } from '../utils/firebase';
 
 export const AddBlogDialog = () => {
   const { register, errors, handleSubmit, reset } = useForm<FormValues>();
-  const [tag, setTag] = useRecoilState(addTags);
-  const [category, setCategory] = useRecoilState(addCategory);
-  const [checked, setChecked] = useState(false);
+  const [tag, setTag] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [category, setCategory] = useState<Category | null>(null);
+  const [isPublic, setIsPublic] = useState(false);
+  const user = auth.currentUser;
 
   const onSubmit = async (data: FormValues) => {
     console.log(data);
-    // try {
-    //   await db.collection('blog').add({
-    //     title: data.title,
-    //     url: data.url,
-    //     memo: data.memo,
-    //     category,
-    //     tag,
-    //     isPublic,
-    //     postedUser: db.collection('users').doc(user?.uid),
-    //       postedAt: firebase.firestore.Timestamp.now(),
-    //       isFavo: false,
-    //       laterRead: false,
-    //   });
-    //   reset();
-    //   //memo 送信したらボタン選択解除したい
-    //   //(連続で追加する場合によくないので)
-    //   const res = await db.collection('tags').get();
-    //   res.docs.map((doc) => doc.ref.update({ isChecked: false }));
-    //   alert('追加出来ました！');
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    setTag([]);
-    setCategory('');
-    setChecked(false);
-    reset();
-    // if (currentDisplay === 'category') {
-    //   try {
-    //     if (categoryList.find((db) => db.name === data.category)) {
-    //       return alert('カテゴリー名が存在します');
-    //     }
-    //     await db.collection('categoryList').add({
-    //       name: data.category,
-    //       imageUrl,
-    //       createdUser: db.collection('users').doc(user?.uid),
-    //     });
-    //     alert('追加出来ました！');
-    //     reset();
-    //     setImageUrl('');
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
+    try {
+      await db.collection('blog').add({
+        title: data.title,
+        url: data.url,
+        memo: data.memo,
+        category: category?.name,
+        tag,
+        isPublic,
+        postedUser: db.collection('users').doc(user?.uid),
+        postedAt: firebase.firestore.Timestamp.now(),
+        isFavo: false,
+        laterRead: false,
+      });
+      reset();
+      //memo 送信したらボタン選択解除したい
+      //(連続で追加する場合によくないので)
+      const res = await db.collection('tags').get();
+      res.docs.map((doc) => doc.ref.update({ isChecked: false }));
+      alert('追加出来ました！');
+      setCategory(null);
+      setTag([]);
+      setInputValue('');
+      setIsPublic(false);
+      reset();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const inputList: InputType[] = [
@@ -100,18 +86,24 @@ export const AddBlogDialog = () => {
       title="ブログ追加"
       handleSubmit={handleSubmit(onSubmit)}
       dialogKey={ADD_BLOG}
+      hasActions
     >
       {inputList.map((props) => (
         <InputWithLabel key={props.name} {...props} />
       ))}
-      <CategorySelector />
-      <Tag />
+      <CategorySelector category={category} setCategory={setCategory} />
+      <Tag
+        tag={tag}
+        setTag={setTag}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+      />
       <InputLabel>
         非公開
         <Checkbox
           color="primary"
-          checked={checked}
-          onChange={(e) => setChecked(e.target.checked)}
+          checked={isPublic}
+          onChange={(e) => setIsPublic(e.target.checked)}
         />
       </InputLabel>
     </DialogBase>

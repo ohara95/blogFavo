@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { addTags } from '../../recoil/root';
+import React, { useEffect, FC } from 'react';
 import { db } from '../utils/firebase';
 import { Tags } from '../../types';
 import { useFirebase } from '../utils/hooks';
@@ -35,31 +33,35 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const Tag = () => {
+type Props = {
+  tag: string[];
+  setTag: (tag: string[]) => void;
+  inputValue: string;
+  setInputValue: (inputValue: string) => void;
+};
+
+export const Tag: FC<Props> = ({ tag, setTag, inputValue, setInputValue }) => {
   const classes = useStyles();
   const [tags] = useFirebase<Tags>('tags');
-  const [inputValue, setInputValue] = useState('');
-  const [selectTags, setSelectTags] = useState<string[]>([]);
-  const setTags = useSetRecoilState(addTags);
 
   useEffect(() => {
-    if (selectTags) {
-      setTags(selectTags);
-
-      selectTags.map((tag) => {
-        db.collection('tags').add({
-          name: tag,
+    if (tag) {
+      tag
+        .filter((el) => !tag.includes(el))
+        .map((tag) => {
+          db.collection('tags').add({
+            name: tag,
+          });
         });
-      });
     }
-  }, [selectTags]);
+  }, [tag]);
 
   return (
     <>
       <InputLabel className={classes.margin}>Tag</InputLabel>
       <Autocomplete
         onChange={(...el) => {
-          if (inputValue) setSelectTags(el[1]);
+          setTag(el[1]);
         }}
         inputValue={inputValue}
         onInputChange={(_, newInputValue) => {
@@ -67,17 +69,16 @@ export const Tag = () => {
           setInputValue(newInputValue);
         }}
         multiple
-        options={tags.map((option) => option.name)}
+        options={tags
+          .filter((option) => !tag.includes(option.name))
+          .map((option) => option.name)}
         freeSolo
         className={classes.padding}
         renderTags={(value: string[], getTagProps) =>
-          value.map((option: string, index: number) => (
-            <Chip
-              label={option}
-              {...getTagProps({ index })}
-              className={classes.backGround}
-            />
-          ))
+          tag.map((option: string, index: number) => {
+            console.log(option);
+            return <Chip label={option} {...getTagProps({ index })} />;
+          })
         }
         renderInput={(params) => {
           return (
