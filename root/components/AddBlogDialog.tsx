@@ -56,6 +56,10 @@ export const AddBlogDialog = () => {
       error: errors.title,
       inputRef: register({
         required: '必須項目です',
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
       }),
     },
     {
@@ -76,7 +80,13 @@ export const AddBlogDialog = () => {
       variant: 'outlined',
       multiline: true,
       rows: 5,
-      inputRef: register,
+      error: errors.memo,
+      inputRef: register({
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
+      }),
     },
   ];
 
