@@ -1,72 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { addCategory } from '../../recoil/root';
+import React, { useEffect } from 'react';
 import { Category } from '../../types';
 import { db } from '../utils/firebase';
 import { useFirebase } from '../utils/hooks';
 //material
 import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
 import Autocomplete, {
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import { FC } from 'react';
+import { Label, LabelText } from '../../styles/common';
 
 const filter = createFilterOptions<Category>();
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    margin: {
-      margin: theme.spacing(1),
-    },
-    padding: {
-      padding: theme.spacing(1),
-    },
-    selectInput: {
-      padding: '15px!important',
-    },
-  })
-);
+type Props = {
+  category: Category | null;
+  setCategory: (category: Category | null) => void;
+};
 
-export const CategorySelector = () => {
-  const [value, setValue] = useState<Category | null>(null);
+export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
   const [categoryList] = useFirebase<Category>('categoryList');
-  const setCategory = useSetRecoilState(addCategory);
-  const classes = useStyles();
 
   useEffect(() => {
-    if (value) {
-      if (categoryList.find((db) => db.name === value.name)) {
-        return;
-      } else {
-        db.collection('categoryList').add({
-          name: value.name,
-        });
-      }
+    if (category) {
+      if (categoryList.find((db) => db.name === category.name)) return;
+      db.collection('categoryList').add({
+        name: category.name,
+      });
     }
-    if (value) {
-      setCategory(value?.name);
-    }
-  }, [value]);
+  }, [category]);
 
   return (
-    <>
-      <InputLabel className={classes.margin}>カテゴリー</InputLabel>
-
+    <Label>
+      <LabelText>カテゴリー</LabelText>
       <Autocomplete
-        value={value}
-        onChange={(event, newValue) => {
+        value={category}
+        onChange={(_, newValue) => {
           if (typeof newValue === 'string') {
-            setValue({
+            setCategory({
               name: newValue,
             });
           } else if (newValue && newValue.inputValue) {
             // ユーザー入力から新しい値を作成
-            setValue({
+            setCategory({
               name: newValue.inputValue,
             });
           } else {
-            setValue(newValue);
+            setCategory(newValue);
           }
         }}
         filterOptions={(options, params) => {
@@ -103,11 +82,10 @@ export const CategorySelector = () => {
             {...params}
             variant="outlined"
             fullWidth
-            className={classes.padding}
             placeholder="選択してください"
           />
         )}
       />
-    </>
+    </Label>
   );
 };

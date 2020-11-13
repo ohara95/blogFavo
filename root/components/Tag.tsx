@@ -1,87 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { addTags } from '../../recoil/root';
+import React, { useEffect, FC, useState } from 'react';
 import { db } from '../utils/firebase';
 import { Tags } from '../../types';
 import { useFirebase } from '../utils/hooks';
 //material
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
-import InputLabel from '@material-ui/core/InputLabel';
-import { cyan } from '@material-ui/core/colors';
+import { Label, LabelText } from '../../styles/common';
+import styled from 'styled-components';
+import { COLOR } from '../../styles/color';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    margin: {
-      margin: theme.spacing(1),
-    },
-    padding: {
-      padding: theme.spacing(1),
-    },
-    backGround: {
-      backgroundColor: cyan[700],
-      color: 'white',
-      marginBottom: theme.spacing(1),
-      '&:hover': {
-        backgroundColor: cyan[500],
-      },
-    },
-    field: {
-      padding: theme.spacing(1),
-      border: 'none',
-    },
-  })
-);
+type Props = {
+  tag: string[];
+  setTag: (tag: string[]) => void;
+};
 
-export const Tag = () => {
-  const classes = useStyles();
+export const Tag: FC<Props> = ({ tag, setTag }) => {
   const [tags] = useFirebase<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
-  const [selectTags, setSelectTags] = useState<string[]>([]);
-  const setTags = useSetRecoilState(addTags);
 
   useEffect(() => {
-    if (selectTags) {
-      setTags(selectTags);
-
-      selectTags.map((tag) => {
-        db.collection('tags').add({
-          name: tag,
+    if (tag) {
+      tag
+        .filter((el) => !tag.includes(el))
+        .map((tag) => {
+          db.collection('tags').add({
+            name: tag,
+          });
         });
-      });
     }
-  }, [selectTags]);
+  }, [tag]);
 
   return (
-    <>
-      <InputLabel className={classes.margin}>Tag</InputLabel>
-      <Autocomplete
+    <Label>
+      <LabelText>Tag</LabelText>
+      <StyledAutocomplete
         onChange={(...el) => {
-          if (inputValue) setSelectTags(el[1]);
+          setTag(el[1] as string[]);
         }}
         inputValue={inputValue}
-        onInputChange={(event, newInputValue) => {
+        onInputChange={(_, newInputValue) => {
           //入力した値
           setInputValue(newInputValue);
         }}
         multiple
-        options={tags.map((option) => option.name)}
+        options={tags
+          .filter((option) => !tag.includes(option.name))
+          .map((option) => option.name)}
         freeSolo
-        className={classes.padding}
-        renderTags={(value: string[], getTagProps) =>
-          value.map((option: string, index: number) => (
-            <Chip
-              label={option}
-              {...getTagProps({ index })}
-              className={classes.backGround}
-            />
-          ))
+        renderTags={(_, getTagProps) =>
+          tag.map((option: string, index: number) => {
+            console.log(option);
+            return <StyledChip label={option} {...getTagProps({ index })} />;
+          })
         }
         renderInput={(params) => {
           return (
-            <TextField
+            <StyledTextField
               {...params}
               variant="standard"
               placeholder="追加してください"
@@ -89,6 +64,20 @@ export const Tag = () => {
           );
         }}
       />
-    </>
+    </Label>
   );
 };
+
+const StyledAutocomplete = styled(Autocomplete)`
+  .MuiFormControl-root {
+    flex-direction: row;
+  }
+`;
+
+const StyledTextField = styled(TextField)`
+  height: 40px;
+`;
+
+const StyledChip = styled(Chip)`
+  background-color: ${COLOR.TURQUOISE};
+`;

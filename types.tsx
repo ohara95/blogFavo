@@ -33,3 +33,14 @@ export type User = {
   imageUrl?: string;
   id: string;
 };
+
+export type InputType = {
+  name: string;
+  label: string;
+  error?: any;
+  type?: 'text' | 'email' | 'password';
+  inputRef?: any;
+  variant?: 'outlined'
+  multiline?: boolean;
+  rows?: number;
+}

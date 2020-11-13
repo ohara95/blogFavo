@@ -1,14 +1,12 @@
 import React, { FC } from 'react';
-import { useRecoilValue } from 'recoil';
-import { AddBlogForm, AddDialog, AddCategoryForm } from '../components';
-import { currentDisplayData } from '../../recoil/root';
-
 // material
 import Fab from '@material-ui/core/Fab';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { cyan } from '@material-ui/core/colors';
 import AddIcon from '@material-ui/icons/Add';
+import { dialogData } from '../../recoil/dialog';
+import { useSetRecoilState } from 'recoil';
 
 const useStyles = makeStyles((theme) => ({
   absolute: {
@@ -24,46 +22,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  onClickOpen: () => void;
-  open: boolean;
-  onClickClose: () => void;
-  title: string;
-  handleSubmit: any;
-  register: any;
-  errors: any;
-  control?: any;
+  dialogKey: string;
 };
 
-export const AddButton: FC<Props> = ({
-  onClickOpen,
-  open,
-  onClickClose,
-  title,
-  handleSubmit,
-  register,
-  errors,
-  control,
-}) => {
+export const AddButton: FC<Props> = ({ dialogKey }) => {
   const classes = useStyles();
-  const currentPage = useRecoilValue(currentDisplayData);
+  const setDialog = useSetRecoilState(dialogData);
+
+  const handleClickOpen = () => {
+    setDialog((prev) => ({
+      ...prev,
+      [dialogKey]: true,
+    }));
+  };
 
   return (
     <>
-      <IconButton onClick={onClickOpen}>
+      <IconButton onClick={handleClickOpen}>
         <Fab className={classes.absolute}>
           <AddIcon />
         </Fab>
       </IconButton>
-      <AddDialog
-        title={title}
-        onClickClose={onClickClose}
-        open={open}
-        render={currentPage === 'list' ? AddBlogForm : AddCategoryForm}
-        register={register}
-        errors={errors}
-        control={control}
-        handleSubmit={handleSubmit}
-      />
     </>
   );
 };

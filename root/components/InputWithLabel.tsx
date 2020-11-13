@@ -1,41 +1,16 @@
 import { TextField } from '@material-ui/core';
 import React, { FC } from 'react';
-import styled from 'styled-components';
-import { InputError } from '../../styles/common';
+import { InputError, Label, LabelText } from '../../styles/common';
+import { InputType } from '../../types';
 
-type Props = {
-  label: string;
-  name: string;
-  register: any;
-  error: boolean;
-  type?: 'text' | 'email' | 'password';
-};
+type Props = InputType;
 
-export const InputWithLabel: FC<Props> = ({
-  label,
-  name,
-  register,
-  error,
-  type = 'text',
-}) => {
+export const InputWithLabel: FC<Props> = ({ label, error, ...otherProps }) => {
   return (
     <Label>
-      {label}
-      <TextField
-        fullWidth
-        type={type}
-        name={name}
-        inputRef={register({
-          required: true,
-        })}
-        error={error}
-      />
-      {error && <InputError>{`${label}を入力してください`}</InputError>}
+      <LabelText>{label}</LabelText>
+      <TextField {...otherProps} fullWidth error={error} />
+      {error && <InputError>{error.message}</InputError>}
     </Label>
   );
 };
-
-const Label = styled.label`
-  margin-top: 20px;
-  display: block;
-`;

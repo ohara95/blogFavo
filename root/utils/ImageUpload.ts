@@ -1,4 +1,4 @@
-import { storage } from '../../utils/firebase';
+import { storage } from '../utils/firebase';
 import { nanoid } from 'nanoid';
 
 export const ImageUpload = (file: File, set: (param: string) => void) => {
