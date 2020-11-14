@@ -66,6 +66,10 @@ export const AddCategoryDialog = () => {
         name="category"
         inputRef={register({
           required: '必須項目です',
+          pattern: {
+            value: /[^ |　]/,
+            message: 'スペースのみの入力はできません。',
+          },
         })}
         error={errors.category}
         label="カテゴリー名*"

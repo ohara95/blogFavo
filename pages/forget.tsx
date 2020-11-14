@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { auth } from '../root/utils/firebase';
-import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
 import { CircularProgress, Typography } from '@material-ui/core';
 import {
@@ -11,6 +10,8 @@ import {
   AuthenticateContainer,
   StyledButton,
 } from '../styles/common';
+import { useSetRecoilState } from 'recoil';
+import { toastValue } from '../recoil/root';
 
 type FormData = {
   email: string;
@@ -18,11 +19,8 @@ type FormData = {
 
 const ForgetPassword = () => {
   const { register, handleSubmit, errors, formState } = useForm<FormData>();
-  const [open, setOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const setToast = useSetRecoilState(toastValue);
   const router = useRouter();
-
-  const handleClose = () => setOpen(false);
 
   const handleSend = async ({ email }: FormData) => {
     try {
@@ -30,8 +28,7 @@ const ForgetPassword = () => {
       router.push('/signin');
     } catch (err) {
       if (err.code === 'auth/user-not-found') {
-        setOpen(true);
-        setErrorMessage('メールアドレスをお確かめください');
+        setToast(['メールアドレスをお確かめください', 'error']);
       }
     }
   };
@@ -66,16 +63,6 @@ const ForgetPassword = () => {
         </StyledButton>
         <Link href="/signin">戻る</Link>
       </AuthenticateForm>
-
-      {/* トースト */}
-      <Toast
-        vertical="top"
-        horizontal="center"
-        open={open}
-        serverity="error"
-        message={errorMessage}
-        handleClose={handleClose}
-      />
     </AuthenticateContainer>
   );
 };

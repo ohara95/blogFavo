@@ -8,6 +8,7 @@ import { ThemeProvider as MaterialUIThemeProvider } from '@material-ui/core/styl
 import { StylesProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Dialogs } from '../root/components/Dialogs';
+import { Toast } from '../root/components/Toast';
 
 /**
  * クライアント側のレンダリングカスタマイズ
@@ -30,6 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <MaterialUIThemeProvider theme={theme}>
           <StyledComponentsThemeProvider theme={theme}>
             <CssBaseline />
+            <Toast />
             <Dialogs />
             <Component {...pageProps} />
           </StyledComponentsThemeProvider>
