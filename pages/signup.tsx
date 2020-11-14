@@ -13,6 +13,7 @@ import firebase from 'firebase';
 import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
 import { InputType } from '../types';
+import { SignInWithSns } from '../root/components/SignInWithSns';
 
 type FormData = {
   name: string;
@@ -130,6 +131,7 @@ export default function SignUp() {
         >
           {formState.isSubmitting ? <CircularProgress size={14} /> : '登録'}
         </StyledButton>
+        <SignInWithSns />
         <Link href="/signin">既にアカウントをお持ちの方はこちら</Link>
       </AuthenticateForm>
 

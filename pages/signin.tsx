@@ -13,6 +13,7 @@ import { sp } from '../styles/media';
 import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
 import { InputType } from '../types';
+import { SignInWithSns } from '../root/components/SignInWithSns';
 
 type FormData = {
   email: string;
@@ -85,6 +86,7 @@ export default function SignIn() {
         >
           {formState.isSubmitting ? <CircularProgress size={14} /> : 'ログイン'}
         </StyledButton>
+        <SignInWithSns />
         <AuthenticateLink>
           <Link href="/forget">パスワードを忘れた</Link>
           <Link href="/signup">アカウントを持っていない方はこちら</Link>
