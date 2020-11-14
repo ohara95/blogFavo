@@ -2,15 +2,19 @@ import React from 'react';
 import firebase, { auth, db, providerGoogle } from '../utils/firebase';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { toastValue } from '../../recoil/root';
+import { useSetRecoilState } from 'recoil';
 
 export const SignInWithSns = () => {
+  const setToast = useSetRecoilState(toastValue);
+
   const googleLogin = async () => {
     try {
       const res = await auth.signInWithPopup(providerGoogle);
       console.log(res);
       snsLoginResponse(res);
     } catch (error) {
-      console.error(error);
+      setToast(['ログインに失敗しました', 'error']);
     }
   };
 
@@ -23,7 +27,7 @@ export const SignInWithSns = () => {
         id: user?.uid,
       });
     } catch (error) {
-      console.error(error);
+      setToast(['ログインに失敗しました', 'error']);
     }
   };
 
