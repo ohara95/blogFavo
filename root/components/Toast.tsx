@@ -1,34 +1,35 @@
-import React, { FC } from 'react';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import React, { useEffect } from 'react';
+import { useResetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { toastValue } from '../../recoil/root';
 
-type Props = {
-  vertical: 'top' | 'bottom';
-  horizontal: 'left' | 'center' | 'right';
-  message: string;
-  open: boolean;
-  serverity: 'error' | 'warning' | 'info' | 'success';
-  handleClose: () => void;
-};
+export const Toast = () => {
+  const [text, severity] = useRecoilValue(toastValue);
+  const reset = useResetRecoilState(toastValue);
 
-export const Toast: FC<Props> = ({
-  vertical,
-  horizontal,
-  open,
-  message,
-  serverity,
-  handleClose,
-}) => {
+  useEffect(() => {
+    if (!text) return;
+
+    /** 3秒後に閉じる */
+    setTimeout(() => {
+      reset();
+    }, 3000);
+  }, [text]);
+
   return (
-    <StyledSnackbar
-      anchorOrigin={{ vertical, horizontal }}
-      open={open}
-      key={vertical + horizontal}
-      onClose={handleClose}
-    >
-      <Alert severity={serverity}>{message}</Alert>
-    </StyledSnackbar>
+    <>
+      {text && (
+        <StyledSnackbar
+          open
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert severity={severity}>{text}</Alert>
+        </StyledSnackbar>
+      )}
+    </>
   );
 };
 
