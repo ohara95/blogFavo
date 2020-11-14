@@ -12,6 +12,7 @@ import { auth, db } from '../root/utils/firebase';
 import firebase from 'firebase';
 import { InputWithLabel } from '../root/components/InputWithLabel';
 import { InputType } from '../types';
+import { SignInWithSns } from '../root/components/SignInWithSns';
 import { useSetRecoilState } from 'recoil';
 import { toastValue } from '../recoil/root';
 
@@ -142,6 +143,7 @@ export default function SignUp() {
         >
           {formState.isSubmitting ? <CircularProgress size={14} /> : '登録'}
         </StyledButton>
+        <SignInWithSns />
         <Link href="/signin">既にアカウントをお持ちの方はこちら</Link>
       </AuthenticateForm>
     </AuthenticateContainer>
