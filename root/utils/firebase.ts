@@ -22,4 +22,5 @@ export const auth = firebase.auth();
 export const db = firebase.firestore();
 export const storage = firebase.storage();
 export const providerGoogle = new firebase.auth.GoogleAuthProvider();
+export const providerTwitter = new firebase.auth.TwitterAuthProvider();
 export default firebase;
