@@ -7,18 +7,19 @@ export const SignInWithSns = () => {
   const googleLogin = async () => {
     try {
       const res = await auth.signInWithPopup(providerGoogle);
-      sns_login_res(res);
+      console.log(res);
+      snsLoginResponse(res);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const sns_login_res = async (res: firebase.auth.UserCredential) => {
+  const snsLoginResponse = async (res: firebase.auth.UserCredential) => {
     const user = res.user as firebase.User;
     try {
       return await db.collection('users').doc(user.uid).set({
-        name,
-        icon: 'https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg',
+        name: user.displayName,
+        icon: user.photoURL,
         id: user?.uid,
       });
     } catch (error) {
