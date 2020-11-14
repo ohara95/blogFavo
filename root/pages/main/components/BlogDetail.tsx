@@ -15,6 +15,9 @@ import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
+import { auth } from '../../../utils/firebase';
+import { useSetRecoilState } from 'recoil';
+import { dialogData, RECOMMEND_REGISTER } from '../../../../recoil/dialog';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -58,6 +61,8 @@ export const BlogDetail: FC<Props> = ({
   deleteItem,
 }) => {
   const classes = useStyles();
+  const user = auth.currentUser;
+  const setDialog = useSetRecoilState(dialogData);
 
   return (
     <Container className={classes.cardGrid} maxWidth="md">
@@ -118,7 +123,12 @@ export const BlogDetail: FC<Props> = ({
                       size="small"
                       color="primary"
                       onClick={() => {
-                        handleIconClick(card?.id, 'isFavo');
+                        user
+                          ? handleIconClick(card?.id, 'isFavo')
+                          : setDialog((prev) => ({
+                              ...prev,
+                              [RECOMMEND_REGISTER]: true,
+                            }));
                       }}
                     >
                       {card.isFavo ? (
@@ -131,7 +141,12 @@ export const BlogDetail: FC<Props> = ({
                       size="small"
                       color="primary"
                       onClick={() => {
-                        handleIconClick(card?.id, 'laterRead');
+                        user
+                          ? handleIconClick(card?.id, 'laterRead')
+                          : setDialog((prev) => ({
+                              ...prev,
+                              [RECOMMEND_REGISTER]: true,
+                            }));
                       }}
                     >
                       {card.laterRead ? (

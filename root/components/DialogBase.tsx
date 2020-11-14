@@ -14,7 +14,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 type Props = {
   title: string;
-  handleSubmit: any;
+  handleSubmit?: any;
   dialogKey: string;
   noActions?: boolean;
 };

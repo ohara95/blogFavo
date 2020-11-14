@@ -10,7 +10,11 @@ import { BlogDetail, PageTop, CategoryDetail } from '../main/components';
 //material
 import Pagination from '@material-ui/lab/Pagination';
 import Grid from '@material-ui/core/Grid';
-import { ADD_BLOG, ADD_CATEGORY } from '../../../recoil/dialog';
+import {
+  ADD_BLOG,
+  ADD_CATEGORY,
+  RECOMMEND_REGISTER,
+} from '../../../recoil/dialog';
 
 const Main: FC = () => {
   const currentDisplay = useRecoilValue(currentDisplayData);
@@ -55,6 +59,12 @@ const Main: FC = () => {
     db.collection(type).doc(id).delete();
   };
 
+  const dialogKey = user
+    ? currentDisplay === 'list'
+      ? ADD_BLOG
+      : ADD_CATEGORY
+    : RECOMMEND_REGISTER;
+
   return (
     <>
       <Header />
@@ -88,9 +98,7 @@ const Main: FC = () => {
         <Pagination count={10} size="large" style={{ marginBottom: 20 }} />
       </Grid>
       <Footer />
-      <AddButton
-        dialogKey={currentDisplay === 'list' ? ADD_BLOG : ADD_CATEGORY}
-      />
+      <AddButton dialogKey={dialogKey} />
     </>
   );
 };
