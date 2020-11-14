@@ -77,7 +77,13 @@ export default function SignUp() {
       name: 'name',
       label: '名前',
       error: errors.name,
-      inputRef: register({ required: '名前を入力してください' }),
+      inputRef: register({
+        required: '名前を入力してください',
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
+      }),
     },
     {
       name: 'email',
@@ -97,14 +103,26 @@ export default function SignUp() {
       label: 'パスワード',
       error: errors.password,
       type: 'password',
-      inputRef: register({ required: 'パスワードを入力してください' }),
+      inputRef: register({
+        required: 'パスワードを入力してください',
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
+      }),
     },
     {
       name: 'passwordConfirm',
       label: 'パスワード再確認',
       error: errors.passwordConfirm,
       type: 'password',
-      inputRef: register({ required: 'パスワード再確認を入力してください' }),
+      inputRef: register({
+        required: 'パスワード再確認を入力してください',
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
+      }),
     },
   ];
 

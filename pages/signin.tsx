@@ -60,7 +60,13 @@ export default function SignIn() {
       label: 'パスワード',
       error: errors.password,
       type: 'password',
-      inputRef: register({ required: 'パスワードを入力してください' }),
+      inputRef: register({
+        required: 'パスワードを入力してください',
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
+      }),
     },
   ];
 
