@@ -14,9 +14,13 @@ export const Toast = () => {
     if (!text) return;
 
     /** 3秒後に閉じる */
-    setTimeout(() => {
+    const closeTime = setTimeout(() => {
       reset();
     }, 3000);
+    // clean up
+    return () => {
+      clearTimeout(closeTime);
+    };
   }, [text]);
 
   return (
@@ -25,6 +29,7 @@ export const Toast = () => {
         <StyledSnackbar
           open
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          onClose={reset}
         >
           <Alert severity={severity}>{text}</Alert>
         </StyledSnackbar>

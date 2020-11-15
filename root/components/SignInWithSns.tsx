@@ -7,8 +7,12 @@ import firebase, {
 } from '../utils/firebase';
 import styled from 'styled-components';
 import Image from 'next/image';
+import { toastValue } from '../../recoil/root';
+import { useSetRecoilState } from 'recoil';
 
 export const SignInWithSns = () => {
+  const setToast = useSetRecoilState(toastValue);
+  
   const snsLogin = async (provider: firebase.auth.AuthProvider) => {
     try {
       const res = await auth.signInWithPopup(provider);
@@ -19,7 +23,7 @@ export const SignInWithSns = () => {
         id: user?.uid,
       });
     } catch (error) {
-      console.error(error);
+      setToast(['ログインに失敗しました', 'error']);
     }
   };
 
