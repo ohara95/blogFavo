@@ -2,15 +2,17 @@ import React, { FC } from 'react';
 import { Category, FormValues } from '../../../../types';
 import firebase from '../../../utils/firebase';
 // material
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Grid,
+  Container,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { cyan } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,10 +42,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  data: Category[];
+  data: (Category | undefined)[];
   blogData: FormValues[];
   deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
   user: firebase.User | null;
+  editItem: (id: string | undefined, type: 'blog' | 'category') => void;
 };
 
 export const CategoryDetail: FC<Props> = ({
@@ -51,6 +54,7 @@ export const CategoryDetail: FC<Props> = ({
   blogData,
   deleteItem,
   user,
+  editItem,
 }) => {
   const classes = useStyles();
 
@@ -58,12 +62,12 @@ export const CategoryDetail: FC<Props> = ({
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
         {data.map((card) => (
-          <Grid item key={card.id} xs={12} sm={6} md={4}>
+          <Grid item key={card?.id} xs={12} sm={6} md={4}>
             <Card className={classes.card}>
-              {card.imageUrl ? (
+              {card?.imageUrl ? (
                 <CardMedia
                   className={classes.cardMedia}
-                  image={card.imageUrl}
+                  image={card?.imageUrl}
                   title="Image title"
                 />
               ) : (
@@ -77,24 +81,30 @@ export const CategoryDetail: FC<Props> = ({
               )}
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h6" component="h6">
-                  {card.name ? card.name : 'title'}(
-                  {blogData.filter((db) => db.category === card.name).length})
+                  {card?.name ? card?.name : 'title'}(
+                  {blogData.filter((db) => db.category === card?.name).length})
                 </Typography>
               </CardContent>
               <CardActions>
                 <Button size="small" color="primary">
-                  blog
+                  list
                 </Button>
                 {user && (
                   <>
-                    <Button size="small" color="primary">
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => {
+                        editItem(card?.id, 'category');
+                      }}
+                    >
                       edit
                     </Button>
                     <Button
                       size="small"
                       color="secondary"
                       onClick={() => {
-                        deleteItem(card.id, 'categoryList');
+                        deleteItem(card?.id, 'categoryList');
                       }}
                     >
                       delete

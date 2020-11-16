@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { CircularProgress } from '@material-ui/core';
 import {
   AuthenticateContainer,
@@ -28,6 +29,7 @@ export default function SignUp() {
   const [isError, setIsError] = useState(false);
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const router = useRouter();
 
   /** メールアドレスとパスワードでユーザーを作成、名前も設定 */
   const createUser = async (email: string, password: string, name: string) => {
@@ -36,7 +38,7 @@ export default function SignUp() {
       password
     );
     const user = createdUser.user as firebase.User;
-    await db.collection('users').add({
+    await db.collection('users').doc(user?.uid).set({
       name,
       icon: 'https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg',
       id: user?.uid,
@@ -67,6 +69,7 @@ export default function SignUp() {
       // ユーザー作成
       await createUser(email, password, name);
       reset();
+      router.push('/');
     } catch (err) {
       if (err.code === 'auth/invalid-email') {
         setErrorMessage('メールアドレスの書式をお確かめください');

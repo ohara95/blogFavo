@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 
 export const useFirebase = <T>(collection: string) => {
@@ -14,5 +14,5 @@ export const useFirebase = <T>(collection: string) => {
       setState(data);
     });
   }, []);
-  return [state];
+  return state;
 };

@@ -10,7 +10,7 @@ export const activeDisplayData = atom<'my' | 'user'>({
   default: 'user',
 });
 
-export const imageData = atom({
-  key: 'imageData',
-  default: '',
-});
+// export const imageData = atom({
+//   key: 'imageData',
+//   default: '',
+// });

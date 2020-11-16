@@ -1,7 +1,12 @@
-import { TextField } from '@material-ui/core';
 import React, { FC } from 'react';
-import { InputError, Label, LabelText } from '../../styles/common';
+import {
+  InputError,
+  Label,
+  LabelText,
+  BaseTextField,
+} from '../../styles/common';
 import { InputType } from '../../types';
+import { InputAdornment } from '@material-ui/core';
 
 type Props = InputType;
 
@@ -9,7 +14,12 @@ export const InputWithLabel: FC<Props> = ({ label, error, ...otherProps }) => {
   return (
     <Label>
       <LabelText>{label}</LabelText>
-      <TextField {...otherProps} fullWidth error={error} />
+      <BaseTextField
+        {...otherProps}
+        fullWidth
+        error={error}
+        InputProps={{ startAdornment: <InputAdornment position="start" /> }}
+      />
       {error && <InputError>{error.message}</InputError>}
     </Label>
   );

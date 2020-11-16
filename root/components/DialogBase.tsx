@@ -17,6 +17,7 @@ type Props = {
   handleSubmit: any;
   dialogKey: string;
   noActions?: boolean;
+  doneText?: string;
 };
 
 export const DialogBase: FC<Props> = ({
@@ -25,6 +26,7 @@ export const DialogBase: FC<Props> = ({
   handleSubmit,
   dialogKey,
   noActions,
+  doneText,
 }) => {
   const setDialog = useSetRecoilState(dialogData);
   const handleClose = () => {
@@ -47,7 +49,7 @@ export const DialogBase: FC<Props> = ({
               キャンセル
             </Button>
             <Button type="submit" color="primary" autoFocus>
-              追加
+              {doneText || '追加'}
             </Button>
           </DialogActions>
         )}

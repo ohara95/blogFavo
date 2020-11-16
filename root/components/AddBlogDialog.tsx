@@ -1,16 +1,19 @@
-import React from 'react';
-//material
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Category, FormValues, InputType } from '../../types';
-import { useState } from 'react';
-import { DialogBase } from './DialogBase';
-import { InputWithLabel } from './InputWithLabel';
-import { CategorySelector } from './CategorySelector';
-import { Tag } from './Tag';
-import { Checkbox } from '@material-ui/core';
+import {
+  DialogBase,
+  Tag,
+  InputWithLabel,
+  CategorySelector,
+} from '../components';
 import { ADD_BLOG } from '../../recoil/dialog';
 import firebase, { auth, db } from '../utils/firebase';
-import { Label, LabelText } from '../../styles/common';
+import { Label, LabelText, FlexLabel } from '../../styles/common';
+import { useFirebase } from '../utils/hooks';
+
+//material
+import { Checkbox } from '@material-ui/core';
 
 export const AddBlogDialog = () => {
   const { register, errors, handleSubmit, reset } = useForm<FormValues>();
@@ -20,7 +23,6 @@ export const AddBlogDialog = () => {
   const user = auth.currentUser;
 
   const onSubmit = async (data: FormValues) => {
-    console.log(data);
     try {
       await db.collection('blog').add({
         title: data.title,
@@ -34,11 +36,6 @@ export const AddBlogDialog = () => {
         isFavo: false,
         laterRead: false,
       });
-      reset();
-      //memo 送信したらボタン選択解除したい
-      //(連続で追加する場合によくないので)
-      const res = await db.collection('tags').get();
-      res.docs.map((doc) => doc.ref.update({ isChecked: false }));
       alert('追加出来ました！');
       setCategory(null);
       setTag([]);
@@ -92,12 +89,14 @@ export const AddBlogDialog = () => {
       <CategorySelector category={category} setCategory={setCategory} />
       <Tag tag={tag} setTag={setTag} />
       <Label>
-        <LabelText>非公開</LabelText>
-        <Checkbox
-          color="primary"
-          checked={isPublic}
-          onChange={(e) => setIsPublic(e.target.checked)}
-        />
+        <FlexLabel>
+          <LabelText>非公開</LabelText>
+          <Checkbox
+            color="primary"
+            checked={isPublic}
+            onChange={(e) => setIsPublic(e.target.checked)}
+          />
+        </FlexLabel>
       </Label>
     </DialogBase>
   );

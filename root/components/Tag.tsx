@@ -11,12 +11,13 @@ import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
 
 type Props = {
-  tag: string[];
+  tag: string[] | undefined;
   setTag: (tag: string[]) => void;
+  defaultValue?: any;
 };
 
-export const Tag: FC<Props> = ({ tag, setTag }) => {
-  const [tags] = useFirebase<Tags>('tags');
+export const Tag: FC<Props> = ({ tag, setTag, defaultValue }) => {
+  const tags = useFirebase<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
@@ -45,12 +46,11 @@ export const Tag: FC<Props> = ({ tag, setTag }) => {
         }}
         multiple
         options={tags
-          .filter((option) => !tag.includes(option.name))
+          .filter((option) => !tag?.includes(option.name))
           .map((option) => option.name)}
         freeSolo
         renderTags={(_, getTagProps) =>
-          tag.map((option: string, index: number) => {
-            console.log(option);
+          tag?.map((option: string, index: number) => {
             return <StyledChip label={option} {...getTagProps({ index })} />;
           })
         }
@@ -63,6 +63,7 @@ export const Tag: FC<Props> = ({ tag, setTag }) => {
             />
           );
         }}
+        defaultValue={defaultValue}
       />
     </Label>
   );
@@ -76,6 +77,7 @@ const StyledAutocomplete = styled(Autocomplete)`
 
 const StyledTextField = styled(TextField)`
   height: 40px;
+  padding: 0 10px;
 `;
 
 const StyledChip = styled(Chip)`

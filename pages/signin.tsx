@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { CircularProgress } from '@material-ui/core';
 import {
   AuthenticateForm,
@@ -25,6 +26,7 @@ export default function SignIn() {
   >();
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const router = useRouter();
 
   const handleClose = () => {
     setOpen(false);
@@ -36,6 +38,7 @@ export default function SignIn() {
       const { email, password } = data;
       await auth.signInWithEmailAndPassword(email, password);
       reset();
+      router.push('/');
     } catch (err) {
       if (err.code === 'auth/user-not-found') {
         setErrorMessage('メールアドレスが間違っています');
