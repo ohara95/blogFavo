@@ -13,14 +13,9 @@ const filter = createFilterOptions<Category>();
 type Props = {
   category: Category | null;
   setCategory: (category: Category | null) => void;
-  placeholder?: string;
 };
 
-export const CategorySelector: FC<Props> = ({
-  category,
-  setCategory,
-  placeholder,
-}) => {
+export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
   const categoryList = useFirebase<Category>('categoryList');
 
   useEffect(() => {
@@ -85,7 +80,7 @@ export const CategorySelector: FC<Props> = ({
             {...params}
             variant="outlined"
             fullWidth
-            defaultValue={placeholder || '選択してください'}
+            placeholder="選択してください"
           />
         )}
       />

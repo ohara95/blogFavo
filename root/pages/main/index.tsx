@@ -86,27 +86,6 @@ const Main: FC = () => {
     db.collection(type).doc(id).delete();
   };
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const data = await Promise.all(
-  //       blog.map((db) =>
-  //         db.postedUser?.get().then((doc) => {
-  //             return {
-  //               ...db,
-  //               userId:doc.data()?.id
-  //             }
-  //         })
-  //       )
-  //       // blog.filter((db) =>
-  //       //   db.postedUser?.get().then((doc) => doc.id === user?.uid)
-  //       // )
-  //     );
-  //     // const a = data.filter((r) => r !== undefined)
-
-  //     // setFilterBlog(data);
-  //   })();
-  // }, [blog, user]);
-
   const holdCategory = (data: FormValues[]) => {
     let arr: Category[] = [];
     for (let i = 0; i < data.length; i++) {

@@ -83,6 +83,7 @@ export const BlogDetail: FC<Props> = ({
                     {card?.tag &&
                       card?.tag.map((name) => (
                         <Button
+                          key={card?.id}
                           disabled
                           variant="outlined"
                           size="small"

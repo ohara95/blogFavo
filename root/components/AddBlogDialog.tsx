@@ -10,7 +10,6 @@ import {
 import { ADD_BLOG } from '../../recoil/dialog';
 import firebase, { auth, db } from '../utils/firebase';
 import { Label, LabelText, FlexLabel } from '../../styles/common';
-import { useFirebase } from '../utils/hooks';
 
 //material
 import { Checkbox } from '@material-ui/core';

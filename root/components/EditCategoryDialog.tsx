@@ -5,7 +5,7 @@ import { db, storage } from '../utils/firebase';
 import { DialogBase, InputWithLabel } from '../components';
 import { useFirebase } from '../utils/hooks';
 import { Category } from '../../types';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { LabelText } from '../../styles/common';
 import styled from 'styled-components';
 import { COLOR } from '../../styles/color';

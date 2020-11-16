@@ -51,7 +51,13 @@ export const Tag: FC<Props> = ({ tag, setTag, defaultValue }) => {
         freeSolo
         renderTags={(_, getTagProps) =>
           tag?.map((option: string, index: number) => {
-            return <StyledChip label={option} {...getTagProps({ index })} />;
+            return (
+              <StyledChip
+                label={option}
+                key={option}
+                {...getTagProps({ index })}
+              />
+            );
           })
         }
         renderInput={(params) => {

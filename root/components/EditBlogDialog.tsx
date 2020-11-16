@@ -18,13 +18,18 @@ import { Checkbox } from '@material-ui/core';
 export const EditBlogDialog = () => {
   const [dialog, setDialog] = useRecoilState(dialogData);
   const blog = useFirebase<FormValues>('blog');
-  const targetBlog = blog.find((db) => db.id === dialog.editBlog.id);
+  const categoryList = useFirebase<Category>('categoryList');
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [isPublic, setIsPublic] = useState(false);
   const { register, errors, handleSubmit, control } = useForm<FormValues>({
     mode: 'onBlur',
   });
+  const targetBlog = blog.find((db) => db.id === dialog.editBlog.id);
+  const targetCategory =
+    targetBlog && categoryList
+      ? categoryList.find((category) => category.name === targetBlog.category)
+      : null;
 
   useEffect(() => {
     if (targetBlog) setIsPublic(targetBlog.isPublic);
@@ -73,6 +78,12 @@ export const EditBlogDialog = () => {
     }
   };
 
+  useEffect(() => {
+    if (targetBlog?.category && categoryList) {
+      setCategory(targetCategory as Category);
+    }
+  }, [targetBlog, categoryList]);
+
   const inputList: InputType[] = [
     {
       name: 'title',
@@ -120,11 +131,7 @@ export const EditBlogDialog = () => {
       {inputList.map((props) => (
         <InputWithLabel key={props.name} {...props} />
       ))}
-      <CategorySelector
-        category={category}
-        setCategory={setCategory}
-        placeholder={targetBlog?.category}
-      />
+      <CategorySelector category={category} setCategory={setCategory} />
       <Tag
         tag={targetBlog?.tag}
         setTag={setTag}
