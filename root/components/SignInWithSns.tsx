@@ -12,7 +12,7 @@ import { useSetRecoilState } from 'recoil';
 
 export const SignInWithSns = () => {
   const setToast = useSetRecoilState(toastValue);
-  
+
   const snsLogin = async (provider: firebase.auth.AuthProvider) => {
     try {
       const res = await auth.signInWithPopup(provider);
