@@ -37,6 +37,7 @@ export type InputType = {
   name: string;
   label: string;
   error?: any;
+  control?: any;
   type?: 'text' | 'email' | 'password';
   inputRef?: any;
   variant?: 'outlined';

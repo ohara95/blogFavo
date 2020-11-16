@@ -5,7 +5,7 @@ import { db, storage } from '../utils/firebase';
 import { DialogBase, InputWithLabel } from '../components';
 import { useFirebase } from '../utils/hooks';
 import { Category } from '../../types';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { LabelText } from '../../styles/common';
 import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
@@ -24,7 +24,9 @@ export const EditCategoryDialog = () => {
     (db) => db.id === dialog.editCategory.id
   );
   const [imageUrl, setImageUrl] = useState('');
-  const { register, errors, handleSubmit } = useForm<FormData>();
+  const { register, errors, handleSubmit, control } = useForm<FormData>({
+    mode: 'onBlur',
+  });
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
@@ -77,12 +79,13 @@ export const EditCategoryDialog = () => {
     >
       <InputWithLabel
         name="category"
+        control={control}
         inputRef={register({
           required: '必須項目です',
         })}
         error={errors.category}
         label="カテゴリー名*"
-        placeholder={categoryDetail?.name}
+        defaultValue={categoryDetail?.name}
       />
       <ActionsWrapper>
         <LabelText>カテゴリー画像登録</LabelText>

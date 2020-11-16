@@ -16,7 +16,9 @@ import { useFirebase } from '../utils/hooks';
 import { Checkbox } from '@material-ui/core';
 
 export const AddBlogDialog = () => {
-  const { register, errors, handleSubmit, reset } = useForm<FormValues>();
+  const { register, errors, handleSubmit, reset, control } = useForm<
+    FormValues
+  >({ mode: 'onBlur' });
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [isPublic, setIsPublic] = useState(false);
@@ -51,6 +53,7 @@ export const AddBlogDialog = () => {
       name: 'title',
       label: 'Title*',
       error: errors.title,
+      control,
       inputRef: register({
         required: '必須項目です',
       }),
@@ -59,6 +62,7 @@ export const AddBlogDialog = () => {
       name: 'url',
       label: 'URL*',
       error: errors.url,
+      control,
       inputRef: register({
         required: '必須項目です',
         pattern: {
@@ -71,6 +75,7 @@ export const AddBlogDialog = () => {
       name: 'memo',
       label: 'Memo',
       variant: 'outlined',
+      control,
       multiline: true,
       rows: 5,
       inputRef: register,

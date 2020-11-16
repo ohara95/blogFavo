@@ -85,7 +85,7 @@ export const CategorySelector: FC<Props> = ({
             {...params}
             variant="outlined"
             fullWidth
-            placeholder={placeholder || '選択してください'}
+            defaultValue={placeholder || '選択してください'}
           />
         )}
       />

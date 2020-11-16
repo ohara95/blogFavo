@@ -22,15 +22,9 @@ export const EditBlogDialog = () => {
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [isPublic, setIsPublic] = useState(false);
-  const { register, errors, handleSubmit } = useForm<FormValues>();
-  // const { register, errors, handleSubmit } = useForm<FormValues>({
-  //   defaultValues: {
-  //     title: targetBlog?.title,
-  //     url: targetBlog?.url,
-  //     memo: targetBlog?.memo,
-  //     isPublic: targetBlog?.isPublic,
-  //   },
-  // });
+  const { register, errors, handleSubmit, control } = useForm<FormValues>({
+    mode: 'onBlur',
+  });
 
   useEffect(() => {
     if (targetBlog) setIsPublic(targetBlog.isPublic);
@@ -84,7 +78,8 @@ export const EditBlogDialog = () => {
       name: 'title',
       label: 'Title*',
       error: errors.title,
-      placeholder: targetBlog?.title,
+      control,
+      defaultValue: targetBlog?.title,
       inputRef: register({
         required: '必須項目です',
       }),
@@ -93,7 +88,8 @@ export const EditBlogDialog = () => {
       name: 'url',
       label: 'URL*',
       error: errors.url,
-      placeholder: targetBlog?.url,
+      control,
+      defaultValue: targetBlog?.url,
       inputRef: register({
         required: '必須項目です',
         pattern: {
@@ -106,10 +102,11 @@ export const EditBlogDialog = () => {
       name: 'memo',
       label: 'Memo',
       variant: 'outlined',
+      control,
       multiline: true,
       rows: 5,
       inputRef: register,
-      placeholder: targetBlog?.memo,
+      defaultValue: targetBlog?.memo,
     },
   ];
 
