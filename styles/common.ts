@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import styled from 'styled-components';
 import { COLOR } from './color';
 import { sp } from './media';
@@ -52,4 +52,13 @@ export const LabelText = styled.p`
   font-weight: 400;
   font-size: 16px;
   margin: 8px;
+`;
+
+export const BaseTextField = styled(TextField)`
+  padding: 10px;
+  width: 95%;
+`;
+
+export const FlexLabel = styled.div`
+  display: flex;
 `;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { activeDisplayData } from '../../recoil/root';
-import { SettingMenu } from '../components';
+import { SettingMenu } from '../components/SettingMenu';
 
 //material
 import Toolbar from '@material-ui/core/Toolbar';

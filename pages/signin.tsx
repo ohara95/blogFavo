@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { CircularProgress } from '@material-ui/core';
 import {
   AuthenticateForm,
@@ -22,9 +23,10 @@ type FormData = {
 };
 
 export default function SignIn() {
-  const { register, handleSubmit, reset, errors, formState } = useForm<
+  const { register, handleSubmit, reset, errors, formState, control } = useForm<
     FormData
   >();
+  const router = useRouter();
   const setToast = useSetRecoilState(toastValue);
 
   /** サインイン */
@@ -33,6 +35,7 @@ export default function SignIn() {
       const { email, password } = data;
       await auth.signInWithEmailAndPassword(email, password);
       reset();
+      router.push('/');
     } catch (err) {
       if (err.code === 'auth/user-not-found') {
         setToast(['メールアドレスが間違っています', 'error']);
@@ -47,6 +50,7 @@ export default function SignIn() {
       name: 'email',
       label: 'メールアドレス',
       error: errors.email,
+      control: control,
       type: 'email',
       inputRef: register({
         required: 'メールアドレスを入力してください',
@@ -60,6 +64,7 @@ export default function SignIn() {
       name: 'password',
       label: 'パスワード',
       error: errors.password,
+      control: control,
       type: 'password',
       inputRef: register({
         required: 'パスワードを入力してください',

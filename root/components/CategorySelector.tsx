@@ -1,14 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, FC } from 'react';
 import { Category } from '../../types';
 import { db } from '../utils/firebase';
 import { useFirebase } from '../utils/hooks';
+import { Label, LabelText, BaseTextField } from '../../styles/common';
 //material
-import TextField from '@material-ui/core/TextField';
 import Autocomplete, {
   createFilterOptions,
 } from '@material-ui/lab/Autocomplete';
-import { FC } from 'react';
-import { Label, LabelText } from '../../styles/common';
 
 const filter = createFilterOptions<Category>();
 
@@ -18,7 +16,7 @@ type Props = {
 };
 
 export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
-  const [categoryList] = useFirebase<Category>('categoryList');
+  const categoryList = useFirebase<Category>('categoryList');
 
   useEffect(() => {
     if (category) {
@@ -78,7 +76,7 @@ export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
         renderOption={(option) => option.name}
         freeSolo
         renderInput={(params) => (
-          <TextField
+          <BaseTextField
             {...params}
             variant="outlined"
             fullWidth

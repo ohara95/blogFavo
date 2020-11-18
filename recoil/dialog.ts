@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { FormValues } from '../types';
 
 export const ADD_BLOG = 'addBlog';
 export const ADD_CATEGORY = 'addCategory';

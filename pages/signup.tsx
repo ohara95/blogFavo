@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { CircularProgress } from '@material-ui/core';
 import {
   AuthenticateContainer,
@@ -24,10 +25,11 @@ type FormData = {
 };
 
 export default function SignUp() {
-  const { register, handleSubmit, reset, errors, formState } = useForm<
+  const { register, handleSubmit, reset, errors, formState, control } = useForm<
     FormData
   >();
   const [isError, setIsError] = useState(false);
+  const router = useRouter();
   const setToast = useSetRecoilState(toastValue);
 
   /** メールアドレスとパスワードでユーザーを作成、名前も設定 */
@@ -37,7 +39,7 @@ export default function SignUp() {
       password
     );
     const user = createdUser.user as firebase.User;
-    await db.collection('users').add({
+    await db.collection('users').doc(user?.uid).set({
       name,
       icon: 'https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg',
       id: user?.uid,
@@ -64,6 +66,7 @@ export default function SignUp() {
       // ユーザー作成
       await createUser(email, password, name);
       reset();
+      router.push('/');
     } catch (err) {
       if (err.code === 'auth/invalid-email') {
         setToast(['メールアドレスの書式をお確かめください', 'error']);
@@ -78,6 +81,7 @@ export default function SignUp() {
       name: 'name',
       label: '名前',
       error: errors.name,
+      control: control,
       inputRef: register({
         required: '名前を入力してください',
         pattern: {
@@ -90,6 +94,7 @@ export default function SignUp() {
       name: 'email',
       label: 'メールアドレス',
       error: errors.email,
+      control: control,
       type: 'email',
       inputRef: register({
         required: 'メールアドレスを入力してください',
@@ -103,6 +108,7 @@ export default function SignUp() {
       name: 'password',
       label: 'パスワード',
       error: errors.password,
+      control: control,
       type: 'password',
       inputRef: register({
         required: 'パスワードを入力してください',
@@ -116,6 +122,7 @@ export default function SignUp() {
       name: 'passwordConfirm',
       label: 'パスワード再確認',
       error: errors.passwordConfirm,
+      control: control,
       type: 'password',
       inputRef: register({
         required: 'パスワード再確認を入力してください',
@@ -126,6 +133,7 @@ export default function SignUp() {
       }),
     },
   ];
+  console.log(formState);
 
   return (
     <AuthenticateContainer>

@@ -18,7 +18,9 @@ type FormData = {
 };
 
 const ForgetPassword = () => {
-  const { register, handleSubmit, errors, formState } = useForm<FormData>();
+  const { register, handleSubmit, errors, formState, control } = useForm<
+    FormData
+  >();
   const setToast = useSetRecoilState(toastValue);
   const router = useRouter();
 
@@ -50,6 +52,7 @@ const ForgetPassword = () => {
             },
           })}
           error={errors.email}
+          control={control}
           name="email"
           type="email"
         />

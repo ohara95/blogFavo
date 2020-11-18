@@ -9,7 +9,7 @@ export type FormValues = {
   isPublic: boolean;
   id?: string;
   postedAt?: firebase.firestore.Timestamp;
-  postedUser?: firebase.firestore.DocumentReference;
+  postedUser?: string;
   isFavo?: boolean;
   laterRead: boolean;
 };
@@ -25,7 +25,6 @@ export type Category = {
   id?: string;
   inputValue?: string;
   imageUrl?: string;
-  createdUser?: firebase.firestore.DocumentReference;
 };
 
 export type User = {
@@ -38,9 +37,11 @@ export type InputType = {
   name: string;
   label: string;
   error?: any;
+  control?: any;
   type?: 'text' | 'email' | 'password';
   inputRef?: any;
-  variant?: 'outlined'
+  variant?: 'outlined';
   multiline?: boolean;
   rows?: number;
-}
+  placeholder?: string;
+};

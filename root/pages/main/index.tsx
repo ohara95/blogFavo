@@ -1,27 +1,47 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
 import { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
 import { useFirebase } from '../../utils/hooks';
-//components
-import { Header, Footer, AddButton } from '../../components';
-import { BlogDetail, PageTop, CategoryDetail } from '../main/components';
-//material
-import Pagination from '@material-ui/lab/Pagination';
-import Grid from '@material-ui/core/Grid';
 import {
   ADD_BLOG,
   ADD_CATEGORY,
   RECOMMEND_REGISTER,
 } from '../../../recoil/dialog';
+import { Header } from '../../components/Header';
+import { Footer } from '../../components/Footer';
+import { AddButton } from '../../components/AddButton';
+import { BlogDetail } from '../main/components/BlogDetail';
+import { PageTop } from '../main/components/PageTop';
+import { CategoryDetail } from '../main/components/CategoryDetail';
+//material
+import { Pagination } from '@material-ui/lab';
+import { Grid } from '@material-ui/core';
 
 const Main: FC = () => {
-  const currentDisplay = useRecoilValue(currentDisplayData);
-  const [blog] = useFirebase<FormValues>('blog');
-  const [categoryList] = useFirebase<Category>('categoryList');
-  const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const user = auth.currentUser;
+  const currentDisplay = useRecoilValue(currentDisplayData);
+  const blog = useFirebase<FormValues>('blog');
+  const categoryList = useFirebase<Category>('categoryList');
+  const [activePage, setActivePage] = useRecoilState(activeDisplayData);
+  const [filterBlog, setFilterBlog] = useState<FormValues[]>([]);
+
+  useEffect(() => {
+    if (user) {
+      db.collection('blog')
+        .where('postedUser', '==', user.uid)
+        .onSnapshot((snap) => {
+          const docData = snap.docs.map((doc) => {
+            return {
+              ...(doc.data() as FormValues),
+              id: doc.id,
+            };
+          });
+          setFilterBlog(docData);
+        });
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) setActivePage('user');
@@ -35,21 +55,9 @@ const Main: FC = () => {
       if (blog.id === id) {
         db.collection('blog')
           .doc(id)
-          .update({ [type]: !blog.isFavo });
+          .update({ [type]: !blog[type] });
       }
     });
-  };
-
-  const filterData = (type: 'blog' | 'category') => {
-    if (type === 'blog') {
-      return blog.filter((db) =>
-        db.postedUser?.onSnapshot((snap) => snap.id === user?.uid)
-      );
-    } else {
-      return categoryList.filter((db) =>
-        db.createdUser?.onSnapshot((snap) => snap.id === user?.uid)
-      );
-    }
   };
 
   const deleteItem = (
@@ -57,6 +65,18 @@ const Main: FC = () => {
     type: 'blog' | 'categoryList'
   ) => {
     db.collection(type).doc(id).delete();
+  };
+
+  const holdCategory = (data: FormValues[]) => {
+    let arr: Category[] = [];
+    for (let i = 0; i < data.length; i++) {
+      categoryList.forEach((category) => {
+        if (category.name === data[i]?.category) {
+          arr.push(category);
+        }
+      });
+    }
+    return arr.filter((el, i, self) => self.indexOf(el) === i);
   };
 
   const dialogKey = user
@@ -74,21 +94,13 @@ const Main: FC = () => {
           <BlogDetail
             activePage={activePage}
             handleIconClick={handleIconClick}
-            data={
-              user && activePage === 'my'
-                ? blog && (filterData('blog') as FormValues[])
-                : blog
-            }
+            data={user && activePage === 'my' ? filterBlog : blog}
             deleteItem={deleteItem}
           />
         ) : (
           <CategoryDetail
-            data={
-              user && activePage === 'my'
-                ? blog && (filterData('category') as Category[])
-                : categoryList
-            }
-            blogData={blog}
+            data={activePage === 'my' ? holdCategory(filterBlog) : categoryList}
+            blogData={activePage === 'my' ? filterBlog : blog}
             deleteItem={deleteItem}
             user={user}
           />
