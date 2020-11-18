@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { toastValue } from '../../recoil/root';
 import { ImageUpload } from '../utils/ImageUpload';
 import { db, storage, auth } from '../utils/firebase';
 import { DialogBase } from '../components/DialogBase';
@@ -22,6 +24,7 @@ export const AddCategoryDialog = () => {
   const [imageUrl, setImageUrl] = useState('');
   const user = auth.currentUser;
   const { register, errors, handleSubmit, reset } = useForm<FormData>();
+  const setToast = useSetRecoilState(toastValue);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -38,18 +41,18 @@ export const AddCategoryDialog = () => {
   const onSubmit = async (data: FormData) => {
     try {
       if (categoryList.find((db) => db.name === data.category)) {
-        return alert('カテゴリー名が存在します');
+        return setToast(['カテゴリー名が存在します', 'error']);
       }
       await db.collection('categoryList').add({
         name: data.category,
         imageUrl,
         createdUser: db.collection('users').doc(user?.uid),
       });
-      alert('追加出来ました！');
+      setToast(['追加出来ました！']);
       reset();
       setImageUrl('');
     } catch (err) {
-      console.log(err);
+      setToast(['追加に失敗しました', 'error']);
     }
   };
 
@@ -63,6 +66,10 @@ export const AddCategoryDialog = () => {
         name="category"
         inputRef={register({
           required: '必須項目です',
+          pattern: {
+            value: /[^ |　]/,
+            message: 'スペースのみの入力はできません。',
+          },
         })}
         error={errors.category}
         label="カテゴリー名*"

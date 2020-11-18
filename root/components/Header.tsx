@@ -17,6 +17,9 @@ import Typography from '@material-ui/core/Typography';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import FaceIcon from '@material-ui/icons/Face';
+import { auth } from '../utils/firebase';
+import { useSetRecoilState } from 'recoil';
+import { dialogData, RECOMMEND_REGISTER } from '../../recoil/dialog';
 
 const useStyles = makeStyles(() => ({
   icon: {
@@ -31,6 +34,8 @@ export const Header = () => {
   const classes = useStyles();
   const [open, setOpen] = useState<null | HTMLElement>(null);
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
+  const user = auth.currentUser;
+  const setDialog = useSetRecoilState(dialogData);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(e.currentTarget);
@@ -53,7 +58,12 @@ export const Header = () => {
                 <IconButton
                   aria-label="my"
                   onClick={() => {
-                    setActivePage('my');
+                    user
+                      ? setActivePage('my')
+                      : setDialog((prev) => ({
+                          ...prev,
+                          [RECOMMEND_REGISTER]: true,
+                        }));
                   }}
                 >
                   <FaceIcon className={classes.icon} />

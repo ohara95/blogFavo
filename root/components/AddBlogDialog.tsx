@@ -11,6 +11,8 @@ import { Label, LabelText, FlexLabel } from '../../styles/common';
 
 //material
 import { Checkbox } from '@material-ui/core';
+import { useSetRecoilState } from 'recoil';
+import { toastValue } from '../../recoil/root';
 
 export const AddBlogDialog = () => {
   const { register, errors, handleSubmit, reset, control } = useForm<
@@ -20,6 +22,7 @@ export const AddBlogDialog = () => {
   const [category, setCategory] = useState<Category | null>(null);
   const [isPublic, setIsPublic] = useState(false);
   const user = auth.currentUser;
+  const setToast = useSetRecoilState(toastValue);
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -35,13 +38,19 @@ export const AddBlogDialog = () => {
         isFavo: false,
         laterRead: false,
       });
-      alert('追加出来ました！');
+
+      reset();
+      //memo 送信したらボタン選択解除したい
+      //(連続で追加する場合によくないので)
+      const res = await db.collection('tags').get();
+      res.docs.map((doc) => doc.ref.update({ isChecked: false }));
+      setToast(['追加出来ました！']);
       setCategory(null);
       setTag([]);
       setIsPublic(false);
       reset();
     } catch (error) {
-      console.log(error);
+      setToast(['追加に失敗しました', 'error']);
     }
   };
 
@@ -53,6 +62,10 @@ export const AddBlogDialog = () => {
       control,
       inputRef: register({
         required: '必須項目です',
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
       }),
     },
     {
@@ -75,7 +88,13 @@ export const AddBlogDialog = () => {
       control,
       multiline: true,
       rows: 5,
-      inputRef: register,
+      error: errors.memo,
+      inputRef: register({
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
+      }),
     },
   ];
 

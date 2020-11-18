@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { CircularProgress } from '@material-ui/core';
@@ -11,9 +11,11 @@ import { useForm } from 'react-hook-form';
 import { auth } from '../root/utils/firebase';
 import styled from 'styled-components';
 import { sp } from '../styles/media';
-import { Toast } from '../root/components/Toast';
 import { InputWithLabel } from '../root/components/InputWithLabel';
 import { InputType } from '../types';
+import { SignInWithSns } from '../root/components/SignInWithSns';
+import { useSetRecoilState } from 'recoil';
+import { toastValue } from '../recoil/root';
 
 type FormData = {
   email: string;
@@ -24,13 +26,8 @@ export default function SignIn() {
   const { register, handleSubmit, reset, errors, formState, control } = useForm<
     FormData
   >();
-  const [open, setOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const setToast = useSetRecoilState(toastValue);
 
   /** サインイン */
   const handleSignIn = async (data: FormData) => {
@@ -41,11 +38,9 @@ export default function SignIn() {
       router.push('/');
     } catch (err) {
       if (err.code === 'auth/user-not-found') {
-        setErrorMessage('メールアドレスが間違っています');
-        setOpen(true);
+        setToast(['メールアドレスが間違っています', 'error']);
       } else if (err.code === 'auth/wrong-password') {
-        setErrorMessage('パスワードが間違っています');
-        setOpen(true);
+        setToast(['パスワードが間違っています', 'error']);
       }
     }
   };
@@ -71,7 +66,13 @@ export default function SignIn() {
       error: errors.password,
       control: control,
       type: 'password',
-      inputRef: register({ required: 'パスワードを入力してください' }),
+      inputRef: register({
+        required: 'パスワードを入力してください',
+        pattern: {
+          value: /[^ |　]/,
+          message: 'スペースのみの入力はできません。',
+        },
+      }),
     },
   ];
 
@@ -90,21 +91,12 @@ export default function SignIn() {
         >
           {formState.isSubmitting ? <CircularProgress size={14} /> : 'ログイン'}
         </StyledButton>
+        <SignInWithSns />
         <AuthenticateLink>
           <Link href="/forget">パスワードを忘れた</Link>
           <Link href="/signup">アカウントを持っていない方はこちら</Link>
         </AuthenticateLink>
       </AuthenticateForm>
-
-      {/* トースト */}
-      <Toast
-        vertical="top"
-        horizontal="center"
-        open={open}
-        serverity="error"
-        message={errorMessage}
-        handleClose={handleClose}
-      />
     </AuthenticateContainer>
   );
 }

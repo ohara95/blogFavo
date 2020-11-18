@@ -1,10 +1,14 @@
 import React, { FC, useState, useEffect } from 'react';
-import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
 import { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
 import { useFirebase } from '../../utils/hooks';
-import { ADD_BLOG, ADD_CATEGORY } from '../../../recoil/dialog';
+import {
+  ADD_BLOG,
+  ADD_CATEGORY,
+  RECOMMEND_REGISTER,
+} from '../../../recoil/dialog';
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { AddButton } from '../../components/AddButton';
@@ -75,6 +79,12 @@ const Main: FC = () => {
     return arr.filter((el, i, self) => self.indexOf(el) === i);
   };
 
+  const dialogKey = user
+    ? currentDisplay === 'list'
+      ? ADD_BLOG
+      : ADD_CATEGORY
+    : RECOMMEND_REGISTER;
+
   return (
     <>
       <Header />
@@ -100,9 +110,7 @@ const Main: FC = () => {
         <Pagination count={10} size="large" style={{ marginBottom: 20 }} />
       </Grid>
       <Footer />
-      <AddButton
-        dialogKey={currentDisplay === 'list' ? ADD_BLOG : ADD_CATEGORY}
-      />
+      <AddButton dialogKey={dialogKey} />
     </>
   );
 };
