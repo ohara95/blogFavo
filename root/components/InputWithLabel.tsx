@@ -6,7 +6,7 @@ import {
   BaseTextField,
 } from '../../styles/common';
 import { InputType } from '../../types';
-import { InputAdornment } from '@material-ui/core';
+// import { InputAdornment } from '@material-ui/core';
 import { Controller } from 'react-hook-form';
 
 type Props = InputType;
@@ -15,6 +15,7 @@ export const InputWithLabel: FC<Props> = ({
   label,
   error,
   control,
+  name,
   defaultValue,
   ...otherProps
 }) => {
@@ -25,14 +26,7 @@ export const InputWithLabel: FC<Props> = ({
         control={control}
         name={name}
         defaultValue={defaultValue}
-        as={
-          <BaseTextField
-            {...otherProps}
-            fullWidth
-            error={error}
-            InputProps={{ startAdornment: <InputAdornment position="start" /> }}
-          />
-        }
+        as={<BaseTextField {...otherProps} fullWidth error={error} />}
       />
       {error && <InputError>{error.message}</InputError>}
     </Label>

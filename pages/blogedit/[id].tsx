@@ -1,50 +1,83 @@
 import React, { useState, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { Category, FormValues, InputType } from '../../types';
-import {
-  CategorySelector,
-  InputWithLabel,
-  DialogBase,
-  Tag,
-} from '../components';
-import { EDIT_BLOG, dialogData } from '../../recoil/dialog';
-import { db } from '../utils/firebase';
 import { Label, LabelText, FlexLabel } from '../../styles/common';
-import { useFirebase } from '../utils/hooks';
+import { db } from '../../root/utils/firebase';
+import { useFirebase } from '../../root/utils/hooks';
+import { CategorySelector } from '../../root/components/CategorySelector';
+import { InputWithLabel } from '../../root/components/InputWithLabel';
+import { Tag } from '../../root/components/Tag';
+import { EditBase } from '../../root/components/EditBase';
+
 //material
 import { Checkbox } from '@material-ui/core';
 
-export const EditBlogDialog = () => {
-  const [dialog, setDialog] = useRecoilState(dialogData);
+const EditBlog = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
   const blog = useFirebase<FormValues>('blog');
   const categoryList = useFirebase<Category>('categoryList');
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [isPublic, setIsPublic] = useState(false);
-  const { register, errors, handleSubmit, control } = useForm<FormValues>({
+  const [targetBlog, setTargetBlog] = useState<FormValues>();
+  const { register, errors, handleSubmit, control, reset } = useForm<
+    FormValues
+  >({
     mode: 'onBlur',
   });
-  const targetBlog = blog.find((db) => db.id === dialog.editBlog.id);
   const targetCategory =
-    targetBlog && categoryList
-      ? categoryList.find((category) => category.name === targetBlog.category)
+    blog && categoryList
+      ? categoryList.find(
+          (category) => category.name === blog.find((db) => db)?.category
+        )
       : null;
 
+  // -----useEffect[start]-----
   useEffect(() => {
-    if (targetBlog) setIsPublic(targetBlog.isPublic);
+    if (blog) {
+      setTargetBlog(blog.find((db) => db.id === id));
+    }
+  }, [blog]);
+
+  useEffect(() => {
+    if (targetBlog) {
+      reset({
+        title: targetBlog?.title,
+        url: targetBlog?.url,
+        memo: targetBlog?.memo,
+      });
+    }
+  }, [targetBlog, reset]);
+
+  useEffect(() => {
+    if (targetBlog) {
+      setIsPublic(targetBlog.isPublic);
+      setTag(targetBlog.tag);
+    }
   }, [targetBlog]);
+
+  useEffect(() => {
+    if (targetCategory) {
+      setCategory(targetCategory);
+    }
+  }, [targetCategory]);
+  // ------useEffect[end]------
 
   const upDateValidation = async (data: FormValues) => {
     const dataDetail = ['title', 'url', 'memo'];
     try {
       await dataDetail.map((type) => {
         if (data[type as 'title' | 'url' | 'memo']) {
-          db.collection('blog')
-            .doc(dialog.editBlog.id)
-            .update({
-              [type]: data[type as 'title' | 'url' | 'memo'],
-            });
+          if (typeof id === 'string') {
+            db.collection('blog')
+              .doc(id)
+              .update({
+                [type]: data[type as 'title' | 'url' | 'memo'],
+              });
+          }
         } else {
           return;
         }
@@ -59,30 +92,22 @@ export const EditBlogDialog = () => {
       upDateValidation(data);
 
       if (category) {
-        await db.collection('blog').doc(dialog.editBlog.id).update({
-          category: category?.name,
+        if (typeof id === 'string') {
+          await db.collection('blog').doc(id).update({
+            category: category?.name,
+          });
+        }
+      }
+      if (typeof id === 'string') {
+        await db.collection('blog').doc(id).update({
+          isPublic,
         });
       }
-      await db.collection('blog').doc(dialog.editBlog.id).update({
-        isPublic,
-      });
-      setDialog((prev) => ({
-        ...prev,
-        [EDIT_BLOG]: {
-          isDisplay: false,
-          id: '',
-        },
-      }));
+      router.back();
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    if (targetBlog?.category && categoryList) {
-      setCategory(targetCategory as Category);
-    }
-  }, [targetBlog, categoryList]);
 
   const inputList: InputType[] = [
     {
@@ -90,7 +115,6 @@ export const EditBlogDialog = () => {
       label: 'Title*',
       error: errors.title,
       control,
-      defaultValue: targetBlog?.title,
       inputRef: register({
         required: '必須項目です',
       }),
@@ -100,7 +124,6 @@ export const EditBlogDialog = () => {
       label: 'URL*',
       error: errors.url,
       control,
-      defaultValue: targetBlog?.url,
       inputRef: register({
         required: '必須項目です',
         pattern: {
@@ -117,26 +140,16 @@ export const EditBlogDialog = () => {
       multiline: true,
       rows: 5,
       inputRef: register,
-      defaultValue: targetBlog?.memo,
     },
   ];
 
   return (
-    <DialogBase
-      title="ブログ登録内容変更"
-      handleSubmit={handleSubmit(onSubmit)}
-      dialogKey={EDIT_BLOG}
-      doneText="更新"
-    >
+    <EditBase handleSubmit={handleSubmit(onSubmit)} title="ブログ編集">
       {inputList.map((props) => (
         <InputWithLabel key={props.name} {...props} />
       ))}
       <CategorySelector category={category} setCategory={setCategory} />
-      <Tag
-        tag={targetBlog?.tag}
-        setTag={setTag}
-        defaultValue={targetBlog?.tag}
-      />
+      <Tag tag={tag} setTag={setTag} />
       <Label>
         <FlexLabel>
           <LabelText>非公開</LabelText>
@@ -147,6 +160,8 @@ export const EditBlogDialog = () => {
           />
         </FlexLabel>
       </Label>
-    </DialogBase>
+    </EditBase>
   );
 };
+
+export default EditBlog;

@@ -4,15 +4,13 @@ import { Category, FormValues } from '../../../types';
 import { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
 import { useFirebase } from '../../utils/hooks';
-import {
-  ADD_BLOG,
-  ADD_CATEGORY,
-  EDIT_BLOG,
-  EDIT_CATEGORY,
-  dialogData,
-} from '../../../recoil/dialog';
-import { Header, Footer, AddButton } from '../../components';
-import { BlogDetail, PageTop, CategoryDetail } from '../main/components';
+import { ADD_BLOG, ADD_CATEGORY } from '../../../recoil/dialog';
+import { Header } from '../../components/Header';
+import { Footer } from '../../components/Footer';
+import { AddButton } from '../../components/AddButton';
+import { BlogDetail } from '../main/components/BlogDetail';
+import { PageTop } from '../main/components/PageTop';
+import { CategoryDetail } from '../main/components/CategoryDetail';
 //material
 import { Pagination } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
@@ -24,7 +22,6 @@ const Main: FC = () => {
   const categoryList = useFirebase<Category>('categoryList');
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [filterBlog, setFilterBlog] = useState<FormValues[]>([]);
-  const setDialog = useSetRecoilState(dialogData);
 
   useEffect(() => {
     if (user) {
@@ -59,26 +56,6 @@ const Main: FC = () => {
     });
   };
 
-  const editItem = (id: string | undefined, type: 'blog' | 'category') => {
-    if (type === 'blog') {
-      setDialog((prev) => ({
-        ...prev,
-        [EDIT_BLOG]: {
-          isDisplay: true,
-          id,
-        },
-      }));
-    } else {
-      setDialog((prev) => ({
-        ...prev,
-        [EDIT_CATEGORY]: {
-          isDisplay: true,
-          id,
-        },
-      }));
-    }
-  };
-
   const deleteItem = (
     id: string | undefined,
     type: 'blog' | 'categoryList'
@@ -109,7 +86,6 @@ const Main: FC = () => {
             handleIconClick={handleIconClick}
             data={user && activePage === 'my' ? filterBlog : blog}
             deleteItem={deleteItem}
-            editItem={editItem}
           />
         ) : (
           <CategoryDetail
@@ -117,7 +93,6 @@ const Main: FC = () => {
             blogData={activePage === 'my' ? filterBlog : blog}
             deleteItem={deleteItem}
             user={user}
-            editItem={editItem}
           />
         )}
       </main>

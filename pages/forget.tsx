@@ -17,7 +17,9 @@ type FormData = {
 };
 
 const ForgetPassword = () => {
-  const { register, handleSubmit, errors, formState } = useForm<FormData>();
+  const { register, handleSubmit, errors, formState, control } = useForm<
+    FormData
+  >();
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
@@ -53,6 +55,7 @@ const ForgetPassword = () => {
             },
           })}
           error={errors.email}
+          control={control}
           name="email"
           type="email"
         />

@@ -23,7 +23,7 @@ type FormData = {
 };
 
 export default function SignUp() {
-  const { register, handleSubmit, reset, errors, formState } = useForm<
+  const { register, handleSubmit, reset, errors, formState, control } = useForm<
     FormData
   >();
   const [isError, setIsError] = useState(false);
@@ -86,12 +86,14 @@ export default function SignUp() {
       name: 'name',
       label: '名前',
       error: errors.name,
+      control: control,
       inputRef: register({ required: '名前を入力してください' }),
     },
     {
       name: 'email',
       label: 'メールアドレス',
       error: errors.email,
+      control: control,
       type: 'email',
       inputRef: register({
         required: 'メールアドレスを入力してください',
@@ -105,6 +107,7 @@ export default function SignUp() {
       name: 'password',
       label: 'パスワード',
       error: errors.password,
+      control: control,
       type: 'password',
       inputRef: register({ required: 'パスワードを入力してください' }),
     },
@@ -112,10 +115,12 @@ export default function SignUp() {
       name: 'passwordConfirm',
       label: 'パスワード再確認',
       error: errors.passwordConfirm,
+      control: control,
       type: 'password',
       inputRef: register({ required: 'パスワード再確認を入力してください' }),
     },
   ];
+  console.log(formState);
 
   return (
     <AuthenticateContainer>

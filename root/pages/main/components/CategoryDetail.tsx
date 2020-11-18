@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Category, FormValues } from '../../../../types';
 import firebase from '../../../utils/firebase';
+import Link from 'next/link';
 // material
 import {
   Button,
@@ -46,7 +47,6 @@ type Props = {
   blogData: FormValues[];
   deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
   user: firebase.User | null;
-  editItem: (id: string | undefined, type: 'blog' | 'category') => void;
 };
 
 export const CategoryDetail: FC<Props> = ({
@@ -54,7 +54,6 @@ export const CategoryDetail: FC<Props> = ({
   blogData,
   deleteItem,
   user,
-  editItem,
 }) => {
   const classes = useStyles();
 
@@ -91,15 +90,9 @@ export const CategoryDetail: FC<Props> = ({
                 </Button>
                 {user && (
                   <>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        editItem(card?.id, 'category');
-                      }}
-                    >
-                      edit
-                    </Button>
+                    <Link href={`/categoryedit/${card?.id}`}>
+                      <Button>edit</Button>
+                    </Link>
                     <Button
                       size="small"
                       color="secondary"

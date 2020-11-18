@@ -2,21 +2,19 @@ import React, { useEffect, FC, useState } from 'react';
 import { db } from '../utils/firebase';
 import { Tags } from '../../types';
 import { useFirebase } from '../utils/hooks';
-//material
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
-import Chip from '@material-ui/core/Chip';
-import { Label, LabelText } from '../../styles/common';
+import { Label, LabelText, BaseTextField } from '../../styles/common';
 import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
+//material
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Chip } from '@material-ui/core';
 
 type Props = {
   tag: string[] | undefined;
   setTag: (tag: string[]) => void;
-  defaultValue?: any;
 };
 
-export const Tag: FC<Props> = ({ tag, setTag, defaultValue }) => {
+export const Tag: FC<Props> = ({ tag, setTag }) => {
   const tags = useFirebase<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
 
@@ -36,6 +34,7 @@ export const Tag: FC<Props> = ({ tag, setTag, defaultValue }) => {
     <Label>
       <LabelText>Tag</LabelText>
       <StyledAutocomplete
+        value={tag}
         onChange={(...el) => {
           setTag(el[1] as string[]);
         }}
@@ -62,14 +61,13 @@ export const Tag: FC<Props> = ({ tag, setTag, defaultValue }) => {
         }
         renderInput={(params) => {
           return (
-            <StyledTextField
+            <BaseTextField
               {...params}
               variant="standard"
               placeholder="追加してください"
             />
           );
         }}
-        defaultValue={defaultValue}
       />
     </Label>
   );
@@ -79,11 +77,6 @@ const StyledAutocomplete = styled(Autocomplete)`
   .MuiFormControl-root {
     flex-direction: row;
   }
-`;
-
-const StyledTextField = styled(TextField)`
-  height: 40px;
-  padding: 0 10px;
 `;
 
 const StyledChip = styled(Chip)`

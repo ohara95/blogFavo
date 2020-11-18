@@ -1,15 +1,18 @@
 import React, { FC } from 'react';
+import Link from 'next/link';
 import { FormValues } from '../../../../types';
 // material
-import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Grid,
+  Container,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import { purple } from '@material-ui/core/colors';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
@@ -49,7 +52,6 @@ type Props = {
     type: 'isFavo' | 'laterRead'
   ) => void;
   deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
-  editItem: (id: string | undefined, type: 'blog' | 'category') => void;
 };
 
 export const BlogDetail: FC<Props> = ({
@@ -57,7 +59,6 @@ export const BlogDetail: FC<Props> = ({
   activePage,
   handleIconClick,
   deleteItem,
-  editItem,
 }) => {
   const classes = useStyles();
 
@@ -75,7 +76,6 @@ export const BlogDetail: FC<Props> = ({
                 />
                 <CardContent className={classes.cardContent}>
                   <Typography gutterBottom variant="h5" component="h2">
-                    {/* {card?.postedUser?.onSnapshot((snap) => snap.data())} */}
                     {card?.title && card.title}
                   </Typography>
                   <Typography>{card?.memo && card?.memo}</Typography>
@@ -83,7 +83,7 @@ export const BlogDetail: FC<Props> = ({
                     {card?.tag &&
                       card?.tag.map((name) => (
                         <Button
-                          key={card?.id}
+                          key={card?.id?.toString()}
                           disabled
                           variant="outlined"
                           size="small"
@@ -106,15 +106,11 @@ export const BlogDetail: FC<Props> = ({
                   </Button>
                   {activePage === 'my' && (
                     <>
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={() => {
-                          editItem(card && card.id, 'blog');
-                        }}
-                      >
-                        edit
-                      </Button>
+                      <Link href={`/blogedit/${card?.id}`}>
+                        <Button size="small" color="primary">
+                          edit
+                        </Button>
+                      </Link>
                       <Button
                         size="small"
                         color="secondary"

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ImageUpload } from '../utils/ImageUpload';
 import { db, storage, auth } from '../utils/firebase';
-import { DialogBase, InputWithLabel } from '../components';
+import { DialogBase } from '../components/DialogBase';
+import { InputWithLabel } from '../components/InputWithLabel';
 import { useFirebase } from '../utils/hooks';
 import { Category } from '../../types';
 import { ADD_CATEGORY } from '../../recoil/dialog';

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Category, FormValues, InputType } from '../../types';
-import {
-  DialogBase,
-  Tag,
-  InputWithLabel,
-  CategorySelector,
-} from '../components';
+import { DialogBase } from '../components/DialogBase';
+import { Tag } from '../components/Tag';
+import { InputWithLabel } from '../components/InputWithLabel';
+import { CategorySelector } from '../components/CategorySelector';
 import { ADD_BLOG } from '../../recoil/dialog';
 import firebase, { auth, db } from '../utils/firebase';
 import { Label, LabelText, FlexLabel } from '../../styles/common';
