@@ -16,7 +16,6 @@ export const InputWithLabel: FC<Props> = ({
   error,
   control,
   name,
-  defaultValue,
   ...otherProps
 }) => {
   return (
@@ -25,7 +24,6 @@ export const InputWithLabel: FC<Props> = ({
       <Controller
         control={control}
         name={name}
-        defaultValue={defaultValue}
         as={<BaseTextField {...otherProps} fullWidth error={error} />}
       />
       {error && <InputError>{error.message}</InputError>}

@@ -97,7 +97,6 @@ const EditCategory = () => {
         })}
         error={errors.category}
         label="カテゴリー名*"
-        defaultValue={categoryList && categoryDetail?.name}
       />
       <ActionsWrapper>
         <LabelText>カテゴリー画像登録</LabelText>

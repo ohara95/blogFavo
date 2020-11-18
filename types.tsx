@@ -44,5 +44,4 @@ export type InputType = {
   multiline?: boolean;
   rows?: number;
   placeholder?: string;
-  defaultValue?: string;
 };
