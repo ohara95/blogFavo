@@ -13,6 +13,7 @@ import { Label, LabelText, FlexLabel } from '../../styles/common';
 import { Checkbox } from '@material-ui/core';
 import { useSetRecoilState } from 'recoil';
 import { toastValue } from '../../recoil/root';
+import { useFirebase } from '../utils/hooks';
 
 export const AddBlogDialog = () => {
   const { register, errors, handleSubmit, reset, control } = useForm<
@@ -21,6 +22,7 @@ export const AddBlogDialog = () => {
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [isPublic, setIsPublic] = useState(false);
+  const categoryList = useFirebase<Category>('categoryList');
   const user = auth.currentUser;
   const setToast = useSetRecoilState(toastValue);
 
@@ -30,18 +32,19 @@ export const AddBlogDialog = () => {
         title: data.title,
         url: data.url,
         memo: data.memo,
-        category: category?.name,
+        category: {
+          name: category ? category.name : null,
+          id: categoryList.find((db) => db.name === category?.name)?.id,
+        },
         tag,
         isPublic,
-        postedUser: db.collection('users').doc(user?.uid),
+        postedUser: user?.uid,
         postedAt: firebase.firestore.Timestamp.now(),
         isFavo: false,
         laterRead: false,
       });
 
       reset();
-      //memo 送信したらボタン選択解除したい
-      //(連続で追加する場合によくないので)
       const res = await db.collection('tags').get();
       res.docs.map((doc) => doc.ref.update({ isChecked: false }));
       setToast(['追加出来ました！']);

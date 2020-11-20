@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { dialogData } from '../../recoil/dialog';
+import { deleteConfig } from '../../recoil/configDialog';
 import { sp } from '../../styles/media';
 //material
 import {
@@ -14,47 +14,52 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 
 type Props = {
-  title: string;
+  title?: string;
   handleSubmit?: any;
-  dialogKey: string;
-  noActions?: boolean;
-  doneText?: string;
+  text: string;
+  doneText: string;
 };
 
-export const DialogBase: FC<Props> = ({
-  children,
-  title,
-  handleSubmit,
-  dialogKey,
-  noActions,
+export const ConfirmDialog: FC<Props> = ({
+  title = '確認',
+  text,
   doneText,
 }) => {
-  const setDialog = useSetRecoilState(dialogData);
+  const setDialog = useSetRecoilState(deleteConfig);
   const handleClose = () => {
-    setDialog((prev) => ({
-      ...prev,
-      [dialogKey]: false,
-    }));
+    setDialog({
+      isDisplay: false,
+      id: '',
+      isDone: false,
+      type: '',
+    });
   };
   return (
     <StyledDialog open={true} onClose={handleClose}>
-      <Form onSubmit={handleSubmit}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <StyledCloseIcon onClick={handleClose} />
-        </DialogHeader>
-        <StyledDialogContent>{children}</StyledDialogContent>
-        {!noActions && (
-          <DialogActions>
-            <Button onClick={handleClose} color="primary">
-              キャンセル
-            </Button>
-            <Button type="submit" color="primary" autoFocus>
-              {doneText || '追加'}
-            </Button>
-          </DialogActions>
-        )}
-      </Form>
+      <DialogHeader>
+        <DialogTitle>{title}</DialogTitle>
+        <StyledCloseIcon onClick={handleClose} />
+      </DialogHeader>
+      <StyledDialogContent>{text}</StyledDialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          キャンセル
+        </Button>
+        <Button
+          type="submit"
+          color="primary"
+          autoFocus
+          onClick={() => {
+            setDialog((prev) => ({
+              ...prev,
+              isDone: true,
+              isDisplay: false,
+            }));
+          }}
+        >
+          {doneText}
+        </Button>
+      </DialogActions>
     </StyledDialog>
   );
 };
@@ -69,13 +74,6 @@ const StyledDialog = styled(Dialog)`
     .MuiDialog-paperScrollPaper {
         max-height: 100vh;
     }
-  `}
-`;
-
-const Form = styled.form`
-  ${sp`
-    width: 100vw;
-    height: 100%;
   `}
 `;
 

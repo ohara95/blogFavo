@@ -23,7 +23,9 @@ export const AddCategoryDialog = () => {
   const categoryList = useFirebase<Category>('categoryList');
   const [imageUrl, setImageUrl] = useState('');
   const user = auth.currentUser;
-  const { register, errors, handleSubmit, reset } = useForm<FormData>();
+  const { register, errors, handleSubmit, reset, control } = useForm<
+    FormData
+  >();
   const setToast = useSetRecoilState(toastValue);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,6 +75,7 @@ export const AddCategoryDialog = () => {
         })}
         error={errors.category}
         label="カテゴリー名*"
+        control={control}
       />
       <ActionsWrapper>
         <LabelText>カテゴリー画像登録</LabelText>

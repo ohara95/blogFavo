@@ -46,14 +46,14 @@ type Props = {
   data: (Category | undefined)[];
   blogData: FormValues[];
   deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
-  user: firebase.User | null;
+  activePage: 'my' | 'user';
 };
 
 export const CategoryDetail: FC<Props> = ({
   data,
   blogData,
   deleteItem,
-  user,
+  activePage,
 }) => {
   const classes = useStyles();
 
@@ -81,14 +81,18 @@ export const CategoryDetail: FC<Props> = ({
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h6" component="h6">
                   {card?.name ? card?.name : 'title'}(
-                  {blogData.filter((db) => db.category === card?.name).length})
+                  {
+                    blogData.filter((db) => db.category.name === card?.name)
+                      .length
+                  }
+                  )
                 </Typography>
               </CardContent>
               <CardActions>
                 <Button size="small" color="primary">
                   list
                 </Button>
-                {user && (
+                {activePage === 'my' && (
                   <>
                     <Link href={`/categoryedit/${card?.id}`}>
                       <Button>edit</Button>
