@@ -9,6 +9,7 @@ import {
   ADD_CATEGORY,
   RECOMMEND_REGISTER,
 } from '../../../recoil/dialog';
+import { deleteConfig } from '../../../recoil/configDialog';
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { AddButton } from '../../components/AddButton';
@@ -26,6 +27,7 @@ const Main: FC = () => {
   const categoryList = useFirebase<Category>('categoryList');
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [filterBlog, setFilterBlog] = useState<FormValues[]>([]);
+  const [configDialog, setConfigDialog] = useRecoilState(deleteConfig);
 
   useEffect(() => {
     if (user) {
@@ -64,16 +66,50 @@ const Main: FC = () => {
     id: string | undefined,
     type: 'blog' | 'categoryList'
   ) => {
-    db.collection(type).doc(id).delete();
+    setConfigDialog((prev) => ({
+      ...prev,
+      id: id ? id : '',
+      isDisplay: true,
+      type,
+    }));
   };
+
+  useEffect(() => {
+    if (configDialog.isDone) {
+      db.collection(configDialog.type).doc(configDialog.id).delete();
+      if (configDialog.type === 'categoryList') {
+        db.collection('blog')
+          .get()
+          .then((res) => {
+            res.docs.map((doc) => {
+              if (doc.data().category.id === configDialog.id) {
+                doc.ref.update({
+                  category: {
+                    name: '',
+                    id: '',
+                  },
+                });
+              }
+            });
+          });
+      }
+      setConfigDialog({
+        isDone: false,
+        isDisplay: false,
+        id: '',
+        type: '',
+      });
+    }
+  }, [configDialog.isDone]);
 
   const holdCategory = (data: FormValues[]) => {
     let arr: Category[] = [];
     for (let i = 0; i < data.length; i++) {
       categoryList.forEach((category) => {
-        if (category.name === data[i]?.category) {
-          arr.push(category);
-        }
+        //一旦コメントアウト
+        // if (category.name === data[i]?.category.name) {
+        arr.push(category);
+        // }
       });
     }
     return arr.filter((el, i, self) => self.indexOf(el) === i);
@@ -99,10 +135,10 @@ const Main: FC = () => {
           />
         ) : (
           <CategoryDetail
-            data={activePage === 'my' ? holdCategory(filterBlog) : categoryList}
+            data={activePage === 'my' ? holdCategory(blog) : categoryList}
             blogData={activePage === 'my' ? filterBlog : blog}
             deleteItem={deleteItem}
-            user={user}
+            activePage={activePage}
           />
         )}
       </main>

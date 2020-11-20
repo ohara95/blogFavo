@@ -1,6 +1,11 @@
 import React, { FC } from 'react';
 import Link from 'next/link';
 import { FormValues } from '../../../../types';
+import { auth } from '../../../utils/firebase';
+import { useSetRecoilState } from 'recoil';
+import { dialogData, RECOMMEND_REGISTER } from '../../../../recoil/dialog';
+import styled from 'styled-components';
+import { COLOR } from '../../../../styles/color';
 // material
 import {
   Button,
@@ -18,9 +23,6 @@ import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
-import { auth } from '../../../utils/firebase';
-import { useSetRecoilState } from 'recoil';
-import { dialogData, RECOMMEND_REGISTER } from '../../../../recoil/dialog';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -87,21 +89,7 @@ export const BlogDetail: FC<Props> = ({
                   <Typography>
                     {card?.tag &&
                       card?.tag.map((name) => (
-                        <Button
-                          key={card?.id?.toString()}
-                          disabled
-                          variant="outlined"
-                          size="small"
-                          //何故かclassNameだと当たらないので直
-                          style={{
-                            color: purple[200],
-                            border: `1px ${purple[200]} solid`,
-                            marginTop: 10,
-                            marginRight: 5,
-                          }}
-                        >
-                          {name}
-                        </Button>
+                        <StyleTag key={card.id?.toString()}>{name}</StyleTag>
                       ))}
                   </Typography>
                 </CardContent>
@@ -174,3 +162,16 @@ export const BlogDetail: FC<Props> = ({
     </Container>
   );
 };
+
+const StyleTag = styled.div`
+  position: relative;
+  margin: 2px;
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid ${COLOR.TURQUOISE};
+  text-transform: uppercase;
+  font-family: sans-serif;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+`;

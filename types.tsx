@@ -4,7 +4,10 @@ export type FormValues = {
   title: string;
   url: string;
   memo: string;
-  category: string;
+  category: {
+    name: string;
+    id: string;
+  };
   tag: string[];
   isPublic: boolean;
   id?: string;
