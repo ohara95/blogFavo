@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
 import { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
@@ -8,8 +8,6 @@ import {
   ADD_BLOG,
   ADD_CATEGORY,
   RECOMMEND_REGISTER,
-  // DELETE_CONFIRM,
-  dialogData,
 } from '../../../recoil/dialog';
 import { deleteConfig } from '../../../recoil/configDialog';
 import { Header } from '../../components/Header';
@@ -21,7 +19,6 @@ import { CategoryDetail } from '../main/components/CategoryDetail';
 //material
 import { Pagination } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
-import { red } from '@material-ui/core/colors';
 
 const Main: FC = () => {
   const user = auth.currentUser;
