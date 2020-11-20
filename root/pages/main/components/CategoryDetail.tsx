@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { Category, FormValues } from '../../../../types';
-import firebase from '../../../utils/firebase';
 import Link from 'next/link';
 // material
 import {
@@ -15,6 +14,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { cyan } from '@material-ui/core/colors';
+import { DeleteButton } from '../../../components/DeleteButton';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -49,12 +49,7 @@ type Props = {
   activePage: 'my' | 'user';
 };
 
-export const CategoryDetail: FC<Props> = ({
-  data,
-  blogData,
-  deleteItem,
-  activePage,
-}) => {
+export const CategoryDetail: FC<Props> = ({ data, blogData, activePage }) => {
   const classes = useStyles();
 
   return (
@@ -97,15 +92,7 @@ export const CategoryDetail: FC<Props> = ({
                     <Link href={`/categoryedit/${card?.id}`}>
                       <Button>edit</Button>
                     </Link>
-                    <Button
-                      size="small"
-                      color="secondary"
-                      onClick={() => {
-                        deleteItem(card?.id, 'categoryList');
-                      }}
-                    >
-                      delete
-                    </Button>
+                    <DeleteButton type="categoryList" id={card?.id} />
                   </>
                 )}
               </CardActions>
