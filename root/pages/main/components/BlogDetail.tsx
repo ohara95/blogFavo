@@ -23,6 +23,7 @@ import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
+import { DeleteButton } from '../../../components/DeleteButton';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -56,14 +57,12 @@ type Props = {
     id: string | undefined,
     type: 'isFavo' | 'laterRead'
   ) => void;
-  deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
 };
 
 export const BlogDetail: FC<Props> = ({
   data,
   activePage,
   handleIconClick,
-  deleteItem,
 }) => {
   const classes = useStyles();
   const user = auth.currentUser;
@@ -104,13 +103,7 @@ export const BlogDetail: FC<Props> = ({
                           edit
                         </Button>
                       </Link>
-                      <Button
-                        size="small"
-                        color="secondary"
-                        onClick={() => deleteItem(card?.id, 'blog')}
-                      >
-                        delete
-                      </Button>
+                      <DeleteButton type="blog" id={card?.id} />
                     </>
                   )}
                   {activePage === 'user' && (

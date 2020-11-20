@@ -17,8 +17,7 @@ type Props = {
   title: string;
   handleSubmit?: any;
   dialogKey: string;
-  noActions?: boolean;
-  doneText?: string;
+  handleClose?: any;
 };
 
 export const DialogBase: FC<Props> = ({
@@ -26,8 +25,6 @@ export const DialogBase: FC<Props> = ({
   title,
   handleSubmit,
   dialogKey,
-  noActions,
-  doneText,
 }) => {
   const setDialog = useSetRecoilState(dialogData);
   const handleClose = () => {
@@ -44,13 +41,13 @@ export const DialogBase: FC<Props> = ({
           <StyledCloseIcon onClick={handleClose} />
         </DialogHeader>
         <StyledDialogContent>{children}</StyledDialogContent>
-        {!noActions && (
+        {handleSubmit && (
           <DialogActions>
             <Button onClick={handleClose} color="primary">
               キャンセル
             </Button>
             <Button type="submit" color="primary" autoFocus>
-              {doneText || '追加'}
+              追加
             </Button>
           </DialogActions>
         )}
@@ -59,7 +56,7 @@ export const DialogBase: FC<Props> = ({
   );
 };
 
-const StyledDialog = styled(Dialog)`
+export const StyledDialog = styled(Dialog)`
   ${sp`
     width: 100vw;
     .MuiDialog-paper {
@@ -72,18 +69,27 @@ const StyledDialog = styled(Dialog)`
   `}
 `;
 
+export const DialogHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: auto;
+`;
+
+export const StyledDialogContent = styled(DialogContent)`
+  width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  ${sp`
+    width: 100%;
+  `}
+`;
+
 const Form = styled.form`
   ${sp`
     width: 100vw;
     height: 100%;
   `}
-`;
-
-const DialogHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: auto;
 `;
 
 const StyledCloseIcon = styled(CloseIcon)`
@@ -92,13 +98,4 @@ const StyledCloseIcon = styled(CloseIcon)`
         display: block;
         margin-right: 15px;
     `}
-`;
-
-const StyledDialogContent = styled(DialogContent)`
-  width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
-  ${sp`
-    width: 100%;
-  `}
 `;
