@@ -1,21 +1,17 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { CircularProgress } from '@material-ui/core';
-import {
-  AuthenticateForm,
-  AuthenticateContainer,
-  StyledButton,
-} from '../styles/common';
+import { AuthenticateContainer, SPACE_BETWEEN } from '../styles/common';
 import { useForm } from 'react-hook-form';
 import { auth } from '../root/utils/firebase';
-import styled from 'styled-components';
 import { sp } from '../styles/media';
 import { InputWithLabel } from '../root/components/InputWithLabel';
 import { InputType } from '../types';
 import { SignInWithSns } from '../root/components/SignInWithSns';
 import { useSetRecoilState } from 'recoil';
-import { toastValue } from '../recoil/root';
+import { toastState } from '../recoil/root';
+import { EMAIL_VALIDATION, NORMAL_VALIDATION } from '../root/utils/validation';
+import { LoadingButton } from '../root/components/LoadingButton';
 
 type FormData = {
   email: string;
@@ -23,11 +19,16 @@ type FormData = {
 };
 
 export default function SignIn() {
-  const { register, handleSubmit, reset, errors, formState, control } = useForm<
-    FormData
-  >();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    errors,
+    formState: { isSubmitting },
+    control,
+  } = useForm<FormData>();
   const router = useRouter();
-  const setToast = useSetRecoilState(toastValue);
+  const setToast = useSetRecoilState(toastState);
 
   /** サインイン */
   const handleSignIn = async (data: FormData) => {
@@ -52,13 +53,7 @@ export default function SignIn() {
       error: errors.email,
       control: control,
       type: 'email',
-      inputRef: register({
-        required: 'メールアドレスを入力してください',
-        pattern: {
-          value: /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/,
-          message: 'メールアドレスの形式が不正です',
-        },
-      }),
+      inputRef: register(EMAIL_VALIDATION),
     },
     {
       name: 'password',
@@ -66,45 +61,35 @@ export default function SignIn() {
       error: errors.password,
       control: control,
       type: 'password',
-      inputRef: register({
-        required: 'パスワードを入力してください',
-        pattern: {
-          value: /[^ |　]/,
-          message: 'スペースのみの入力はできません。',
-        },
-      }),
+      inputRef: register(NORMAL_VALIDATION),
     },
   ];
 
   return (
     <AuthenticateContainer>
       <h1>Sign in</h1>
-      <AuthenticateForm onSubmit={handleSubmit(handleSignIn)}>
+      <form onSubmit={handleSubmit(handleSignIn)}>
         {inputList.map((props) => (
           <InputWithLabel key={props.name} {...props} />
         ))}
-        <StyledButton
+        <LoadingButton
           type="submit"
           fullWidth
-          disabled={formState.isSubmitting}
-          loading={formState.isSubmitting ? true : undefined} // warningが出るため
+          disabled={isSubmitting}
+          loading={isSubmitting}
         >
-          {formState.isSubmitting ? <CircularProgress size={14} /> : 'ログイン'}
-        </StyledButton>
+          ログイン
+        </LoadingButton>
         <SignInWithSns />
-        <AuthenticateLink>
+        <div
+          css={`
+            ${SPACE_BETWEEN}${sp`flex-direction: column`}
+          `}
+        >
           <Link href="/forget">パスワードを忘れた</Link>
           <Link href="/signup">アカウントを持っていない方はこちら</Link>
-        </AuthenticateLink>
-      </AuthenticateForm>
+        </div>
+      </form>
     </AuthenticateContainer>
   );
 }
-
-const AuthenticateLink = styled.div`
-  display: flex;
-  justify-content: space-between;
-  ${sp`
-    flex-direction: column;
-  `}
-`;

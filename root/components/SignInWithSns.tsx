@@ -7,11 +7,11 @@ import firebase, {
 } from '../utils/firebase';
 import styled from 'styled-components';
 import Image from 'next/image';
-import { toastValue } from '../../recoil/root';
+import { toastState } from '../../recoil/root';
 import { useSetRecoilState } from 'recoil';
 
 export const SignInWithSns = () => {
-  const setToast = useSetRecoilState(toastValue);
+  const setToast = useSetRecoilState(toastState);
 
   const snsLogin = async (provider: firebase.auth.AuthProvider) => {
     try {

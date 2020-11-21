@@ -7,24 +7,29 @@ import { InputWithLabel } from '../components/InputWithLabel';
 import { CategorySelector } from '../components/CategorySelector';
 import { ADD_BLOG } from '../../recoil/dialog';
 import firebase, { auth, db } from '../utils/firebase';
-import { Label, LabelText, FlexLabel } from '../../styles/common';
+import { Label, LabelText } from '../../styles/common';
 
 //material
 import { Checkbox } from '@material-ui/core';
 import { useSetRecoilState } from 'recoil';
-import { toastValue } from '../../recoil/root';
+import { toastState } from '../../recoil/root';
 import { useFirebase } from '../utils/hooks';
+import { NORMAL_VALIDATION } from '../utils/validation';
 
 export const AddBlogDialog = () => {
-  const { register, errors, handleSubmit, reset, control } = useForm<
-    FormValues
-  >({ mode: 'onBlur' });
+  const {
+    register,
+    errors,
+    handleSubmit,
+    reset,
+    control,
+  } = useForm<FormValues>({ mode: 'onBlur' });
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [isPublic, setIsPublic] = useState(false);
   const categoryList = useFirebase<Category>('categoryList');
   const user = auth.currentUser;
-  const setToast = useSetRecoilState(toastValue);
+  const setToast = useSetRecoilState(toastState);
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -44,7 +49,6 @@ export const AddBlogDialog = () => {
         laterRead: false,
       });
 
-      reset();
       const res = await db.collection('tags').get();
       res.docs.map((doc) => doc.ref.update({ isChecked: false }));
       setToast(['追加出来ました！']);
@@ -63,13 +67,7 @@ export const AddBlogDialog = () => {
       label: 'Title*',
       error: errors.title,
       control,
-      inputRef: register({
-        required: '必須項目です',
-        pattern: {
-          value: /[^ |　]/,
-          message: 'スペースのみの入力はできません。',
-        },
-      }),
+      inputRef: register(NORMAL_VALIDATION),
     },
     {
       name: 'url',
@@ -92,12 +90,7 @@ export const AddBlogDialog = () => {
       multiline: true,
       rows: 5,
       error: errors.memo,
-      inputRef: register({
-        pattern: {
-          value: /[^ |　]/,
-          message: 'スペースのみの入力はできません。',
-        },
-      }),
+      inputRef: register(NORMAL_VALIDATION),
     },
   ];
 
@@ -113,14 +106,14 @@ export const AddBlogDialog = () => {
       <CategorySelector category={category} setCategory={setCategory} />
       <Tag tag={tag} setTag={setTag} />
       <Label>
-        <FlexLabel>
+        <label css="display: flex">
           <LabelText>非公開</LabelText>
           <Checkbox
             color="primary"
             checked={isPublic}
             onChange={(e) => setIsPublic(e.target.checked)}
           />
-        </FlexLabel>
+        </label>
       </Label>
     </DialogBase>
   );

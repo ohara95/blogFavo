@@ -1,7 +1,7 @@
 import { Button, DialogActions, DialogTitle } from '@material-ui/core';
 import React, { FC, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { toastValue } from '../../recoil/root';
+import { toastState } from '../../recoil/root';
 import { db } from '../utils/firebase';
 import { DialogHeader, StyledDialog, StyledDialogContent } from './DialogBase';
 
@@ -12,7 +12,7 @@ type Props = {
 
 export const DeleteButton: FC<Props> = ({ id, type }) => {
   const [open, setOpen] = useState(false);
-  const setToast = useSetRecoilState(toastValue);
+  const setToast = useSetRecoilState(toastState);
 
   const deleteItem = async () => {
     try {

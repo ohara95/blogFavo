@@ -12,7 +12,7 @@ export const activeDisplayData = atom<'my' | 'user'>({
 
 export type ToastType = [string, ('error' | 'info' | 'success' | 'warning')?];
 
-export const toastValue = atom<ToastType>({
-  key: 'toastValue',
+export const toastState = atom<ToastType>({
+  key: 'toastState',
   default: [''],
 });

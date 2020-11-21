@@ -4,7 +4,7 @@ import { useRouter } from 'next/dist/client/router';
 //material
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { toastValue } from '../../recoil/root';
+import { toastState } from '../../recoil/root';
 import { useSetRecoilState } from 'recoil';
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 export const SettingMenu: FC<Props> = ({ open, onClose }) => {
   const router = useRouter();
   const user = auth.currentUser;
-  const setToast = useSetRecoilState(toastValue);
+  const setToast = useSetRecoilState(toastState);
 
   const handleAction = async () => {
     if (user) {
