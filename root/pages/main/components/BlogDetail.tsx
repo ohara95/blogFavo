@@ -161,7 +161,7 @@ const StyleTag = styled.div`
   margin: 2px;
   display: inline-block;
   padding: 4px 12px;
-  border: 1px solid ${COLOR.TURQUOISE};
+  border: 1px solid ${COLOR.MAIN};
   text-transform: uppercase;
   font-family: sans-serif;
   font-size: 8px;

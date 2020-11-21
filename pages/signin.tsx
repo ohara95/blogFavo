@@ -25,7 +25,6 @@ export default function SignIn() {
     reset,
     errors,
     formState: { isSubmitting },
-    control,
   } = useForm<FormData>();
   const router = useRouter();
   const setToast = useSetRecoilState(toastState);
@@ -51,7 +50,6 @@ export default function SignIn() {
       name: 'email',
       label: 'メールアドレス',
       error: errors.email,
-      control: control,
       type: 'email',
       inputRef: register(EMAIL_VALIDATION),
     },
@@ -59,7 +57,6 @@ export default function SignIn() {
       name: 'password',
       label: 'パスワード',
       error: errors.password,
-      control: control,
       type: 'password',
       inputRef: register(NORMAL_VALIDATION),
     },

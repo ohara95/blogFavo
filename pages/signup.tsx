@@ -27,7 +27,6 @@ export default function SignUp() {
     reset,
     errors,
     formState,
-    control,
   } = useForm<FormData>();
   const [isError, setIsError] = useState(false);
   const router = useRouter();
@@ -82,14 +81,12 @@ export default function SignUp() {
       name: 'name',
       label: '名前',
       error: errors.name,
-      control: control,
       inputRef: register(NORMAL_VALIDATION),
     },
     {
       name: 'email',
       label: 'メールアドレス',
       error: errors.email,
-      control: control,
       type: 'email',
       inputRef: register(EMAIL_VALIDATION),
     },
@@ -97,7 +94,6 @@ export default function SignUp() {
       name: 'password',
       label: 'パスワード',
       error: errors.password,
-      control: control,
       type: 'password',
       inputRef: register(NORMAL_VALIDATION),
     },
@@ -105,7 +101,6 @@ export default function SignUp() {
       name: 'passwordConfirm',
       label: 'パスワード再確認',
       error: errors.passwordConfirm,
-      control: control,
       type: 'password',
       inputRef: register(NORMAL_VALIDATION),
     },

@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { EditBase } from '../../root/components/EditBase';
 //material
 import { Button } from '@material-ui/core';
+import { NORMAL_VALIDATION } from '../../root/utils/validation';
 
 type FormData = {
   category: string;
@@ -23,9 +24,7 @@ const EditCategory = () => {
   const router = useRouter();
   const { id } = router.query;
   const [imageUrl, setImageUrl] = useState('');
-  const { register, errors, handleSubmit, control, reset } = useForm<FormData>({
-    mode: 'onBlur',
-  });
+  const { register, errors, handleSubmit, reset } = useForm<FormData>();
   const categoryDetail = categoryList?.find((db) => db.id === id);
 
   useEffect(() => {
@@ -91,10 +90,7 @@ const EditCategory = () => {
     <EditBase handleSubmit={handleSubmit(onSubmit)} title="カテゴリー編集">
       <InputWithLabel
         name="category"
-        control={control}
-        inputRef={register({
-          required: '必須項目です',
-        })}
+        inputRef={register(NORMAL_VALIDATION)}
         error={errors.category}
         label="カテゴリー名*"
       />
@@ -128,7 +124,7 @@ const InputHidden = styled.input`
 `;
 
 const UploadButton = styled(Button)<{ component: string }>`
-  background-color: ${COLOR.TURQUOISE};
+  background-color: ${COLOR.MAIN};
   color: ${COLOR.WHITE};
   margin: 10px;
 `;
