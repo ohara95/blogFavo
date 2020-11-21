@@ -1,40 +1,16 @@
-import { Button, TextField } from '@material-ui/core';
-import styled from 'styled-components';
+import { TextField } from '@material-ui/core';
+import styled, { css } from 'styled-components';
 import { COLOR } from './color';
 import { sp } from './media';
 
-export const AuthenticateContainer = styled.div`
-  margin: 50px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 400px;
-  ${sp`
-    width: 250px;
-  `}
-`;
-
-export const StyledButton = styled(Button)<{ loading?: boolean }>`
-  margin: 24px 0 16px;
-  color: ${COLOR.WHITE};
-  background-color: ${COLOR.TURQUOISE};
-  box-shadow: ${COLOR.BLACK} 0px 1px 3px;
-  height: 36px;
-  &:hover {
-    background-color: ${COLOR.LIGHT_GRAY};
-    box-shadow: none;
-  }
-  ${({ loading }) => loading && { backgroundColor: COLOR.LIGHT_GRAY }}
-`;
-
-export const AuthenticateForm = styled.form`
-  width: 100%;
-  margin-top: 24px;
-`;
-
-export const SpaceBetween = styled.div`
+export const SPACE_BETWEEN = css`
   display: flex;
   justify-content: space-between;
+`;
+
+export const ALIGN_ITEMS_CENTER = css`
+  display: flex;
+  align-items: center;
 `;
 
 export const InputError = styled.p`
@@ -59,6 +35,16 @@ export const BaseTextField = styled(TextField)`
   width: 95%;
 `;
 
-export const FlexLabel = styled.div`
-  display: flex;
+export const AuthenticateContainer = styled.div`
+  margin: 50px auto;
+  ${ALIGN_ITEMS_CENTER}
+  flex-direction: column;
+  width: 400px;
+  > form {
+    width: 100%;
+    margin-top: 24px;
+  }
+  ${sp`
+    width: 250px;
+  `}
 `;

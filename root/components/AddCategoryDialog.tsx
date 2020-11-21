@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { toastValue } from '../../recoil/root';
+import { toastState } from '../../recoil/root';
 import { ImageUpload } from '../utils/ImageUpload';
 import { db, storage, auth } from '../utils/firebase';
 import { DialogBase } from '../components/DialogBase';
@@ -23,10 +23,14 @@ export const AddCategoryDialog = () => {
   const categoryList = useFirebase<Category>('categoryList');
   const [imageUrl, setImageUrl] = useState('');
   const user = auth.currentUser;
-  const { register, errors, handleSubmit, reset, control } = useForm<
-    FormData
-  >();
-  const setToast = useSetRecoilState(toastValue);
+  const {
+    register,
+    errors,
+    handleSubmit,
+    reset,
+    control,
+  } = useForm<FormData>();
+  const setToast = useSetRecoilState(toastState);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
