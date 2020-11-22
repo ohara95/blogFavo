@@ -13,5 +13,6 @@ export const COLOR = {
   LIGHT_GRAY: '#D5D5D5',
   GRAY: '#808080',
   BLACK: '#000000',
-  TURQUOISE: '#0097A7'
+  MAIN: '#0097A7',
+  MAIN_HOVER: '#00bcd4',
 };

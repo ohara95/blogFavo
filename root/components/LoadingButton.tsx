@@ -25,7 +25,7 @@ export const LoadingButton: FC<Props> = ({
 const StyledButton = styled(Button)<Props>`
   margin: 24px 0 16px;
   color: ${COLOR.WHITE};
-  background-color: ${COLOR.TURQUOISE};
+  background-color: ${COLOR.MAIN};
   box-shadow: ${COLOR.BLACK} 0px 1px 3px;
   height: 36px;
   &:hover {

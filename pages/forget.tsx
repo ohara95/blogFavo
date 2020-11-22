@@ -15,13 +15,7 @@ type FormData = {
 };
 
 export default function ForgetPassword() {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    formState,
-    control,
-  } = useForm<FormData>();
+  const { register, handleSubmit, errors, formState } = useForm<FormData>();
   const setToast = useSetRecoilState(toastState);
   const router = useRouter();
 
@@ -47,7 +41,6 @@ export default function ForgetPassword() {
           label="メールアドレス"
           inputRef={register(EMAIL_VALIDATION)}
           error={errors.email}
-          control={control}
           name="email"
           type="email"
         />

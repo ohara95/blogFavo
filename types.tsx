@@ -4,10 +4,7 @@ export type FormValues = {
   title: string;
   url: string;
   memo: string;
-  category: {
-    name: string;
-    id: string;
-  };
+  category: string;
   tag: string[];
   isPublic: boolean;
   id?: string;
@@ -40,7 +37,6 @@ export type InputType = {
   name: string;
   label: string;
   error?: any;
-  control?: any;
   type?: 'text' | 'email' | 'password';
   inputRef?: any;
   variant?: 'outlined';

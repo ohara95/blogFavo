@@ -80,5 +80,5 @@ const StyledAutocomplete = styled(Autocomplete)`
 `;
 
 const StyledChip = styled(Chip)`
-  background-color: ${COLOR.TURQUOISE};
+  background-color: ${COLOR.MAIN};
 `;

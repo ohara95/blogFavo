@@ -45,7 +45,6 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
   data: (Category | undefined)[];
   blogData: FormValues[];
-  deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
   activePage: 'my' | 'user';
 };
 
@@ -76,11 +75,7 @@ export const CategoryDetail: FC<Props> = ({ data, blogData, activePage }) => {
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h6" component="h6">
                   {card?.name ? card?.name : 'title'}(
-                  {
-                    blogData.filter((db) => db.category.name === card?.name)
-                      .length
-                  }
-                  )
+                  {blogData.filter((db) => db.category === card?.name).length})
                 </Typography>
               </CardContent>
               <CardActions>
