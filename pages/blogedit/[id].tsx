@@ -24,7 +24,7 @@ const EditBlog = () => {
   const categoryList = useFirebase<Category>('categoryList');
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [targetBlog, setTargetBlog] = useState<FormValues>();
   const { register, errors, handleSubmit, reset } = useForm<FormValues>({
     mode: 'onBlur',
@@ -56,7 +56,7 @@ const EditBlog = () => {
 
   useEffect(() => {
     if (targetBlog) {
-      setIsPublic(targetBlog.isPublic);
+      setIsPrivate(targetBlog.isPrivate);
       setTag(targetBlog.tag);
     }
   }, [targetBlog]);
@@ -97,7 +97,7 @@ const EditBlog = () => {
             category: category?.name,
           });
         await db.collection('blog').doc(id).update({
-          isPublic,
+          isPrivate,
         });
       }
       router.back();
@@ -141,8 +141,8 @@ const EditBlog = () => {
           <LabelText>非公開</LabelText>
           <Checkbox
             color="primary"
-            checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
+            checked={isPrivate}
+            onChange={(e) => setIsPrivate(e.target.checked)}
           />
         </label>
       </Label>

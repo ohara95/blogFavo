@@ -22,7 +22,7 @@ export const AddBlogDialog = () => {
   });
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
   const categoryList = useFirebase<Category>('categoryList');
   const user = auth.currentUser;
   const setToast = useSetRecoilState(toastState);
@@ -38,7 +38,7 @@ export const AddBlogDialog = () => {
           id: categoryList.find((db) => db.name === category?.name)?.id,
         },
         tag,
-        isPublic,
+        isPrivate,
         postedUser: user?.uid,
         postedAt: firebase.firestore.Timestamp.now(),
         isFavo: false,
@@ -50,7 +50,7 @@ export const AddBlogDialog = () => {
       setToast(['追加出来ました！']);
       setCategory(null);
       setTag([]);
-      setIsPublic(false);
+      setIsPrivate(false);
       reset();
     } catch (error) {
       setToast(['追加に失敗しました', 'error']);
@@ -103,8 +103,8 @@ export const AddBlogDialog = () => {
           <LabelText>非公開</LabelText>
           <Checkbox
             color="primary"
-            checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
+            checked={isPrivate}
+            onChange={(e) => setIsPrivate(e.target.checked)}
           />
         </label>
       </Label>
