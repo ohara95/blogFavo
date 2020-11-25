@@ -57,12 +57,14 @@ type Props = {
     id: string | undefined,
     type: 'isFavo' | 'laterRead'
   ) => void;
+  isDisplay: boolean;
 };
 
 export const BlogDetail: FC<Props> = ({
   data,
   activePage,
   handleIconClick,
+  isDisplay,
 }) => {
   const classes = useStyles();
   const user = auth.currentUser;
@@ -71,86 +73,88 @@ export const BlogDetail: FC<Props> = ({
   return (
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
-        {data.map((card) => {
-          return (
-            <Grid item key={card?.id} xs={12} sm={6} md={4}>
-              <Card className={classes.card}>
-                <CardMedia
-                  className={classes.cardMedia}
-                  image="https://source.unsplash.com/random"
-                  title="Image title"
-                />
-                <CardContent className={classes.cardContent}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {card?.title && card.title}
-                  </Typography>
-                  <Typography>{card?.memo && card?.memo}</Typography>
-                  <Typography>
-                    {card?.tag &&
-                      card?.tag.map((name) => (
-                        <StyleTag key={card.id?.toString()}>{name}</StyleTag>
-                      ))}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" color="primary">
-                    blog
-                  </Button>
-                  {activePage === 'my' && (
-                    <>
-                      <Link href={`/blogedit/${card?.id}`}>
-                        <Button size="small" color="primary">
-                          edit
+        {data
+          .filter((display) => !display?.isPrivate)
+          .map((card) => {
+            return (
+              <Grid item key={card?.id} xs={12} sm={6} md={4}>
+                <Card className={classes.card}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image="https://source.unsplash.com/random"
+                    title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {card?.title && card.title}
+                    </Typography>
+                    <Typography>{card?.memo && card?.memo}</Typography>
+                    <Typography>
+                      {card?.tag &&
+                        card?.tag.map((name) => (
+                          <StyleTag key={card.id?.toString()}>{name}</StyleTag>
+                        ))}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      blog
+                    </Button>
+                    {isDisplay && (
+                      <>
+                        <Link href={`/blogedit/${card?.id}`}>
+                          <Button size="small" color="primary">
+                            edit
+                          </Button>
+                        </Link>
+                        <DeleteButton type="blog" id={card?.id} />
+                      </>
+                    )}
+                    {!isDisplay && (
+                      <>
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={() => {
+                            user
+                              ? handleIconClick(card?.id, 'isFavo')
+                              : setDialog((prev) => ({
+                                  ...prev,
+                                  [RECOMMEND_REGISTER]: true,
+                                }));
+                          }}
+                        >
+                          {card?.isFavo ? (
+                            <StarRoundedIcon />
+                          ) : (
+                            <StarBorderRoundedIcon />
+                          )}
                         </Button>
-                      </Link>
-                      <DeleteButton type="blog" id={card?.id} />
-                    </>
-                  )}
-                  {activePage === 'user' && (
-                    <>
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={() => {
-                          user
-                            ? handleIconClick(card?.id, 'isFavo')
-                            : setDialog((prev) => ({
-                                ...prev,
-                                [RECOMMEND_REGISTER]: true,
-                              }));
-                        }}
-                      >
-                        {card?.isFavo ? (
-                          <StarRoundedIcon />
-                        ) : (
-                          <StarBorderRoundedIcon />
-                        )}
-                      </Button>
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={() => {
-                          user
-                            ? handleIconClick(card?.id, 'laterRead')
-                            : setDialog((prev) => ({
-                                ...prev,
-                                [RECOMMEND_REGISTER]: true,
-                              }));
-                        }}
-                      >
-                        {card?.laterRead ? (
-                          <BookmarkRoundedIcon />
-                        ) : (
-                          <TurnedInNotRoundedIcon />
-                        )}
-                      </Button>
-                    </>
-                  )}
-                </CardActions>
-              </Card>
-            </Grid>
-          );
-        })}
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={() => {
+                            user
+                              ? handleIconClick(card?.id, 'laterRead')
+                              : setDialog((prev) => ({
+                                  ...prev,
+                                  [RECOMMEND_REGISTER]: true,
+                                }));
+                          }}
+                        >
+                          {card?.laterRead ? (
+                            <BookmarkRoundedIcon />
+                          ) : (
+                            <TurnedInNotRoundedIcon />
+                          )}
+                        </Button>
+                      </>
+                    )}
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
       </Grid>
     </Container>
   );

@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { dialogData } from '../../recoil/dialog';
@@ -33,6 +34,15 @@ export const DialogBase: FC<Props> = ({
       [dialogKey]: false,
     }));
   };
+
+  const router = useRouter();
+  const path = router.pathname;
+
+  useEffect(() => {
+    if (path === '/signup' || path === '/signin') {
+      handleClose();
+    }
+  }, [path]);
   return (
     <StyledDialog open={true} onClose={handleClose}>
       <Form onSubmit={handleSubmit}>

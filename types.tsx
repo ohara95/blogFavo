@@ -6,7 +6,7 @@ export type FormValues = {
   memo: string;
   category: string;
   tag: string[];
-  isPublic: boolean;
+  isPrivate: boolean;
   id?: string;
   postedAt?: firebase.firestore.Timestamp;
   postedUser?: string;

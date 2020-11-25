@@ -89,6 +89,7 @@ const Main: FC = () => {
             activePage={activePage}
             handleIconClick={handleIconClick}
             data={user && activePage === 'my' ? filterBlog : blog}
+            isDisplay={user && activePage === 'my' ? true : false}
           />
         ) : (
           <CategoryDetail
