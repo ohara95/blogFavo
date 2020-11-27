@@ -19,29 +19,33 @@ type BlogWithFavo = {
 
 type Props = {
   data: (FormValues & BlogWithFavo)[] | undefined;
-  activePage: 'my' | 'user';
   bookmarkToggle: (id: string | undefined) => void;
-  deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
   favoCount: (id: string) => void;
+  isDisplay: boolean;
 };
 export const BlogList: FC<Props> = ({
   data,
-  activePage,
   bookmarkToggle,
-  deleteItem,
   favoCount,
+  isDisplay,
 }) => {
   const classes = useStyles();
 
   return (
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
-        {data?.map((card) => (
-          <BlogItem
-            {...{ card, activePage, bookmarkToggle, deleteItem, favoCount }}
-          />
-        ))}
-        ;
+        {data
+          ?.filter((display) => !display?.isPrivate)
+          .map((card) => (
+            <BlogItem
+              {...{
+                card,
+                bookmarkToggle,
+                favoCount,
+                isDisplay,
+              }}
+            />
+          ))}
       </Grid>
     </Container>
   );

@@ -45,18 +45,16 @@ const useStyles = makeStyles((theme) => ({
 
 type Props = {
   card: FormValues;
-  activePage: 'my' | 'user';
   bookmarkToggle: (id: string | undefined) => void;
-  deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
   favoCount: (id: string) => void;
+  isDisplay: boolean;
 };
 
 export const BlogItem: FC<Props> = ({
   card,
-  activePage,
   bookmarkToggle,
-  deleteItem,
   favoCount,
+  isDisplay,
 }) => {
   const classes = useStyles();
   const user = auth.currentUser;
@@ -95,7 +93,8 @@ export const BlogItem: FC<Props> = ({
           <Button size="small" color="primary">
             blog
           </Button>
-          {activePage === 'my' && (
+
+          {isDisplay && (
             <>
               <Link href={`/blogedit/${card?.id}`}>
                 <Button size="small" color="primary">
@@ -105,13 +104,19 @@ export const BlogItem: FC<Props> = ({
               <Button
                 size="small"
                 color="secondary"
-                onClick={() => deleteItem(card?.id, 'blog')}
+                onClick={() => {
+                  !user &&
+                    setDialog((prev) => ({
+                      ...prev,
+                      [RECOMMEND_REGISTER]: true,
+                    }));
+                }}
               >
                 delete
               </Button>
             </>
           )}
-          {activePage === 'user' && (
+          {!isDisplay && (
             <>
               <Button
                 onClick={() => {
@@ -160,7 +165,7 @@ const StyleTag = styled.div`
   margin: 2px;
   display: inline-block;
   padding: 4px 12px;
-  border: 1px solid ${COLOR.TURQUOISE};
+  border: 1px solid ${COLOR.MAIN};
   text-transform: uppercase;
   font-family: sans-serif;
   font-size: 8px;
