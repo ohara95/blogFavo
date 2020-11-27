@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
-import { db, auth } from '../../utils/firebase';
+import firebase, { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
 import { useFirebase } from '../../utils/hooks';
 import {
@@ -13,7 +13,7 @@ import { deleteConfig } from '../../../recoil/configDialog';
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { AddButton } from '../../components/AddButton';
-import { BlogDetail } from '../main/components/BlogDetail';
+import { BlogList } from './components/BlogList';
 import { PageTop } from '../main/components/PageTop';
 import { CategoryDetail } from '../main/components/CategoryDetail';
 //material
@@ -23,8 +23,8 @@ import { Grid } from '@material-ui/core';
 const Main: FC = () => {
   const user = auth.currentUser;
   const currentDisplay = useRecoilValue(currentDisplayData);
-  const blog = useFirebase<FormValues>('blog');
   const categoryList = useFirebase<Category>('categoryList');
+  const blog = useFirebase<FormValues>('blog');
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [filterBlog, setFilterBlog] = useState<FormValues[]>([]);
   const [configDialog, setConfigDialog] = useRecoilState(deleteConfig);
@@ -49,15 +49,12 @@ const Main: FC = () => {
     if (!user) setActivePage('user');
   }, [user]);
 
-  const handleIconClick = (
-    id: string | undefined,
-    type: 'isFavo' | 'laterRead'
-  ) => {
-    blog.map((blog) => {
-      if (blog.id === id) {
+  const bookmarkToggle = (id: string | undefined) => {
+    blog.map((fieldItem) => {
+      if (fieldItem.id === id) {
         db.collection('blog')
           .doc(id)
-          .update({ [type]: !blog[type] });
+          .update({ laterRead: !fieldItem.laterRead });
       }
     });
   };
@@ -121,17 +118,40 @@ const Main: FC = () => {
       : ADD_CATEGORY
     : RECOMMEND_REGISTER;
 
+  const favoCount = async (id: string) => {
+    const favoRef = db.collection(`blog/${id}/numOfFavo`);
+
+    const res = await (favoRef && favoRef.get());
+    const data = res.docs.map((doc) => doc.id);
+
+    const blogRef = db.doc(`blog/${id}`);
+    if (!!data.find((db) => db === user?.uid)) {
+      favoRef.doc(user?.uid).delete();
+      blogRef.update({
+        favoCount: firebase.firestore.FieldValue.increment(-1),
+      });
+    } else {
+      favoRef.doc(user?.uid).set({
+        userRef: db.collection('users').doc(user?.uid),
+      });
+      blogRef.update({
+        favoCount: firebase.firestore.FieldValue.increment(1),
+      });
+    }
+  };
+
   return (
     <>
       <Header />
       <main>
         <PageTop title={currentDisplay} />
         {currentDisplay === 'list' ? (
-          <BlogDetail
+          <BlogList
             activePage={activePage}
-            handleIconClick={handleIconClick}
+            bookmarkToggle={bookmarkToggle}
             data={user && activePage === 'my' ? filterBlog : blog}
             deleteItem={deleteItem}
+            favoCount={favoCount}
           />
         ) : (
           <CategoryDetail

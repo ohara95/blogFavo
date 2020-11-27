@@ -31,7 +31,7 @@ const EditBlog = () => {
   const targetCategory =
     blog && categoryList
       ? categoryList.find(
-          (category) => category.name === blog.find((db) => db)?.category
+          (category) => category.name === blog.find((db) => db)?.category.name
         )
       : null;
 

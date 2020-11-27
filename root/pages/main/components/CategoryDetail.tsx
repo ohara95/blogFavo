@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { Category, FormValues } from '../../../../types';
-import firebase from '../../../utils/firebase';
 import Link from 'next/link';
 // material
 import {

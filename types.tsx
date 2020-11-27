@@ -13,8 +13,8 @@ export type FormValues = {
   id?: string;
   postedAt?: firebase.firestore.Timestamp;
   postedUser?: string;
-  isFavo?: boolean;
   laterRead: boolean;
+  favoCount: number;
 };
 
 export type Tags = {

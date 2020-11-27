@@ -1,5 +1,6 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { dialogData } from '../../recoil/dialog';
 import { sp } from '../../styles/media';
@@ -30,6 +31,15 @@ export const DialogBase: FC<Props> = ({
   doneText,
 }) => {
   const setDialog = useSetRecoilState(dialogData);
+  const router = useRouter();
+  const path = router.pathname;
+
+  useEffect(() => {
+    if (path === '/signup' || path === '/signin') {
+      handleClose();
+    }
+  }, [path]);
+
   const handleClose = () => {
     setDialog((prev) => ({
       ...prev,
