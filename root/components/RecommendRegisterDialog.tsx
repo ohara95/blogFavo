@@ -1,6 +1,6 @@
+import React from 'react';
 import { Button } from '@material-ui/core';
 import Link from 'next/link';
-import React from 'react';
 import { RECOMMEND_REGISTER } from '../../recoil/dialog';
 import { DialogBase } from './DialogBase';
 

@@ -31,6 +31,9 @@ export const AddButton: FC<Props> = ({ dialogKey }) => {
 };
 
 const StyledFab = styled(Fab)`
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
   background-color: ${COLOR.MAIN};
   color: ${COLOR.WHITE};
   &:hover {

@@ -7,11 +7,11 @@ export type FormValues = {
   category: string;
   tag: string[];
   isPrivate: boolean;
-  id?: string;
+  id: string;
   postedAt?: firebase.firestore.Timestamp;
   postedUser?: string;
-  isFavo?: boolean;
   laterRead: boolean;
+  favCount: number;
 };
 
 export type Tags = {

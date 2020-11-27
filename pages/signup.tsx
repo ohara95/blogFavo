@@ -21,13 +21,9 @@ type FormData = {
 };
 
 export default function SignUp() {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    errors,
-    formState,
-  } = useForm<FormData>();
+  const { register, handleSubmit, reset, errors, formState } = useForm<
+    FormData
+  >();
   const [isError, setIsError] = useState(false);
   const router = useRouter();
   const setToast = useSetRecoilState(toastState);

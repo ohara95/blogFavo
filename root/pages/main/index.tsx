@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
-import { db, auth } from '../../utils/firebase';
+import firebase, { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
 import { useFirebase } from '../../utils/hooks';
 import {
@@ -12,7 +12,7 @@ import {
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { AddButton } from '../../components/AddButton';
-import { BlogDetail } from '../main/components/BlogDetail';
+import { BlogList } from './components/BlogList';
 import { PageTop } from '../main/components/PageTop';
 import { CategoryDetail } from '../main/components/CategoryDetail';
 //material
@@ -22,8 +22,8 @@ import { Grid } from '@material-ui/core';
 const Main: FC = () => {
   const user = auth.currentUser;
   const currentDisplay = useRecoilValue(currentDisplayData);
-  const blog = useFirebase<FormValues>('blog');
   const categoryList = useFirebase<Category>('categoryList');
+  const blog = useFirebase<FormValues>('blog');
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [filterBlog, setFilterBlog] = useState<FormValues[]>([]);
 
@@ -47,15 +47,12 @@ const Main: FC = () => {
     if (!user) setActivePage('user');
   }, [user]);
 
-  const handleIconClick = (
-    id: string | undefined,
-    type: 'isFavo' | 'laterRead'
-  ) => {
-    blog.map((blog) => {
-      if (blog.id === id) {
+  const bookmarkToggle = (id: string) => {
+    blog.forEach((fieldItem) => {
+      if (fieldItem.id === id) {
         db.collection('blog')
           .doc(id)
-          .update({ [type]: !blog[type] });
+          .update({ laterRead: !fieldItem.laterRead });
       }
     });
   };
@@ -79,16 +76,38 @@ const Main: FC = () => {
       : ADD_CATEGORY
     : RECOMMEND_REGISTER;
 
+  const favToggle = async (id: string) => {
+    const favRef = db.collection(`blog/${id}/favUsers`);
+
+    const res = await (favRef && favRef.get());
+    const data = res.docs.map((doc) => doc.id);
+
+    const blogRef = db.doc(`blog/${id}`);
+    if (!!data.find((db) => db === user?.uid)) {
+      favRef.doc(user?.uid).delete();
+      blogRef.update({
+        favCount: firebase.firestore.FieldValue.increment(-1),
+      });
+    } else {
+      favRef.doc(user?.uid).set({
+        userRef: db.collection('users').doc(user?.uid),
+      });
+      blogRef.update({
+        favCount: firebase.firestore.FieldValue.increment(1),
+      });
+    }
+  };
+
   return (
     <>
       <Header />
       <main>
         <PageTop title={currentDisplay} />
         {currentDisplay === 'list' ? (
-          <BlogDetail
-            activePage={activePage}
-            handleIconClick={handleIconClick}
-            data={user && activePage === 'my' ? filterBlog : blog}
+          <BlogList
+            bookmarkToggle={bookmarkToggle}
+            blogData={user && activePage === 'my' ? filterBlog : blog}
+            favToggle={favToggle}
             isDisplay={user && activePage === 'my' ? true : false}
           />
         ) : (

@@ -28,13 +28,6 @@ export const DialogBase: FC<Props> = ({
   dialogKey,
 }) => {
   const setDialog = useSetRecoilState(dialogData);
-  const handleClose = () => {
-    setDialog((prev) => ({
-      ...prev,
-      [dialogKey]: false,
-    }));
-  };
-
   const router = useRouter();
   const path = router.pathname;
 
@@ -43,6 +36,13 @@ export const DialogBase: FC<Props> = ({
       handleClose();
     }
   }, [path]);
+
+  const handleClose = () => {
+    setDialog((prev) => ({
+      ...prev,
+      [dialogKey]: false,
+    }));
+  };
   return (
     <StyledDialog open={true} onClose={handleClose}>
       <Form onSubmit={handleSubmit}>
