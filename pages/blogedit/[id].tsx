@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { Category, FormValues, InputType } from '../../types';
-import { Label, LabelText, FlexLabel } from '../../styles/common';
+import { Label, LabelText } from '../../styles/common';
 import { db } from '../../root/utils/firebase';
 import { useFirebase } from '../../root/utils/hooks';
 import { CategorySelector } from '../../root/components/CategorySelector';
@@ -12,6 +12,9 @@ import { EditBase } from '../../root/components/EditBase';
 
 //material
 import { Checkbox } from '@material-ui/core';
+import { NORMAL_VALIDATION, URL_VALIDATION } from '../../root/utils/validation';
+import { useSetRecoilState } from 'recoil';
+import { toastState } from '../../recoil/root';
 
 const EditBlog = () => {
   const router = useRouter();
@@ -21,19 +24,18 @@ const EditBlog = () => {
   const categoryList = useFirebase<Category>('categoryList');
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [targetBlog, setTargetBlog] = useState<FormValues>();
-  const { register, errors, handleSubmit, control, reset } = useForm<
-    FormValues
-  >({
+  const { register, errors, handleSubmit, reset } = useForm<FormValues>({
     mode: 'onBlur',
   });
   const targetCategory =
-    blog && categoryList
-      ? categoryList.find(
-          (category) => category.name === blog.find((db) => db)?.category.name
-        )
-      : null;
+    blog &&
+    categoryList &&
+    categoryList.find((category) =>
+      blog.find((db) => db.category === category.name)
+    );
+  const setToast = useSetRecoilState(toastState);
 
   // -----useEffect[start]-----
   useEffect(() => {
@@ -54,7 +56,7 @@ const EditBlog = () => {
 
   useEffect(() => {
     if (targetBlog) {
-      setIsPublic(targetBlog.isPublic);
+      setIsPrivate(targetBlog.isPrivate);
       setTag(targetBlog.tag);
     }
   }, [targetBlog]);
@@ -64,26 +66,24 @@ const EditBlog = () => {
       setCategory(targetCategory);
     }
   }, [targetCategory]);
+
   // ------useEffect[end]------
 
-  const upDateValidation = async (data: FormValues) => {
-    const dataDetail = ['title', 'url', 'memo'];
+  const upDateValidation = (data: FormValues) => {
+    const dataDetail = ['title', 'url', 'memo'] as const;
     try {
-      await dataDetail.map((type) => {
-        if (data[type as 'title' | 'url' | 'memo']) {
-          if (typeof id === 'string') {
-            db.collection('blog')
+      dataDetail.map(async (type) => {
+        if (data[type])
+          if (typeof id === 'string')
+            await db
+              .collection('blog')
               .doc(id)
               .update({
-                [type]: data[type as 'title' | 'url' | 'memo'],
+                [type]: data[type],
               });
-          }
-        } else {
-          return;
-        }
       });
-    } catch (err) {
-      console.log(err);
+    } catch {
+      setToast(['失敗しました', 'error']);
     }
   };
 
@@ -91,21 +91,18 @@ const EditBlog = () => {
     try {
       upDateValidation(data);
 
-      if (category) {
-        if (typeof id === 'string') {
+      if (typeof id === 'string') {
+        if (category)
           await db.collection('blog').doc(id).update({
             category: category?.name,
           });
-        }
-      }
-      if (typeof id === 'string') {
         await db.collection('blog').doc(id).update({
-          isPublic,
+          isPrivate,
         });
       }
       router.back();
-    } catch (error) {
-      console.log(error);
+    } catch {
+      setToast(['失敗しました', 'error']);
     }
   };
 
@@ -114,29 +111,18 @@ const EditBlog = () => {
       name: 'title',
       label: 'Title*',
       error: errors.title,
-      control,
-      inputRef: register({
-        required: '必須項目です',
-      }),
+      inputRef: register(NORMAL_VALIDATION),
     },
     {
       name: 'url',
       label: 'URL*',
       error: errors.url,
-      control,
-      inputRef: register({
-        required: '必須項目です',
-        pattern: {
-          value: /https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+/g,
-          message: '正しい書式で入力してください',
-        },
-      }),
+      inputRef: register(URL_VALIDATION),
     },
     {
       name: 'memo',
       label: 'Memo',
       variant: 'outlined',
-      control,
       multiline: true,
       rows: 5,
       inputRef: register,
@@ -151,14 +137,14 @@ const EditBlog = () => {
       <CategorySelector category={category} setCategory={setCategory} />
       <Tag tag={tag} setTag={setTag} />
       <Label>
-        <FlexLabel>
+        <label css="display: flex">
           <LabelText>非公開</LabelText>
           <Checkbox
             color="primary"
-            checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
+            checked={isPrivate}
+            onChange={(e) => setIsPrivate(e.target.checked)}
           />
-        </FlexLabel>
+        </label>
       </Label>
     </EditBase>
   );

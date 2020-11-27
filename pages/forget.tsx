@@ -4,24 +4,19 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { auth } from '../root/utils/firebase';
 import { InputWithLabel } from '../root/components/InputWithLabel';
-import { CircularProgress, Typography } from '@material-ui/core';
-import {
-  AuthenticateForm,
-  AuthenticateContainer,
-  StyledButton,
-} from '../styles/common';
+import { AuthenticateContainer } from '../styles/common';
 import { useSetRecoilState } from 'recoil';
-import { toastValue } from '../recoil/root';
+import { toastState } from '../recoil/root';
+import { LoadingButton } from '../root/components/LoadingButton';
+import { EMAIL_VALIDATION } from '../root/utils/validation';
 
 type FormData = {
   email: string;
 };
 
-const ForgetPassword = () => {
-  const { register, handleSubmit, errors, formState, control } = useForm<
-    FormData
-  >();
-  const setToast = useSetRecoilState(toastValue);
+export default function ForgetPassword() {
+  const { register, handleSubmit, errors, formState } = useForm<FormData>();
+  const setToast = useSetRecoilState(toastState);
   const router = useRouter();
 
   const handleSend = async ({ email }: FormData) => {
@@ -38,36 +33,27 @@ const ForgetPassword = () => {
   return (
     <AuthenticateContainer>
       <h1>パスワード再設定</h1>
-      <AuthenticateForm onSubmit={handleSubmit(handleSend)}>
-        <Typography variant="subtitle1">
+      <form onSubmit={handleSubmit(handleSend)}>
+        <p css="font-size: 16px; line-height: 1.75">
           アカウントに関連付けられているメールアドレスを入力すると、パスワードをリセットするためのリンクが記載されたメールが送信されます。
-        </Typography>
+        </p>
         <InputWithLabel
           label="メールアドレス"
-          inputRef={register({
-            required: 'メールアドレスを入力してください',
-            pattern: {
-              value: /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/,
-              message: 'メールアドレスの形式が不正です',
-            },
-          })}
+          inputRef={register(EMAIL_VALIDATION)}
           error={errors.email}
-          control={control}
           name="email"
           type="email"
         />
-        <StyledButton
-          type="submit"
-          fullWidth
+        <LoadingButton
           disabled={formState.isSubmitting}
-          loading={formState.isSubmitting ? true : undefined}
+          loading={formState.isSubmitting}
+          fullWidth
+          type="submit"
         >
-          {formState.isSubmitting ? <CircularProgress size={14} /> : '送信'}
-        </StyledButton>
+          送信
+        </LoadingButton>
         <Link href="/signin">戻る</Link>
-      </AuthenticateForm>
+      </form>
     </AuthenticateContainer>
   );
-};
-
-export default ForgetPassword;
+}

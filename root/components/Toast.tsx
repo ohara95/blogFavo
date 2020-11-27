@@ -3,12 +3,11 @@ import { Alert } from '@material-ui/lab';
 import React, { useEffect } from 'react';
 import { useResetRecoilState } from 'recoil';
 import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
-import { toastValue } from '../../recoil/root';
+import { toastState } from '../../recoil/root';
 
 export const Toast = () => {
-  const [text, severity] = useRecoilValue(toastValue);
-  const reset = useResetRecoilState(toastValue);
+  const [text, severity] = useRecoilValue(toastState);
+  const reset = useResetRecoilState(toastState);
 
   useEffect(() => {
     if (!text) return;
@@ -26,18 +25,15 @@ export const Toast = () => {
   return (
     <>
       {text && (
-        <StyledSnackbar
+        <Snackbar
+          css="min-width: 250px"
           open
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           onClose={reset}
         >
           <Alert severity={severity}>{text}</Alert>
-        </StyledSnackbar>
+        </Snackbar>
       )}
     </>
   );
 };
-
-const StyledSnackbar = styled(Snackbar)`
-  min-width: 250px;
-`;

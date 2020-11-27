@@ -9,7 +9,6 @@ import {
   ADD_CATEGORY,
   RECOMMEND_REGISTER,
 } from '../../../recoil/dialog';
-import { deleteConfig } from '../../../recoil/configDialog';
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { AddButton } from '../../components/AddButton';
@@ -27,7 +26,6 @@ const Main: FC = () => {
   const blog = useFirebase<FormValues>('blog');
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [filterBlog, setFilterBlog] = useState<FormValues[]>([]);
-  const [configDialog, setConfigDialog] = useRecoilState(deleteConfig);
 
   useEffect(() => {
     if (user) {
@@ -58,46 +56,6 @@ const Main: FC = () => {
       }
     });
   };
-
-  const deleteItem = (
-    id: string | undefined,
-    type: 'blog' | 'categoryList'
-  ) => {
-    setConfigDialog((prev) => ({
-      ...prev,
-      id: id ? id : '',
-      isDisplay: true,
-      type,
-    }));
-  };
-
-  useEffect(() => {
-    if (configDialog.isDone) {
-      db.collection(configDialog.type).doc(configDialog.id).delete();
-      if (configDialog.type === 'categoryList') {
-        db.collection('blog')
-          .get()
-          .then((res) => {
-            res.docs.map((doc) => {
-              if (doc.data().category.id === configDialog.id) {
-                doc.ref.update({
-                  category: {
-                    name: '',
-                    id: '',
-                  },
-                });
-              }
-            });
-          });
-      }
-      setConfigDialog({
-        isDone: false,
-        isDisplay: false,
-        id: '',
-        type: '',
-      });
-    }
-  }, [configDialog.isDone]);
 
   const holdCategory = (data: FormValues[]) => {
     let arr: Category[] = [];
@@ -147,17 +105,15 @@ const Main: FC = () => {
         <PageTop title={currentDisplay} />
         {currentDisplay === 'list' ? (
           <BlogList
-            activePage={activePage}
             bookmarkToggle={bookmarkToggle}
             data={user && activePage === 'my' ? filterBlog : blog}
-            deleteItem={deleteItem}
             favoCount={favoCount}
+            isDisplay={user && activePage === 'my' ? true : false}
           />
         ) : (
           <CategoryDetail
             data={activePage === 'my' ? holdCategory(blog) : categoryList}
             blogData={activePage === 'my' ? filterBlog : blog}
-            deleteItem={deleteItem}
             activePage={activePage}
           />
         )}

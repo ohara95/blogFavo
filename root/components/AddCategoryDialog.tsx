@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { toastValue } from '../../recoil/root';
+import { toastState } from '../../recoil/root';
 import { ImageUpload } from '../utils/ImageUpload';
 import { db, storage, auth } from '../utils/firebase';
 import { DialogBase } from '../components/DialogBase';
@@ -14,6 +14,7 @@ import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
 //material
 import { Button } from '@material-ui/core';
+import { NORMAL_VALIDATION } from '../utils/validation';
 
 type FormData = {
   category: string;
@@ -23,10 +24,8 @@ export const AddCategoryDialog = () => {
   const categoryList = useFirebase<Category>('categoryList');
   const [imageUrl, setImageUrl] = useState('');
   const user = auth.currentUser;
-  const { register, errors, handleSubmit, reset, control } = useForm<
-    FormData
-  >();
-  const setToast = useSetRecoilState(toastValue);
+  const { register, errors, handleSubmit, reset } = useForm<FormData>();
+  const setToast = useSetRecoilState(toastState);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -66,16 +65,9 @@ export const AddCategoryDialog = () => {
     >
       <InputWithLabel
         name="category"
-        inputRef={register({
-          required: '必須項目です',
-          pattern: {
-            value: /[^ |　]/,
-            message: 'スペースのみの入力はできません。',
-          },
-        })}
+        inputRef={register(NORMAL_VALIDATION)}
         error={errors.category}
         label="カテゴリー名*"
-        control={control}
       />
       <ActionsWrapper>
         <LabelText>カテゴリー画像登録</LabelText>
@@ -105,7 +97,7 @@ const InputHidden = styled.input`
 `;
 
 const UploadButton = styled(Button)<{ component: string }>`
-  background-color: ${COLOR.TURQUOISE};
+  background-color: ${COLOR.MAIN};
   color: ${COLOR.WHITE};
   margin: 10px;
 `;

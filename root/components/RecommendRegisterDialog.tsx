@@ -6,7 +6,7 @@ import { DialogBase } from './DialogBase';
 
 export const RecommendRegisterDialog = () => {
   return (
-    <DialogBase title="" noActions dialogKey={RECOMMEND_REGISTER}>
+    <DialogBase title="" dialogKey={RECOMMEND_REGISTER}>
       <h1>ユーザー登録をして、blogFavoをもっと便利に使ってみませんか？</h1>
       <p>ログインするとこんな機能が使えます</p>
       <div style={{ display: 'flex' }}>

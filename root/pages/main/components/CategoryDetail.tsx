@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { cyan } from '@material-ui/core/colors';
+import { DeleteButton } from '../../../components/DeleteButton';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -44,16 +45,10 @@ const useStyles = makeStyles((theme) => ({
 type Props = {
   data: (Category | undefined)[];
   blogData: FormValues[];
-  deleteItem: (id: string | undefined, type: 'blog' | 'categoryList') => void;
   activePage: 'my' | 'user';
 };
 
-export const CategoryDetail: FC<Props> = ({
-  data,
-  blogData,
-  deleteItem,
-  activePage,
-}) => {
+export const CategoryDetail: FC<Props> = ({ data, blogData, activePage }) => {
   const classes = useStyles();
 
   return (
@@ -80,11 +75,7 @@ export const CategoryDetail: FC<Props> = ({
               <CardContent className={classes.cardContent}>
                 <Typography gutterBottom variant="h6" component="h6">
                   {card?.name ? card?.name : 'title'}(
-                  {
-                    blogData.filter((db) => db.category.name === card?.name)
-                      .length
-                  }
-                  )
+                  {blogData.filter((db) => db.category === card?.name).length})
                 </Typography>
               </CardContent>
               <CardActions>
@@ -96,15 +87,7 @@ export const CategoryDetail: FC<Props> = ({
                     <Link href={`/categoryedit/${card?.id}`}>
                       <Button>edit</Button>
                     </Link>
-                    <Button
-                      size="small"
-                      color="secondary"
-                      onClick={() => {
-                        deleteItem(card?.id, 'categoryList');
-                      }}
-                    >
-                      delete
-                    </Button>
+                    <DeleteButton type="categoryList" id={card?.id} />
                   </>
                 )}
               </CardActions>

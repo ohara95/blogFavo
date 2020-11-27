@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { CircularProgress } from '@material-ui/core';
-import {
-  AuthenticateContainer,
-  AuthenticateForm,
-  StyledButton,
-  InputError,
-} from '../styles/common';
+import { AuthenticateContainer, InputError } from '../styles/common';
 import { useForm } from 'react-hook-form';
 import { auth, db } from '../root/utils/firebase';
 import firebase from 'firebase';
@@ -15,7 +9,9 @@ import { InputWithLabel } from '../root/components/InputWithLabel';
 import { InputType } from '../types';
 import { SignInWithSns } from '../root/components/SignInWithSns';
 import { useSetRecoilState } from 'recoil';
-import { toastValue } from '../recoil/root';
+import { toastState } from '../recoil/root';
+import { LoadingButton } from '../root/components/LoadingButton';
+import { EMAIL_VALIDATION, NORMAL_VALIDATION } from '../root/utils/validation';
 
 type FormData = {
   name: string;
@@ -25,12 +21,12 @@ type FormData = {
 };
 
 export default function SignUp() {
-  const { register, handleSubmit, reset, errors, formState, control } = useForm<
+  const { register, handleSubmit, reset, errors, formState } = useForm<
     FormData
   >();
   const [isError, setIsError] = useState(false);
   const router = useRouter();
-  const setToast = useSetRecoilState(toastValue);
+  const setToast = useSetRecoilState(toastState);
 
   /** メールアドレスとパスワードでユーザーを作成、名前も設定 */
   const createUser = async (email: string, password: string, name: string) => {
@@ -81,78 +77,50 @@ export default function SignUp() {
       name: 'name',
       label: '名前',
       error: errors.name,
-      control: control,
-      inputRef: register({
-        required: '名前を入力してください',
-        pattern: {
-          value: /[^ |　]/,
-          message: 'スペースのみの入力はできません。',
-        },
-      }),
+      inputRef: register(NORMAL_VALIDATION),
     },
     {
       name: 'email',
       label: 'メールアドレス',
       error: errors.email,
-      control: control,
       type: 'email',
-      inputRef: register({
-        required: 'メールアドレスを入力してください',
-        pattern: {
-          value: /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/,
-          message: 'メールアドレスの形式が不正です',
-        },
-      }),
+      inputRef: register(EMAIL_VALIDATION),
     },
     {
       name: 'password',
       label: 'パスワード',
       error: errors.password,
-      control: control,
       type: 'password',
-      inputRef: register({
-        required: 'パスワードを入力してください',
-        pattern: {
-          value: /[^ |　]/,
-          message: 'スペースのみの入力はできません。',
-        },
-      }),
+      inputRef: register(NORMAL_VALIDATION),
     },
     {
       name: 'passwordConfirm',
       label: 'パスワード再確認',
       error: errors.passwordConfirm,
-      control: control,
       type: 'password',
-      inputRef: register({
-        required: 'パスワード再確認を入力してください',
-        pattern: {
-          value: /[^ |　]/,
-          message: 'スペースのみの入力はできません。',
-        },
-      }),
+      inputRef: register(NORMAL_VALIDATION),
     },
   ];
 
   return (
     <AuthenticateContainer>
       <h1>Sign up</h1>
-      <AuthenticateForm onSubmit={handleSubmit(handleSignUp)}>
+      <form onSubmit={handleSubmit(handleSignUp)}>
         {inputList.map((props) => (
           <InputWithLabel key={props.name} {...props} />
         ))}
         {isError && <InputError>パスワードが一致しません</InputError>}
-        <StyledButton
-          type="submit"
+        <LoadingButton
           fullWidth
+          type="submit"
           disabled={formState.isSubmitting}
-          loading={formState.isSubmitting ? true : undefined} // warningが出るため
+          loading={formState.isSubmitting}
         >
-          {formState.isSubmitting ? <CircularProgress size={14} /> : '登録'}
-        </StyledButton>
+          登録
+        </LoadingButton>
         <SignInWithSns />
         <Link href="/signin">既にアカウントをお持ちの方はこちら</Link>
-      </AuthenticateForm>
+      </form>
     </AuthenticateContainer>
   );
 }

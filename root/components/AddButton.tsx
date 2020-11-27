@@ -1,32 +1,17 @@
 import React, { FC } from 'react';
 // material
-import Fab from '@material-ui/core/Fab';
-import IconButton from '@material-ui/core/IconButton';
-import { makeStyles } from '@material-ui/core/styles';
-import { cyan } from '@material-ui/core/colors';
+import { Fab, IconButton } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { dialogData } from '../../recoil/dialog';
 import { useSetRecoilState } from 'recoil';
-
-const useStyles = makeStyles((theme) => ({
-  absolute: {
-    position: 'fixed',
-    bottom: theme.spacing(2),
-    right: theme.spacing(3),
-    backgroundColor: cyan[700],
-    color: 'white',
-    '&:hover': {
-      backgroundColor: cyan[500],
-    },
-  },
-}));
+import styled from 'styled-components';
+import { COLOR } from '../../styles/color';
 
 type Props = {
   dialogKey: string;
 };
 
 export const AddButton: FC<Props> = ({ dialogKey }) => {
-  const classes = useStyles();
   const setDialog = useSetRecoilState(dialogData);
 
   const handleClickOpen = () => {
@@ -37,12 +22,18 @@ export const AddButton: FC<Props> = ({ dialogKey }) => {
   };
 
   return (
-    <>
-      <IconButton onClick={handleClickOpen}>
-        <Fab className={classes.absolute}>
-          <AddIcon />
-        </Fab>
-      </IconButton>
-    </>
+    <IconButton onClick={handleClickOpen}>
+      <StyledFab>
+        <AddIcon />
+      </StyledFab>
+    </IconButton>
   );
 };
+
+const StyledFab = styled(Fab)`
+  background-color: ${COLOR.MAIN};
+  color: ${COLOR.WHITE};
+  &:hover {
+    background-color: ${COLOR.MAIN_HOVER};
+  }
+`;
