@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { FormValues } from '../../../../types';
 import { BlogItem } from './BlogItem';
-
 // material
 import { Grid, Container } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,20 +12,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type BlogWithFavo = {
-  favoUsers?: string[];
-};
-
 type Props = {
-  data: (FormValues & BlogWithFavo)[] | undefined;
-  bookmarkToggle: (id: string | undefined) => void;
-  favoCount: (id: string) => void;
+  blogData: FormValues[] | undefined;
+  bookmarkToggle: (id: string) => void;
+  favToggle: (id: string) => void;
   isDisplay: boolean;
 };
 export const BlogList: FC<Props> = ({
-  data,
+  blogData,
   bookmarkToggle,
-  favoCount,
+  favToggle,
   isDisplay,
 }) => {
   const classes = useStyles();
@@ -34,14 +29,14 @@ export const BlogList: FC<Props> = ({
   return (
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
-        {data
+        {blogData
           ?.filter((display) => !display?.isPrivate)
           .map((card) => (
             <BlogItem
               {...{
                 card,
                 bookmarkToggle,
-                favoCount,
+                favToggle,
                 isDisplay,
               }}
             />

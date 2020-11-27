@@ -45,32 +45,32 @@ const useStyles = makeStyles((theme) => ({
 
 type Props = {
   card: FormValues;
-  bookmarkToggle: (id: string | undefined) => void;
-  favoCount: (id: string) => void;
+  bookmarkToggle: (id: string) => void;
+  favToggle: (id: string) => void;
   isDisplay: boolean;
 };
 
 export const BlogItem: FC<Props> = ({
   card,
   bookmarkToggle,
-  favoCount,
+  favToggle,
   isDisplay,
 }) => {
   const classes = useStyles();
   const user = auth.currentUser;
   const setDialog = useSetRecoilState(dialogData);
-  const [isFavo, setIsFavo] = useState(false);
+  const [isFav, setIsFav] = useState(false);
 
   useEffect(() => {
     if (user) {
-      db.doc(`blog/${card.id}/numOfFavo/${user.uid}`).onSnapshot((doc) => {
-        setIsFavo(doc.exists);
+      db.doc(`blog/${card.id}/favUsers/${user.uid}`).onSnapshot((doc) => {
+        setIsFav(doc.exists);
       });
     }
   }, [user]);
 
   return (
-    <Grid item key={card?.id} xs={12} sm={6} md={4}>
+    <Grid item key={card.id} xs={12} sm={6} md={4}>
       <Card className={classes.card}>
         <CardMedia
           className={classes.cardMedia}
@@ -85,7 +85,7 @@ export const BlogItem: FC<Props> = ({
           <Typography>
             {card?.tag &&
               card?.tag.map((name) => (
-                <StyleTag key={card.id?.toString()}>{name}</StyleTag>
+                <StyleTag key={card.id.toString()}>{name}</StyleTag>
               ))}
           </Typography>
         </CardContent>
@@ -96,7 +96,7 @@ export const BlogItem: FC<Props> = ({
 
           {isDisplay && (
             <>
-              <Link href={`/blogedit/${card?.id}`}>
+              <Link href={`/blogedit/${card.id}`}>
                 <Button size="small" color="primary">
                   edit
                 </Button>
@@ -120,7 +120,7 @@ export const BlogItem: FC<Props> = ({
             <>
               <Button
                 onClick={() => {
-                  favoCount(card?.id ? card.id : '');
+                  favToggle(card.id);
                   !user &&
                     setDialog((prev) => ({
                       ...prev,
@@ -130,8 +130,8 @@ export const BlogItem: FC<Props> = ({
                 size="small"
                 color="primary"
               >
-                {isFavo ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
-                {card.favoCount === 0 ? '' : card.favoCount}
+                {isFav ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
+                {card.favCount === 0 ? '' : card.favCount}
               </Button>
 
               <Button
@@ -139,7 +139,7 @@ export const BlogItem: FC<Props> = ({
                 color="primary"
                 onClick={() => {
                   user
-                    ? bookmarkToggle(card?.id)
+                    ? bookmarkToggle(card.id)
                     : setDialog((prev) => ({
                         ...prev,
                         [RECOMMEND_REGISTER]: true,

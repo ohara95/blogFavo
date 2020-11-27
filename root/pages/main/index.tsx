@@ -47,8 +47,8 @@ const Main: FC = () => {
     if (!user) setActivePage('user');
   }, [user]);
 
-  const bookmarkToggle = (id: string | undefined) => {
-    blog.map((fieldItem) => {
+  const bookmarkToggle = (id: string) => {
+    blog.forEach((fieldItem) => {
       if (fieldItem.id === id) {
         db.collection('blog')
           .doc(id)
@@ -76,24 +76,24 @@ const Main: FC = () => {
       : ADD_CATEGORY
     : RECOMMEND_REGISTER;
 
-  const favoCount = async (id: string) => {
-    const favoRef = db.collection(`blog/${id}/numOfFavo`);
+  const favToggle = async (id: string) => {
+    const favRef = db.collection(`blog/${id}/favUsers`);
 
-    const res = await (favoRef && favoRef.get());
+    const res = await (favRef && favRef.get());
     const data = res.docs.map((doc) => doc.id);
 
     const blogRef = db.doc(`blog/${id}`);
     if (!!data.find((db) => db === user?.uid)) {
-      favoRef.doc(user?.uid).delete();
+      favRef.doc(user?.uid).delete();
       blogRef.update({
-        favoCount: firebase.firestore.FieldValue.increment(-1),
+        favCount: firebase.firestore.FieldValue.increment(-1),
       });
     } else {
-      favoRef.doc(user?.uid).set({
+      favRef.doc(user?.uid).set({
         userRef: db.collection('users').doc(user?.uid),
       });
       blogRef.update({
-        favoCount: firebase.firestore.FieldValue.increment(1),
+        favCount: firebase.firestore.FieldValue.increment(1),
       });
     }
   };
@@ -106,8 +106,8 @@ const Main: FC = () => {
         {currentDisplay === 'list' ? (
           <BlogList
             bookmarkToggle={bookmarkToggle}
-            data={user && activePage === 'my' ? filterBlog : blog}
-            favoCount={favoCount}
+            blogData={user && activePage === 'my' ? filterBlog : blog}
+            favToggle={favToggle}
             isDisplay={user && activePage === 'my' ? true : false}
           />
         ) : (
