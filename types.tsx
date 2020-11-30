@@ -5,6 +5,7 @@ export type FormValues = {
   url: string;
   memo: string;
   category: string;
+  myCategory: string;
   tag: string[];
   isPrivate: boolean;
   id: string;
@@ -22,9 +23,15 @@ export type Tags = {
 
 export type Category = {
   name: string;
+  id: string;
+  imageUrl?: string;
+};
+
+export type MyCategory = {
+  name: string;
+  imageUrl?: string;
   id?: string;
   inputValue?: string;
-  imageUrl?: string;
 };
 
 export type User = {

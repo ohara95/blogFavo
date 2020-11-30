@@ -1,7 +1,7 @@
 import React, { useEffect, FC, useState } from 'react';
 import { db } from '../utils/firebase';
 import { Tags } from '../../types';
-import { useFirebase } from '../utils/hooks';
+import { useCollection } from '../utils/hooks';
 import { Label, LabelText, BaseTextField } from '../../styles/common';
 import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export const Tag: FC<Props> = ({ tag, setTag }) => {
-  const tags = useFirebase<Tags>('tags');
+  const tags = useCollection<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {

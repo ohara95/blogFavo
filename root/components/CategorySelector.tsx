@@ -1,89 +1,52 @@
-import React, { useEffect, FC } from 'react';
+import React, { FC } from 'react';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import { useFirebase } from '../utils/hooks/useFirebase';
 import { Category } from '../../types';
-import { db } from '../utils/firebase';
-import { useFirebase } from '../utils/hooks';
-import { Label, LabelText, BaseTextField } from '../../styles/common';
-//material
-import Autocomplete, {
-  createFilterOptions,
-} from '@material-ui/lab/Autocomplete';
 
-const filter = createFilterOptions<Category>();
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    formControl: {
+      margin: theme.spacing(1),
+      minWidth: 120,
+      width: '90%',
+    },
+  })
+);
 
 type Props = {
-  category: Category | null;
-  setCategory: (category: Category | null) => void;
+  publicCategory?: string;
+  setPublicCategory: (param: string) => void;
 };
 
-export const CategorySelector: FC<Props> = ({ category, setCategory }) => {
+export const CategorySelector: FC<Props> = ({
+  publicCategory,
+  setPublicCategory,
+}) => {
   const categoryList = useFirebase<Category>('categoryList');
-
-  useEffect(() => {
-    if (category) {
-      if (categoryList.find((db) => db.name === category.name)) return;
-      db.collection('categoryList').add({
-        name: category.name,
-      });
-    }
-  }, [category]);
-
+  const classes = useStyles();
   return (
-    <Label>
-      <LabelText>カテゴリー</LabelText>
-      <Autocomplete
-        value={category}
-        onChange={(_, newValue) => {
-          if (typeof newValue === 'string') {
-            setCategory({
-              name: newValue,
-            });
-          } else if (newValue && newValue.inputValue) {
-            // ユーザー入力から新しい値を作成
-            setCategory({
-              name: newValue.inputValue,
-            });
-          } else {
-            setCategory(newValue);
-          }
+    <FormControl className={classes.formControl} fullWidth variant="outlined">
+      <InputLabel htmlFor="age-native-simple">Category</InputLabel>
+      <Select
+        label="Category"
+        native
+        onChange={(e) => {
+          setPublicCategory(e.target.value as string);
         }}
-        filterOptions={(options, params) => {
-          const filtered = filter(options, params);
-
-          if (params.inputValue !== '') {
-            filtered.push({
-              inputValue: params.inputValue,
-              name: `追加 "${params.inputValue}"`,
-            });
-          }
-
-          return filtered;
-        }}
-        selectOnFocus
-        clearOnBlur
-        handleHomeEndKeys
-        options={categoryList}
-        getOptionLabel={(option) => {
-          // 入力から直接入力で選択された値
-          if (typeof option === 'string') {
-            return option;
-          }
-          //値を追加
-          if (option.inputValue) {
-            return option.inputValue;
-          }
-          return option.name;
-        }}
-        renderOption={(option) => option.name}
-        freeSolo
-        renderInput={(params) => (
-          <BaseTextField
-            {...params}
-            variant="outlined"
-            fullWidth
-            placeholder="選択してください"
-          />
-        )}
-      />
-    </Label>
+        value={publicCategory}
+      >
+        <option value="none">選択してください</option>
+        {categoryList.map((category) => {
+          return (
+            <option key={category?.id} value={category?.name}>
+              {category.name}
+            </option>
+          );
+        })}
+      </Select>
+    </FormControl>
   );
 };

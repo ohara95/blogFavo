@@ -1,36 +1,38 @@
 import React, { useState, useEffect } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { ImageUpload } from '../../root/utils/ImageUpload';
-import { db, storage } from '../../root/utils/firebase';
-import { InputWithLabel } from '../../root/components/InputWithLabel';
-import { useFirebase } from '../../root/utils/hooks';
-import { Category, FormValues } from '../../types';
+import { db, storage, auth } from '../../root/utils/firebase';
+import { useCollection } from '../../root/utils/hooks';
+import { MyCategory } from '../../types';
 import { useForm } from 'react-hook-form';
 import { LabelText } from '../../styles/common';
 import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
 import { useRouter } from 'next/router';
 import { EditBase } from '../../root/components/EditBase';
+import { InputWithLabel } from '../../root/components/InputWithLabel';
+import { NORMAL_VALIDATION } from '../../root/utils/validation';
+import { toastState } from '../../recoil/root';
 //material
 import { Button } from '@material-ui/core';
-import { NORMAL_VALIDATION } from '../../root/utils/validation';
 
 type FormData = {
   category: string;
 };
 
 const EditCategory = () => {
-  const blog = useFirebase<FormValues>('blog');
-  const categoryList = useFirebase<Category>('categoryList');
   const router = useRouter();
   const { id } = router.query;
-  const [imageUrl, setImageUrl] = useState('');
   const { register, errors, handleSubmit, reset } = useForm<FormData>();
-  const categoryDetail = categoryList?.find((db) => db.id === id);
+  const user = auth.currentUser;
+  const [imageUrl, setImageUrl] = useState('');
+
+  const myCategory = useCollection<MyCategory>(`users/${user?.uid}/myCategory`);
+  const categoryDetail = myCategory?.find((db) => db.id === id);
+  const setToast = useSetRecoilState(toastState);
 
   useEffect(() => {
-    if (categoryDetail?.imageUrl) {
-      setImageUrl(categoryDetail?.imageUrl);
-    }
+    if (categoryDetail?.imageUrl) setImageUrl(categoryDetail?.imageUrl);
   }, [categoryDetail]);
 
   useEffect(() => {
@@ -52,37 +54,31 @@ const EditCategory = () => {
     if (imageUrl) storage.refFromURL(imageUrl).delete();
     setImageUrl('');
     if (typeof id === 'string') {
-      db.collection('categoryList').doc(id).update({ imageUrl: '' });
+      db.doc(`users/${user?.uid}/myCategory/${id}`).update({ imageUrl: '' });
     }
   };
 
   const onSubmit = async (data: FormData) => {
     try {
-      if (categoryDetail?.name === data.category) {
+      if (myCategory.find((my) => my.name === data.category)) {
         if (categoryDetail?.name !== data.category) {
-          return alert('カテゴリー名が存在します');
+          return setToast(['カテゴリー名が存在します', 'error']);
         }
       }
       if (typeof id === 'string') {
-        await db.collection('categoryList').doc(id).update({
+        await db
+          .collection('blog')
+          .doc(id)
+          .update({ myCategory: data.category });
+        await db.doc(`users/${user?.uid}/myCategory/${id}`).update({
           name: data.category,
-          imageUrl,
+          imageUrl: imageUrl ? imageUrl : '',
         });
       }
-      if (blog) {
-        const blogFilter = await db
-          .collection('blog')
-          .where('category', '==', categoryDetail?.name)
-          .get();
-        blogFilter.docs.map((doc) =>
-          doc.ref.update({
-            category: data.category,
-          })
-        );
-      }
+      setToast(['変更出来ました！']);
       router.back();
     } catch (err) {
-      console.log(err);
+      setToast(['失敗しました', 'error']);
     }
   };
 

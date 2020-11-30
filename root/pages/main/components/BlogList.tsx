@@ -30,8 +30,8 @@ export const BlogList: FC<Props> = ({
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
         {blogData
-          ?.filter((display) => !display?.isPrivate)
-          .map((card) => (
+          // ?.filter((display) => !display?.isPrivate)
+          ?.map((card) => (
             <BlogItem
               {...{
                 card,

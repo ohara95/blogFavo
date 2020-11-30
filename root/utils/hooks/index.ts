@@ -1,1 +1,1 @@
-export { useFirebase } from './useFirebase';
+export { useCollection } from './useCollection';

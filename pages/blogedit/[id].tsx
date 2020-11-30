@@ -1,49 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-import { Category, FormValues, InputType } from '../../types';
+import { useSetRecoilState } from 'recoil';
+import { toastState } from '../../recoil/root';
 import { Label, LabelText } from '../../styles/common';
-import { db } from '../../root/utils/firebase';
-import { useFirebase } from '../../root/utils/hooks';
+import { MyCategory, Category, FormValues, InputType } from '../../types';
 import { CategorySelector } from '../../root/components/CategorySelector';
 import { InputWithLabel } from '../../root/components/InputWithLabel';
 import { Tag } from '../../root/components/Tag';
 import { EditBase } from '../../root/components/EditBase';
-
+import { db } from '../../root/utils/firebase';
+import { useCollection } from '../../root/utils/hooks';
+import { NORMAL_VALIDATION, URL_VALIDATION } from '../../root/utils/validation';
 //material
 import { Checkbox } from '@material-ui/core';
-import { NORMAL_VALIDATION, URL_VALIDATION } from '../../root/utils/validation';
-import { useSetRecoilState } from 'recoil';
-import { toastState } from '../../recoil/root';
 
 const EditBlog = () => {
   const router = useRouter();
   const { id } = router.query;
-
-  const blog = useFirebase<FormValues>('blog');
-  const categoryList = useFirebase<Category>('categoryList');
-  const [tag, setTag] = useState<string[]>([]);
-  const [category, setCategory] = useState<Category | null>(null);
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [targetBlog, setTargetBlog] = useState<FormValues>();
   const { register, errors, handleSubmit, reset } = useForm<FormValues>({
     mode: 'onBlur',
   });
-  const targetCategory =
-    blog &&
-    categoryList &&
-    categoryList.find((category) =>
-      blog.find((db) => db.category === category.name)
-    );
+
+  const blog = useCollection<FormValues>('blog');
+  const categoryList = useCollection<Category>('categoryList');
+  const [tag, setTag] = useState<string[]>([]);
+  const [category, setCategory] = useState<MyCategory | null>(null);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [publicCategory, setPublicCategory] = useState('');
   const setToast = useSetRecoilState(toastState);
+  const targetBlog = blog.find((db) => db.id === id);
+  const targetCategory = categoryList.find((category) =>
+    blog.find((db) => db.category === category.name)
+  );
 
   // -----useEffect[start]-----
-  useEffect(() => {
-    if (blog) {
-      setTargetBlog(blog.find((db) => db.id === id));
-    }
-  }, [blog]);
-
   useEffect(() => {
     if (targetBlog) {
       reset({
@@ -51,6 +42,7 @@ const EditBlog = () => {
         url: targetBlog?.url,
         memo: targetBlog?.memo,
       });
+      setPublicCategory(targetBlog.category);
     }
   }, [targetBlog, reset]);
 
@@ -62,11 +54,8 @@ const EditBlog = () => {
   }, [targetBlog]);
 
   useEffect(() => {
-    if (targetCategory) {
-      setCategory(targetCategory);
-    }
+    if (targetCategory) setCategory(targetCategory);
   }, [targetCategory]);
-
   // ------useEffect[end]------
 
   const upDateValidation = (data: FormValues) => {
@@ -94,12 +83,13 @@ const EditBlog = () => {
       if (typeof id === 'string') {
         if (category)
           await db.collection('blog').doc(id).update({
-            category: category?.name,
+            category: publicCategory,
           });
         await db.collection('blog').doc(id).update({
           isPrivate,
         });
       }
+      setToast(['変更出来ました！']);
       router.back();
     } catch {
       setToast(['失敗しました', 'error']);
@@ -134,7 +124,10 @@ const EditBlog = () => {
       {inputList.map((props) => (
         <InputWithLabel key={props.name} {...props} />
       ))}
-      <CategorySelector category={category} setCategory={setCategory} />
+      <CategorySelector
+        setPublicCategory={setPublicCategory}
+        publicCategory={publicCategory}
+      />
       <Tag tag={tag} setTag={setTag} />
       <Label>
         <label css="display: flex">

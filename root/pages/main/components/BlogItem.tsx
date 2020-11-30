@@ -6,6 +6,7 @@ import { useSetRecoilState } from 'recoil';
 import { dialogData, RECOMMEND_REGISTER } from '../../../../recoil/dialog';
 import styled from 'styled-components';
 import { COLOR } from '../../../../styles/color';
+import { DeleteButton } from '../../../components/DeleteButton';
 import {
   Button,
   Card,
@@ -75,7 +76,7 @@ export const BlogItem: FC<Props> = ({
         <CardMedia
           className={classes.cardMedia}
           image="https://source.unsplash.com/random"
-          title="Image title"
+          title="blogImage"
         />
         <CardContent className={classes.cardContent}>
           <Typography gutterBottom variant="h5" component="h2">
@@ -96,24 +97,12 @@ export const BlogItem: FC<Props> = ({
 
           {isDisplay && (
             <>
-              <Link href={`/blogedit/${card.id}`}>
+              <Link href={`/blogedit/${card?.id}`}>
                 <Button size="small" color="primary">
                   edit
                 </Button>
               </Link>
-              <Button
-                size="small"
-                color="secondary"
-                onClick={() => {
-                  !user &&
-                    setDialog((prev) => ({
-                      ...prev,
-                      [RECOMMEND_REGISTER]: true,
-                    }));
-                }}
-              >
-                delete
-              </Button>
+              <DeleteButton type="blog" id={card?.id} />
             </>
           )}
           {!isDisplay && (
