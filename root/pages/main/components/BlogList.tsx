@@ -29,18 +29,19 @@ export const BlogList: FC<Props> = ({
   return (
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
-        {blogData
-          ?.filter((display) => !display?.isPrivate)
-          .map((card) => (
-            <BlogItem
-              {...{
-                card,
-                bookmarkToggle,
-                favToggle,
-                isDisplay,
-              }}
-            />
-          ))}
+        {blogData?.map((card) => (
+          <BlogItem
+            bookmarkToggle={bookmarkToggle}
+            favCount={card.favCount}
+            favToggle={favToggle}
+            id={card.id}
+            isDisplay={isDisplay}
+            laterRead={card.laterRead}
+            memo={card.memo}
+            tag={card.tag}
+            title={card.title}
+          />
+        ))}
       </Grid>
     </Container>
   );

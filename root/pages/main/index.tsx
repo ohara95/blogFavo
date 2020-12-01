@@ -3,7 +3,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
 import firebase, { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
-import { useFirebase } from '../../utils/hooks';
+import { useCollection } from '../../utils/hooks';
 import {
   ADD_BLOG,
   ADD_CATEGORY,
@@ -14,16 +14,17 @@ import { Footer } from '../../components/Footer';
 import { AddButton } from '../../components/AddButton';
 import { BlogList } from './components/BlogList';
 import { PageTop } from '../main/components/PageTop';
-import { CategoryDetail } from '../main/components/CategoryDetail';
+import { CategoryList } from '../main/components/CategoryList';
 //material
 import { Pagination } from '@material-ui/lab';
 import { Grid } from '@material-ui/core';
 
 const Main: FC = () => {
   const user = auth.currentUser;
+  const blog = useCollection<FormValues>('blog');
+  const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
+  const categoryList = useCollection<Category>('categoryList');
   const currentDisplay = useRecoilValue(currentDisplayData);
-  const categoryList = useFirebase<Category>('categoryList');
-  const blog = useFirebase<FormValues>('blog');
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [filterBlog, setFilterBlog] = useState<FormValues[]>([]);
 
@@ -55,19 +56,6 @@ const Main: FC = () => {
           .update({ laterRead: !fieldItem.laterRead });
       }
     });
-  };
-
-  const holdCategory = (data: FormValues[]) => {
-    let arr: Category[] = [];
-    for (let i = 0; i < data.length; i++) {
-      categoryList.forEach((category) => {
-        //一旦コメントアウト
-        // if (category.name === data[i]?.category.name) {
-        arr.push(category);
-        // }
-      });
-    }
-    return arr.filter((el, i, self) => self.indexOf(el) === i);
   };
 
   const dialogKey = user
@@ -106,23 +94,29 @@ const Main: FC = () => {
         {currentDisplay === 'list' ? (
           <BlogList
             bookmarkToggle={bookmarkToggle}
-            blogData={user && activePage === 'my' ? filterBlog : blog}
+            blogData={
+              user && activePage === 'my'
+                ? filterBlog
+                : blog?.filter((display) => !display?.isPrivate)
+            }
             favToggle={favToggle}
             isDisplay={user && activePage === 'my' ? true : false}
           />
         ) : (
-          <CategoryDetail
-            data={activePage === 'my' ? holdCategory(blog) : categoryList}
+          <CategoryList
+            data={activePage === 'my' ? myCategory && myCategory : categoryList}
             blogData={activePage === 'my' ? filterBlog : blog}
             activePage={activePage}
           />
         )}
       </main>
       <Grid container direction="row" justify="center" alignItems="center">
-        <Pagination count={10} size="large" style={{ marginBottom: 20 }} />
+        <Pagination count={10} size="large" css="margin-Bottom: 20px" />
       </Grid>
       <Footer />
-      <AddButton dialogKey={dialogKey} />
+      {(activePage !== 'user' || currentDisplay !== 'category') && (
+        <AddButton dialogKey={dialogKey} />
+      )}
     </>
   );
 };

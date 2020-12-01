@@ -7,6 +7,12 @@ export const EMAIL_VALIDATION = {
 };
 
 export const NORMAL_VALIDATION = {
+  pattern: {
+    value: /[^ |　]/,
+    message: 'スペースのみの入力はできません。',
+  },
+};
+export const REQUIRED_VALIDATION = {
   required: '必須項目です',
   pattern: {
     value: /[^ |　]/,

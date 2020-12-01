@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Category, FormValues, InputType } from '../../types';
+import { FormValues, InputType } from '../../types';
+import { Label, LabelText } from '../../styles/common';
+//recoil
+import { useSetRecoilState } from 'recoil';
+import { ADD_BLOG } from '../../recoil/dialog';
+import { toastState } from '../../recoil/root';
+//component
 import { DialogBase } from '../components/DialogBase';
 import { Tag } from '../components/Tag';
 import { InputWithLabel } from '../components/InputWithLabel';
-import { CategorySelector } from '../components/CategorySelector';
-import { ADD_BLOG } from '../../recoil/dialog';
+import { CategorySelector } from './CategorySelector';
+//utils
 import firebase, { auth, db } from '../utils/firebase';
-import { Label, LabelText } from '../../styles/common';
-
+import { NORMAL_VALIDATION, REQUIRED_VALIDATION } from '../utils/validation';
 //material
 import { Checkbox } from '@material-ui/core';
-import { useSetRecoilState } from 'recoil';
-import { toastState } from '../../recoil/root';
-import { useFirebase } from '../utils/hooks';
-import { NORMAL_VALIDATION } from '../utils/validation';
 
 export const AddBlogDialog = () => {
   const { register, errors, handleSubmit, reset } = useForm<FormValues>({
     mode: 'onBlur',
   });
   const [tag, setTag] = useState<string[]>([]);
-  const [category, setCategory] = useState<Category | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
-  const categoryList = useFirebase<Category>('categoryList');
   const user = auth.currentUser;
   const setToast = useSetRecoilState(toastState);
+  const [publicCategory, setPublicCategory] = useState('');
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -33,26 +33,23 @@ export const AddBlogDialog = () => {
         title: data.title,
         url: data.url,
         memo: data.memo,
-        category: {
-          name: category ? category.name : null,
-          id: categoryList.find((db) => db.name === category?.name)?.id,
-        },
+        category: publicCategory ? publicCategory : 'その他',
         tag,
         isPrivate,
         postedUser: user?.uid,
         postedAt: firebase.firestore.Timestamp.now(),
-        isFavo: false,
         laterRead: false,
       });
 
       const res = await db.collection('tags').get();
       res.docs.map((doc) => doc.ref.update({ isChecked: false }));
       setToast(['追加出来ました！']);
-      setCategory(null);
+      setPublicCategory('');
       setTag([]);
       setIsPrivate(false);
       reset();
     } catch (error) {
+      console.log(error);
       setToast(['追加に失敗しました', 'error']);
     }
   };
@@ -62,7 +59,7 @@ export const AddBlogDialog = () => {
       name: 'title',
       label: 'Title*',
       error: errors.title,
-      inputRef: register(NORMAL_VALIDATION),
+      inputRef: register(REQUIRED_VALIDATION),
     },
     {
       name: 'url',
@@ -96,7 +93,7 @@ export const AddBlogDialog = () => {
       {inputList.map((props) => (
         <InputWithLabel key={props.name} {...props} />
       ))}
-      <CategorySelector category={category} setCategory={setCategory} />
+      <CategorySelector setPublicCategory={setPublicCategory} />
       <Tag tag={tag} setTag={setTag} />
       <Label>
         <label css="display: flex">

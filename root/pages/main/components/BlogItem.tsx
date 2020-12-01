@@ -6,6 +6,7 @@ import { useSetRecoilState } from 'recoil';
 import { dialogData, RECOMMEND_REGISTER } from '../../../../recoil/dialog';
 import styled from 'styled-components';
 import { COLOR } from '../../../../styles/color';
+import { DeleteButton } from '../../../components/DeleteButton';
 import {
   Button,
   Card,
@@ -44,17 +45,27 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  card: FormValues;
   bookmarkToggle: (id: string) => void;
+  favCount: number;
   favToggle: (id: string) => void;
+  id: string;
   isDisplay: boolean;
+  laterRead: boolean;
+  memo: string;
+  tag: string[];
+  title: string;
 };
 
 export const BlogItem: FC<Props> = ({
-  card,
   bookmarkToggle,
   favToggle,
+  favCount,
+  id,
   isDisplay,
+  laterRead,
+  memo,
+  tag,
+  title,
 }) => {
   const classes = useStyles();
   const user = auth.currentUser;
@@ -63,30 +74,29 @@ export const BlogItem: FC<Props> = ({
 
   useEffect(() => {
     if (user) {
-      db.doc(`blog/${card.id}/favUsers/${user.uid}`).onSnapshot((doc) => {
+      db.doc(`blog/${id}/favUsers/${user.uid}`).onSnapshot((doc) => {
         setIsFav(doc.exists);
       });
     }
   }, [user]);
 
   return (
-    <Grid item key={card.id} xs={12} sm={6} md={4}>
+    <Grid item key={id} xs={12} sm={6} md={4}>
       <Card className={classes.card}>
         <CardMedia
           className={classes.cardMedia}
           image="https://source.unsplash.com/random"
-          title="Image title"
+          title="blogImage"
         />
         <CardContent className={classes.cardContent}>
           <Typography gutterBottom variant="h5" component="h2">
-            {card?.title && card.title}
+            {title}
           </Typography>
-          <Typography>{card?.memo && card?.memo}</Typography>
+          <Typography>{memo}</Typography>
           <Typography>
-            {card?.tag &&
-              card?.tag.map((name) => (
-                <StyleTag key={card.id.toString()}>{name}</StyleTag>
-              ))}
+            {tag.map((name) => (
+              <StyleTag key={id.toString()}>{name}</StyleTag>
+            ))}
           </Typography>
         </CardContent>
         <CardActions>
@@ -96,31 +106,19 @@ export const BlogItem: FC<Props> = ({
 
           {isDisplay && (
             <>
-              <Link href={`/blogedit/${card.id}`}>
+              <Link href={`/blogedit/${id}`}>
                 <Button size="small" color="primary">
                   edit
                 </Button>
               </Link>
-              <Button
-                size="small"
-                color="secondary"
-                onClick={() => {
-                  !user &&
-                    setDialog((prev) => ({
-                      ...prev,
-                      [RECOMMEND_REGISTER]: true,
-                    }));
-                }}
-              >
-                delete
-              </Button>
+              <DeleteButton type="blog" id={id} />
             </>
           )}
           {!isDisplay && (
             <>
               <Button
                 onClick={() => {
-                  favToggle(card.id);
+                  favToggle(id);
                   !user &&
                     setDialog((prev) => ({
                       ...prev,
@@ -131,7 +129,7 @@ export const BlogItem: FC<Props> = ({
                 color="primary"
               >
                 {isFav ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
-                {card.favCount === 0 ? '' : card.favCount}
+                {favCount === 0 ? '' : favCount}
               </Button>
 
               <Button
@@ -139,14 +137,14 @@ export const BlogItem: FC<Props> = ({
                 color="primary"
                 onClick={() => {
                   user
-                    ? bookmarkToggle(card.id)
+                    ? bookmarkToggle(id)
                     : setDialog((prev) => ({
                         ...prev,
                         [RECOMMEND_REGISTER]: true,
                       }));
                 }}
               >
-                {card?.laterRead ? (
+                {laterRead ? (
                   <BookmarkRoundedIcon />
                 ) : (
                   <TurnedInNotRoundedIcon />
@@ -171,4 +169,5 @@ const StyleTag = styled.div`
   font-size: 8px;
   font-weight: 800;
   letter-spacing: 1px;
+  background: linear-gradient(45deg, #afeeee 10%, #40e0d0 30%, #20b2aa 80%);
 `;

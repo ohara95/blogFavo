@@ -6,7 +6,6 @@ import {
   BaseTextField,
 } from '../../styles/common';
 import { InputType } from '../../types';
-// import { InputAdornment } from '@material-ui/core';
 
 type Props = InputType;
 

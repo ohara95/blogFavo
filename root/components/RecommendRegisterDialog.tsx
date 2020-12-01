@@ -9,7 +9,7 @@ export const RecommendRegisterDialog = () => {
     <DialogBase title="" dialogKey={RECOMMEND_REGISTER}>
       <h1>ユーザー登録をして、blogFavoをもっと便利に使ってみませんか？</h1>
       <p>ログインするとこんな機能が使えます</p>
-      <div style={{ display: 'flex' }}>
+      <div css="display: flex">
         <ol>
           <li>ブログを書いて、それを共有できます</li>
           <li>お気に入りの記事を保存できます</li>
