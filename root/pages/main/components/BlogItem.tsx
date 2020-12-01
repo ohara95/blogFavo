@@ -169,4 +169,5 @@ const StyleTag = styled.div`
   font-size: 8px;
   font-weight: 800;
   letter-spacing: 1px;
+  background: linear-gradient(45deg, #afeeee 10%, #40e0d0 30%, #20b2aa 80%);
 `;

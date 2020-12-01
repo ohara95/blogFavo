@@ -3,12 +3,14 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../recoil/root';
+import { Category, FormValues, InputType } from '../../types';
 import { Label, LabelText } from '../../styles/common';
-import { MyCategory, Category, FormValues, InputType } from '../../types';
+//component
 import { CategorySelector } from '../../root/components/CategorySelector';
 import { InputWithLabel } from '../../root/components/InputWithLabel';
 import { Tag } from '../../root/components/Tag';
 import { EditBase } from '../../root/components/EditBase';
+//utils
 import { db } from '../../root/utils/firebase';
 import { useCollection } from '../../root/utils/hooks';
 import { NORMAL_VALIDATION, URL_VALIDATION } from '../../root/utils/validation';
@@ -25,7 +27,7 @@ const EditBlog = () => {
   const blog = useCollection<FormValues>('blog');
   const categoryList = useCollection<Category>('categoryList');
   const [tag, setTag] = useState<string[]>([]);
-  const [category, setCategory] = useState<MyCategory | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
   const [publicCategory, setPublicCategory] = useState('');
   const setToast = useSetRecoilState(toastState);

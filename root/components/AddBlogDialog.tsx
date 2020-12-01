@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { useForm } from 'react-hook-form';
 import { FormValues, InputType } from '../../types';
+import { Label, LabelText } from '../../styles/common';
+//recoil
+import { useSetRecoilState } from 'recoil';
+import { ADD_BLOG } from '../../recoil/dialog';
+import { toastState } from '../../recoil/root';
+//component
 import { DialogBase } from '../components/DialogBase';
 import { Tag } from '../components/Tag';
 import { InputWithLabel } from '../components/InputWithLabel';
 import { CategorySelector } from './CategorySelector';
-import { ADD_BLOG } from '../../recoil/dialog';
+//utils
 import firebase, { auth, db } from '../utils/firebase';
-import { Label, LabelText } from '../../styles/common';
-import { toastState } from '../../recoil/root';
 import { NORMAL_VALIDATION, REQUIRED_VALIDATION } from '../utils/validation';
-
 //material
 import { Checkbox } from '@material-ui/core';
 
@@ -48,7 +50,6 @@ export const AddBlogDialog = () => {
       reset();
     } catch (error) {
       console.log(error);
-
       setToast(['追加に失敗しました', 'error']);
     }
   };

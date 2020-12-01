@@ -33,7 +33,7 @@ export const CategoryList: FC<Props> = ({ activePage, blogData, data }) => {
   const classes = useStyles();
 
   return (
-    <Container className={classes.cardGrid} maxWidth="md">
+    <Container maxWidth="md">
       <Grid container spacing={4}>
         {data.map((card) => (
           <CategoryItem

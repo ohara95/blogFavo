@@ -31,20 +31,20 @@ const EditCategory = () => {
   const [imageUrl, setImageUrl] = useState('');
 
   const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
-  const categoryDetail = myCategory?.find((db) => db.id === id);
+  const findCategory = myCategory.find((db) => db.id === id);
   const setToast = useSetRecoilState(toastState);
 
   useEffect(() => {
-    if (categoryDetail?.imageUrl) setImageUrl(categoryDetail?.imageUrl);
-  }, [categoryDetail]);
+    if (findCategory?.imageUrl) setImageUrl(findCategory.imageUrl);
+  }, [findCategory]);
 
   useEffect(() => {
-    if (categoryDetail) {
+    if (findCategory) {
       reset({
-        category: categoryDetail.name,
+        category: findCategory.name,
       });
     }
-  }, [reset, categoryDetail]);
+  }, [reset, findCategory]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -64,7 +64,7 @@ const EditCategory = () => {
   const onSubmit = async (data: FormData) => {
     try {
       if (myCategory.find((my) => my.name === data.category)) {
-        if (categoryDetail?.name !== data.category) {
+        if (findCategory?.name !== data.category) {
           return setToast(['カテゴリー名が存在します', 'error']);
         }
       }
