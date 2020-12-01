@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Category, FormValues, MyCategory } from '../../../../types';
+import { Category, FormValues } from '../../../../types';
 import { CategoryItem } from './CategoryItem';
 // material
 import { Grid, Container } from '@material-ui/core';
@@ -7,9 +7,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { cyan } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
-  icon: {
-    marginRight: theme.spacing(2),
-  },
   cardGrid: {
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(8),
@@ -19,12 +16,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  cardMedia: {
-    paddingTop: '56.25%', // 16:9
-  },
-  cardContent: {
-    flexGrow: 1,
-  },
   defaultColor: {
     paddingTop: '56.25%', // 16:9
     backgroundColor: cyan['A700'],
@@ -33,12 +24,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  data: (Category | MyCategory)[];
-  blogData: FormValues[];
   activePage: 'my' | 'user';
+  blogData: FormValues[];
+  data: Category[];
 };
 
-export const CategoryList: FC<Props> = ({ data, blogData, activePage }) => {
+export const CategoryList: FC<Props> = ({ activePage, blogData, data }) => {
   const classes = useStyles();
 
   return (
@@ -46,9 +37,11 @@ export const CategoryList: FC<Props> = ({ data, blogData, activePage }) => {
       <Grid container spacing={4}>
         {data.map((card) => (
           <CategoryItem
-            card={card}
-            blogData={blogData}
             activePage={activePage}
+            blogData={blogData}
+            id={card.id}
+            imageUrl={card.imageUrl}
+            name={card.name}
           />
         ))}
       </Grid>

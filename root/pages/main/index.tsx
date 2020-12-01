@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { Category, FormValues, MyCategory } from '../../../types';
+import { Category, FormValues } from '../../../types';
 import firebase, { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
 import { useCollection } from '../../utils/hooks';
@@ -22,7 +22,7 @@ import { Grid } from '@material-ui/core';
 const Main: FC = () => {
   const user = auth.currentUser;
   const blog = useCollection<FormValues>('blog');
-  const myCategory = useCollection<MyCategory>(`users/${user?.uid}/myCategory`);
+  const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
   const categoryList = useCollection<Category>('categoryList');
   const currentDisplay = useRecoilValue(currentDisplayData);
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);

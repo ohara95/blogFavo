@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Category } from '../../types';
+import { useForm } from 'react-hook-form';
+//recoil
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../recoil/root';
+import { ADD_CATEGORY } from '../../recoil/dialog';
+//utils
 import { ImageUpload } from '../utils/ImageUpload';
 import { db, storage, auth } from '../utils/firebase';
+//component
 import { DialogBase } from '../components/DialogBase';
 import { InputWithLabel } from '../components/InputWithLabel';
-import { MyCategory } from '../../types';
-import { ADD_CATEGORY } from '../../recoil/dialog';
-import { useForm } from 'react-hook-form';
+//styled
 import { LabelText } from '../../styles/common';
 import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
@@ -24,7 +28,7 @@ export const AddCategoryDialog = () => {
   const user = auth.currentUser;
   const { register, errors, handleSubmit, reset } = useForm<FormData>();
   const setToast = useSetRecoilState(toastState);
-  const [myCategory, setMyCategory] = useState<MyCategory[]>([]);
+  const [myCategory, setMyCategory] = useState<Category[]>([]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -48,7 +52,7 @@ export const AddCategoryDialog = () => {
             id: doc.id,
           };
         });
-        setMyCategory(myCategoryArr as MyCategory[]);
+        setMyCategory(myCategoryArr as Category[]);
       });
   }, []);
 

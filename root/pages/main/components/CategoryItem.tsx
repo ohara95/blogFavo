@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Category, FormValues, MyCategory } from '../../../../types';
+import { FormValues } from '../../../../types';
 import Link from 'next/link';
 // material
 import {
@@ -19,10 +19,6 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     marginRight: theme.spacing(2),
   },
-  cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
-  },
   card: {
     height: '100%',
     display: 'flex',
@@ -34,40 +30,41 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
-  defaultColor: {
-    paddingTop: '56.25%', // 16:9
-    backgroundColor: cyan['A700'],
-    width: '100%',
-  },
 }));
 
 type Props = {
-  card: Category | MyCategory;
-  blogData: FormValues[];
   activePage: 'my' | 'user';
+  blogData: FormValues[];
+  id: string;
+  imageUrl: string;
+  name: string;
 };
 
-export const CategoryItem: FC<Props> = ({ card, blogData, activePage }) => {
+export const CategoryItem: FC<Props> = ({
+  activePage,
+  blogData,
+  id,
+  imageUrl,
+  name,
+}) => {
   const classes = useStyles();
 
-  const categoryHoldBlog = blogData.filter(
-    (blog) => blog.category === card.name
-  );
+  const categoryHoldBlog = blogData.filter((blog) => blog.category === name);
   const myCategoryHoldBlog = blogData.filter(
-    (blog) => blog.myCategory === card.name
+    (blog) => blog.myCategory === name
   );
 
   return (
-    <Grid item key={card.id} xs={12} sm={6} md={4}>
+    <Grid item key={id} xs={12} sm={6} md={4}>
       <Card className={classes.card}>
         <CardMedia
           className={classes.cardMedia}
-          image={card?.imageUrl ? card?.imageUrl : '/images/noImage.jpg'}
+          image={imageUrl ? imageUrl : '/images/noImage.jpg'}
           title="categoryImage"
         />
         <CardContent className={classes.cardContent}>
           <Typography gutterBottom variant="h6" component="h6">
-            {card?.name ? card?.name : 'title'}(
+            {name ? name : 'title'}(
             {
               (activePage === 'my' ? myCategoryHoldBlog : categoryHoldBlog)
                 .length
@@ -81,10 +78,10 @@ export const CategoryItem: FC<Props> = ({ card, blogData, activePage }) => {
           </Button>
           {activePage === 'my' && (
             <>
-              <Link href={`/categoryedit/${card?.id}`}>
+              <Link href={`/categoryedit/${id}`}>
                 <Button>edit</Button>
               </Link>
-              <DeleteButton type="myCategory" id={card?.id} />
+              <DeleteButton type="myCategory" id={id} />
             </>
           )}
         </CardActions>

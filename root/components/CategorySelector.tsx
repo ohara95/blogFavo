@@ -9,9 +9,9 @@ import { Category } from '../../types';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     formControl: {
-      margin: theme.spacing(1),
+      margin: 20,
       minWidth: 120,
-      width: '90%',
+      width: '88%',
     },
   })
 );

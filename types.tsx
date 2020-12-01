@@ -24,13 +24,7 @@ export type Tags = {
 export type Category = {
   name: string;
   id: string;
-  imageUrl?: string;
-};
-
-export type MyCategory = {
-  name: string;
-  imageUrl?: string;
-  id?: string;
+  imageUrl: string;
   inputValue?: string;
 };
 

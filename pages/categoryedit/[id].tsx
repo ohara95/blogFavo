@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { toastState } from '../../recoil/root';
+import { Category } from '../../types';
+import { useForm } from 'react-hook-form';
+import { useRouter } from 'next/router';
+//utils
 import { ImageUpload } from '../../root/utils/ImageUpload';
 import { db, storage, auth } from '../../root/utils/firebase';
 import { useCollection } from '../../root/utils/hooks';
-import { MyCategory } from '../../types';
-import { useForm } from 'react-hook-form';
+import { NORMAL_VALIDATION } from '../../root/utils/validation';
+//component
+import { EditBase } from '../../root/components/EditBase';
+import { InputWithLabel } from '../../root/components/InputWithLabel';
+//styled
 import { LabelText } from '../../styles/common';
 import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
-import { useRouter } from 'next/router';
-import { EditBase } from '../../root/components/EditBase';
-import { InputWithLabel } from '../../root/components/InputWithLabel';
-import { NORMAL_VALIDATION } from '../../root/utils/validation';
-import { toastState } from '../../recoil/root';
 //material
 import { Button } from '@material-ui/core';
 
@@ -27,7 +30,7 @@ const EditCategory = () => {
   const user = auth.currentUser;
   const [imageUrl, setImageUrl] = useState('');
 
-  const myCategory = useCollection<MyCategory>(`users/${user?.uid}/myCategory`);
+  const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
   const categoryDetail = myCategory?.find((db) => db.id === id);
   const setToast = useSetRecoilState(toastState);
 
