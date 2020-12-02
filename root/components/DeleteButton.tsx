@@ -17,7 +17,11 @@ export const DeleteButton: FC<Props> = ({ id, type }) => {
 
   const deleteItem = async () => {
     try {
+      const res = await db.doc(`${type}/${id}`).get();
+      const otherUserBlogId: string = res.data()?.otherUserBlogId;
+      db.doc(`blog/${otherUserBlogId}/laterReadUsers/${user?.uid}`).delete();
       await db.collection(type).doc(id).delete();
+
       if (type === 'myCategory') {
         await db.doc(`users/${user?.uid}/myCategory/${id}`).delete();
         setToast(['削除しました']);
@@ -36,7 +40,7 @@ export const DeleteButton: FC<Props> = ({ id, type }) => {
         <DialogHeader>
           <DialogTitle>削除確認</DialogTitle>
         </DialogHeader>
-        <StyledDialogContent>本当に削除しますか? </StyledDialogContent>
+        <StyledDialogContent>本当に削除しますか?</StyledDialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="primary">
             キャンセル

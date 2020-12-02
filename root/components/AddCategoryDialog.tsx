@@ -43,17 +43,16 @@ export const AddCategoryDialog = () => {
   };
 
   useEffect(() => {
-    db.collection(`users/${user?.uid}/myCategory`)
-      .get()
-      .then((querySnapshot) => {
-        const myCategoryArr = querySnapshot.docs.map((doc) => {
-          return {
-            ...doc.data(),
-            id: doc.id,
-          };
-        });
-        setMyCategory(myCategoryArr as Category[]);
+    (async () => {
+      const res = await db.collection(`users/${user?.uid}/myCategory`).get();
+      const myCategoryArr = res.docs.map(({ data, id }) => {
+        return {
+          ...data(),
+          id: id,
+        };
       });
+      setMyCategory(myCategoryArr as Category[]);
+    })();
   }, []);
 
   const onSubmit = async (data: FormData) => {

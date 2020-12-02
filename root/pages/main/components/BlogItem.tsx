@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FormValues } from '../../../../types';
 import { auth, db } from '../../../utils/firebase';
 import { useSetRecoilState } from 'recoil';
 import { dialogData, RECOMMEND_REGISTER } from '../../../../recoil/dialog';
@@ -15,6 +14,7 @@ import {
   CardMedia,
   Grid,
   Typography,
+  IconButton,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { purple } from '@material-ui/core/colors';
@@ -45,24 +45,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  bookmarkToggle: (id: string) => void;
   favCount: number;
-  favToggle: (id: string) => void;
+  iconSwitch: (id: string, type: 'favUsers' | 'laterReadUsers') => void;
   id: string;
   isDisplay: boolean;
-  laterRead: boolean;
   memo: string;
   tag: string[];
   title: string;
 };
 
 export const BlogItem: FC<Props> = ({
-  bookmarkToggle,
-  favToggle,
   favCount,
+  iconSwitch,
   id,
   isDisplay,
-  laterRead,
   memo,
   tag,
   title,
@@ -71,11 +67,15 @@ export const BlogItem: FC<Props> = ({
   const user = auth.currentUser;
   const setDialog = useSetRecoilState(dialogData);
   const [isFav, setIsFav] = useState(false);
+  const [isHoldLaterRead, setIsHoldLaterRead] = useState(false);
 
   useEffect(() => {
     if (user) {
       db.doc(`blog/${id}/favUsers/${user.uid}`).onSnapshot((doc) => {
         setIsFav(doc.exists);
+      });
+      db.doc(`blog/${id}/laterReadUsers/${user.uid}`).onSnapshot((doc) => {
+        setIsHoldLaterRead(doc.exists);
       });
     }
   }, [user]);
@@ -118,7 +118,7 @@ export const BlogItem: FC<Props> = ({
             <>
               <Button
                 onClick={() => {
-                  favToggle(id);
+                  iconSwitch(id, 'favUsers');
                   !user &&
                     setDialog((prev) => ({
                       ...prev,
@@ -137,14 +137,14 @@ export const BlogItem: FC<Props> = ({
                 color="primary"
                 onClick={() => {
                   user
-                    ? bookmarkToggle(id)
+                    ? iconSwitch(id, 'laterReadUsers')
                     : setDialog((prev) => ({
                         ...prev,
                         [RECOMMEND_REGISTER]: true,
                       }));
                 }}
               >
-                {laterRead ? (
+                {isHoldLaterRead ? (
                   <BookmarkRoundedIcon />
                 ) : (
                   <TurnedInNotRoundedIcon />
