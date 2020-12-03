@@ -26,6 +26,7 @@ export const CategoryList: FC<Props> = ({ activePage, blogData, data }) => {
       <Grid container spacing={4}>
         {data.map((card) => (
           <CategoryItem
+            key={card.id}
             activePage={activePage}
             blogData={blogData}
             id={card.id}

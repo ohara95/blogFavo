@@ -1,6 +1,6 @@
 import React, { useEffect, FC, useState } from 'react';
 import { db } from '../utils/firebase';
-import { Tags } from '../../types';
+import { Tags, FormValues } from '../../types';
 import { useCollection } from '../utils/hooks';
 import { Label, LabelText, BaseTextField } from '../../styles/common';
 import styled from 'styled-components';
@@ -10,11 +10,12 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Chip } from '@material-ui/core';
 
 type Props = {
-  tag: string[] | undefined;
+  tag: string[];
   setTag: (tag: string[]) => void;
+  autoOption?: FormValues[];
 };
 
-export const Tag: FC<Props> = ({ tag, setTag }) => {
+export const Tag: FC<Props> = ({ tag, setTag, autoOption }) => {
   const tags = useCollection<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
 
@@ -35,8 +36,8 @@ export const Tag: FC<Props> = ({ tag, setTag }) => {
       <LabelText>Tag</LabelText>
       <StyledAutocomplete
         value={tag}
-        onChange={(...el) => {
-          setTag(el[1] as string[]);
+        onChange={(_, el) => {
+          setTag(el as string[]);
         }}
         inputValue={inputValue}
         onInputChange={(_, newInputValue) => {

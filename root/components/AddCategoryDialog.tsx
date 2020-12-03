@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Category } from '../../types';
 import { useForm } from 'react-hook-form';
 //recoil
@@ -8,6 +8,7 @@ import { ADD_CATEGORY } from '../../recoil/dialog';
 //utils
 import { ImageUpload } from '../utils/ImageUpload';
 import { db, storage, auth } from '../utils/firebase';
+import { useCollection } from '../utils/hooks/useCollection';
 //component
 import { DialogBase } from '../components/DialogBase';
 import { InputWithLabel } from '../components/InputWithLabel';
@@ -17,18 +18,18 @@ import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
 //material
 import { Button } from '@material-ui/core';
-import { NORMAL_VALIDATION } from '../utils/validation';
+import { REQUIRED_VALIDATION } from '../utils/validation';
 
 type FormData = {
   category: string;
 };
 
 export const AddCategoryDialog = () => {
+  const { register, errors, handleSubmit, reset } = useForm<FormData>();
   const [imageUrl, setImageUrl] = useState('');
   const user = auth.currentUser;
-  const { register, errors, handleSubmit, reset } = useForm<FormData>();
   const setToast = useSetRecoilState(toastState);
-  const [myCategory, setMyCategory] = useState<Category[]>([]);
+  const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -42,22 +43,9 @@ export const AddCategoryDialog = () => {
     setImageUrl('');
   };
 
-  useEffect(() => {
-    (async () => {
-      const res = await db.collection(`users/${user?.uid}/myCategory`).get();
-      const myCategoryArr = res.docs.map(({ data, id }) => {
-        return {
-          ...data(),
-          id: id,
-        };
-      });
-      setMyCategory(myCategoryArr as Category[]);
-    })();
-  }, []);
-
   const onSubmit = async (data: FormData) => {
     try {
-      if (myCategory.find((db) => db.name === data.category)) {
+      if (myCategory.find((my) => my.name === data.category)) {
         return setToast(['カテゴリー名が存在します', 'error']);
       }
       await db.collection(`users/${user?.uid}/myCategory`).add({
@@ -80,7 +68,7 @@ export const AddCategoryDialog = () => {
     >
       <InputWithLabel
         name="category"
-        inputRef={register(NORMAL_VALIDATION)}
+        inputRef={register(REQUIRED_VALIDATION)}
         error={errors.category}
         label="カテゴリー名*"
       />
@@ -89,7 +77,6 @@ export const AddCategoryDialog = () => {
         <InputHidden
           accept="image/*"
           multiple
-          id="contained-button-file"
           type="file"
           onChange={handleImageUpload}
         />

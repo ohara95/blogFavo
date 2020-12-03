@@ -6,6 +6,7 @@ import { dialogData, RECOMMEND_REGISTER } from '../../../../recoil/dialog';
 import styled from 'styled-components';
 import { COLOR } from '../../../../styles/color';
 import { DeleteButton } from '../../../components/DeleteButton';
+//material
 import {
   Button,
   Card,
@@ -14,7 +15,6 @@ import {
   CardMedia,
   Grid,
   Typography,
-  IconButton,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { purple } from '@material-ui/core/colors';

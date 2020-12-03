@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../recoil/root';
-import { Category } from '../../types';
+import { Category, FormValues } from '../../types';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/router';
 //utils
@@ -12,6 +12,7 @@ import { NORMAL_VALIDATION } from '../../root/utils/validation';
 //component
 import { EditBase } from '../../root/components/EditBase';
 import { InputWithLabel } from '../../root/components/InputWithLabel';
+import { AddBlogSelector } from '../../root/components/AddBlogSelector';
 //styled
 import { LabelText } from '../../styles/common';
 import styled from 'styled-components';
@@ -25,14 +26,19 @@ type FormData = {
 
 const EditCategory = () => {
   const router = useRouter();
+  const user = auth.currentUser;
+  const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
+  const blog = useCollection<FormValues>(`blog`);
+  const setToast = useSetRecoilState(toastState);
   const { id } = router.query;
   const { register, errors, handleSubmit, reset } = useForm<FormData>();
-  const user = auth.currentUser;
   const [imageUrl, setImageUrl] = useState('');
+  const [addBlog, setAddBlog] = useState<FormValues[] | null>(null);
 
-  const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
   const findCategory = myCategory.find((db) => db.id === id);
-  const setToast = useSetRecoilState(toastState);
+  const notDivideMyCategory = blog
+    .filter((item) => item.postedUser === user?.uid)
+    .filter((item) => item.myCategory === '');
 
   useEffect(() => {
     if (findCategory?.imageUrl) setImageUrl(findCategory.imageUrl);
@@ -53,16 +59,26 @@ const EditCategory = () => {
     }
   };
 
-  const deleteImage = () => {
+  const deleteImage = async () => {
     if (imageUrl) storage.refFromURL(imageUrl).delete();
     setImageUrl('');
     if (typeof id === 'string') {
-      db.doc(`users/${user?.uid}/myCategory/${id}`).update({ imageUrl: '' });
+      db.doc(`users/${user?.uid}/myCategory/${id as string}`).update({
+        imageUrl: '',
+      });
     }
   };
 
   const onSubmit = async (data: FormData) => {
     try {
+      const res = await db.collection('blog').get();
+      res.forEach((doc) => {
+        addBlog?.forEach((blog) => {
+          if (doc.id === blog.id) {
+            doc.ref.update({ myCategory: data.category });
+          }
+        });
+      });
       if (myCategory.find((my) => my.name === data.category)) {
         if (findCategory?.name !== data.category) {
           return setToast(['カテゴリー名が存在します', 'error']);
@@ -71,8 +87,18 @@ const EditCategory = () => {
       if (typeof id === 'string') {
         await db
           .collection('blog')
-          .doc(id)
-          .update({ myCategory: data.category });
+          .where('postedUser', '==', user?.uid)
+          .onSnapshot((snap) => {
+            snap.forEach((doc) => {
+              if (
+                doc.data().myCategory ===
+                myCategory.find((category) => category.id === id)?.name
+              ) {
+                doc.ref.update({ myCategory: data.category });
+              }
+            });
+          });
+
         await db.doc(`users/${user?.uid}/myCategory/${id}`).update({
           name: data.category,
           imageUrl: imageUrl ? imageUrl : '',
@@ -82,6 +108,7 @@ const EditCategory = () => {
       router.back();
     } catch (err) {
       setToast(['失敗しました', 'error']);
+      console.log(err);
     }
   };
 
@@ -93,6 +120,9 @@ const EditCategory = () => {
         error={errors.category}
         label="カテゴリー名*"
       />
+      {!!notDivideMyCategory.length && (
+        <AddBlogSelector setBlog={setAddBlog} options={notDivideMyCategory} />
+      )}
       <ActionsWrapper>
         <LabelText>カテゴリー画像登録</LabelText>
         <InputHidden
