@@ -129,9 +129,9 @@ const Main: FC = () => {
             data={
               user && activePage === 'my'
                 ? filterBlog
-                : blog
-                    ?.filter((display) => !display?.isPrivate)
-                    ?.filter((display) => !display.otherUserBlogId)
+                : blog?.filter(
+                    (display) => !display?.isPrivate && !display.otherUserBlogId
+                  )
             }
             iconSwitch={iconSwitch}
             isDisplay={user && activePage === 'my' ? true : false}
