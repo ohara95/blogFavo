@@ -11,8 +11,8 @@ export type FormValues = {
   id: string;
   postedAt?: firebase.firestore.Timestamp;
   postedUser?: string;
-  laterRead: boolean;
   favCount: number;
+  otherUserBlogId?: string;
 };
 
 export type Tags = {

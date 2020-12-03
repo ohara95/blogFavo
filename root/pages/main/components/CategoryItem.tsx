@@ -12,7 +12,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { cyan } from '@material-ui/core/colors';
 import { DeleteButton } from '../../../components/DeleteButton';
 
 const useStyles = makeStyles((theme) => ({
@@ -49,7 +48,9 @@ export const CategoryItem: FC<Props> = ({
 }) => {
   const classes = useStyles();
 
-  const categoryHoldBlog = blogData.filter((blog) => blog.category === name);
+  const categoryHoldBlog = blogData
+    .filter((blog) => blog.category === name)
+    .filter((blog) => !blog.otherUserBlogId);
   const myCategoryHoldBlog = blogData.filter(
     (blog) => blog.myCategory === name
   );

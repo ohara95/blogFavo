@@ -13,30 +13,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type Props = {
-  blogData: FormValues[] | undefined;
-  bookmarkToggle: (id: string) => void;
-  favToggle: (id: string) => void;
+  data: FormValues[] | undefined;
+  iconSwitch: (id: string, type: 'favUsers' | 'laterReadUsers') => void;
   isDisplay: boolean;
 };
-export const BlogList: FC<Props> = ({
-  blogData,
-  bookmarkToggle,
-  favToggle,
-  isDisplay,
-}) => {
+export const BlogList: FC<Props> = ({ data, iconSwitch, isDisplay }) => {
   const classes = useStyles();
 
   return (
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
-        {blogData?.map((card) => (
+        {data?.map((card) => (
           <BlogItem
-            bookmarkToggle={bookmarkToggle}
             favCount={card.favCount}
-            favToggle={favToggle}
+            iconSwitch={iconSwitch}
             id={card.id}
             isDisplay={isDisplay}
-            laterRead={card.laterRead}
             memo={card.memo}
             tag={card.tag}
             title={card.title}

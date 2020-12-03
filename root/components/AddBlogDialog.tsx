@@ -38,7 +38,6 @@ export const AddBlogDialog = () => {
         isPrivate,
         postedUser: user?.uid,
         postedAt: firebase.firestore.Timestamp.now(),
-        laterRead: false,
       });
 
       const res = await db.collection('tags').get();

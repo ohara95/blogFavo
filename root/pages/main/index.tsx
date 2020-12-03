@@ -48,14 +48,47 @@ const Main: FC = () => {
     if (!user) setActivePage('user');
   }, [user]);
 
-  const bookmarkToggle = (id: string) => {
-    blog.forEach((fieldItem) => {
-      if (fieldItem.id === id) {
-        db.collection('blog')
-          .doc(id)
-          .update({ laterRead: !fieldItem.laterRead });
+  const iconSwitch = async (
+    id: string,
+    type: 'favUsers' | 'laterReadUsers'
+  ) => {
+    const typeRef = db.collection(`blog/${id}/${type}`);
+    const res = await typeRef.get();
+    const userIdArr = res.docs.map((doc) => doc.id);
+    const favUserIncrement = (num: number) => {
+      db.doc(`blog/${id}`).update({
+        favCount: firebase.firestore.FieldValue.increment(num),
+      });
+    };
+    const isExistUser = userIdArr.find((id) => id === user?.uid);
+
+    if (isExistUser) {
+      typeRef.doc(user?.uid).delete();
+      if (type === 'favUsers') favUserIncrement(-1);
+      if (type === 'laterReadUsers') {
+        const findId = blog.find((data) => data.otherUserBlogId === id)?.id;
+        db.doc(`blog/${findId}`).delete();
       }
-    });
+    } else {
+      typeRef.doc(user?.uid).set({
+        userRef: db.collection('users').doc(user?.uid),
+      });
+      if (type === 'favUsers') favUserIncrement(1);
+      if (type === 'laterReadUsers') {
+        const findBlog = blog.find((blogId) => blogId.id === id);
+        await db.collection('blog').add({
+          title: findBlog?.title,
+          url: findBlog?.url,
+          memo: findBlog?.memo,
+          category: findBlog?.category,
+          tag: [],
+          isPrivate: false,
+          postedUser: user?.uid,
+          postedAt: firebase.firestore.Timestamp.now(),
+          otherUserBlogId: id,
+        });
+      }
+    }
   };
 
   const dialogKey = user
@@ -64,28 +97,6 @@ const Main: FC = () => {
       : ADD_CATEGORY
     : RECOMMEND_REGISTER;
 
-  const favToggle = async (id: string) => {
-    const favRef = db.collection(`blog/${id}/favUsers`);
-
-    const res = await (favRef && favRef.get());
-    const data = res.docs.map((doc) => doc.id);
-
-    const blogRef = db.doc(`blog/${id}`);
-    if (!!data.find((db) => db === user?.uid)) {
-      favRef.doc(user?.uid).delete();
-      blogRef.update({
-        favCount: firebase.firestore.FieldValue.increment(-1),
-      });
-    } else {
-      favRef.doc(user?.uid).set({
-        userRef: db.collection('users').doc(user?.uid),
-      });
-      blogRef.update({
-        favCount: firebase.firestore.FieldValue.increment(1),
-      });
-    }
-  };
-
   return (
     <>
       <Header />
@@ -93,20 +104,21 @@ const Main: FC = () => {
         <PageTop title={currentDisplay} />
         {currentDisplay === 'list' ? (
           <BlogList
-            bookmarkToggle={bookmarkToggle}
-            blogData={
+            data={
               user && activePage === 'my'
                 ? filterBlog
-                : blog?.filter((display) => !display?.isPrivate)
+                : blog
+                    ?.filter((display) => !display?.isPrivate)
+                    ?.filter((display) => !display.otherUserBlogId)
             }
-            favToggle={favToggle}
+            iconSwitch={iconSwitch}
             isDisplay={user && activePage === 'my' ? true : false}
           />
         ) : (
           <CategoryList
-            data={activePage === 'my' ? myCategory && myCategory : categoryList}
-            blogData={activePage === 'my' ? filterBlog : blog}
             activePage={activePage}
+            blogData={activePage === 'my' ? filterBlog : blog}
+            data={activePage === 'my' ? myCategory && myCategory : categoryList}
           />
         )}
       </main>
