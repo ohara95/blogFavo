@@ -25,6 +25,7 @@ export const BlogList: FC<Props> = ({ data, iconSwitch, isDisplay }) => {
       <Grid container spacing={4}>
         {data?.map((card) => (
           <BlogItem
+            key={card.id}
             favCount={card.favCount}
             iconSwitch={iconSwitch}
             id={card.id}

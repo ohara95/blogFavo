@@ -48,9 +48,9 @@ export const CategoryItem: FC<Props> = ({
 }) => {
   const classes = useStyles();
 
-  const categoryHoldBlog = blogData
-    .filter((blog) => blog.category === name)
-    .filter((blog) => !blog.otherUserBlogId);
+  const categoryHoldBlog = blogData.filter(
+    (blog) => blog.category === name && !blog.otherUserBlogId
+  );
   const myCategoryHoldBlog = blogData.filter(
     (blog) => blog.myCategory === name
   );

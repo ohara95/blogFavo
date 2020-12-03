@@ -34,6 +34,7 @@ export const AddBlogDialog = () => {
         url: data.url,
         memo: data.memo,
         category: publicCategory ? publicCategory : 'その他',
+        myCategory: '',
         tag,
         isPrivate,
         postedUser: user?.uid,

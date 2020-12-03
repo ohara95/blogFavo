@@ -1,25 +1,23 @@
 // import React, { useState, useEffect, FC } from 'react';
-// import { MyCategory } from '../../types';
+// import { Category } from '../../types';
 // import { db, auth } from '../utils/firebase';
 // import { Label, LabelText, BaseTextField } from '../../styles/common';
-// import { useFirebaseCollection } from '../utils/hooks/useFirebaseCollection';
+// import { useCollection } from '../utils/hooks/useCollection';
 // //material
 // import Autocomplete, {
 //   createFilterOptions,
 // } from '@material-ui/lab/Autocomplete';
 
-// const filter = createFilterOptions<MyCategory>();
+// const filter = createFilterOptions<Category>();
 
 // type Props = {
-//   category: MyCategory | null;
-//   setCategory: (category: MyCategory | null) => void;
+//   category: Category | null;
+//   setCategory: React.Dispatch<React.SetStateAction<Category | null>>;
 // };
 
 // export const MyCategorySelector: FC<Props> = ({ category, setCategory }) => {
 //   const user = auth.currentUser;
-//   const myCategory = useFirebaseCollection<MyCategory>(
-//     `users/${user?.uid}/myCategory`
-//   );
+//   const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
 
 //   useEffect(() => {
 //     if (category) {
@@ -90,5 +88,4 @@
 //     </Label>
 //   );
 // };
-//一旦保留
 export default {};

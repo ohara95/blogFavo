@@ -63,31 +63,53 @@ const Main: FC = () => {
     const isExistUser = userIdArr.find((id) => id === user?.uid);
 
     if (isExistUser) {
-      typeRef.doc(user?.uid).delete();
-      if (type === 'favUsers') favUserIncrement(-1);
-      if (type === 'laterReadUsers') {
-        const findId = blog.find((data) => data.otherUserBlogId === id)?.id;
-        db.doc(`blog/${findId}`).delete();
-      }
+      onSwitch(typeRef, favUserIncrement, type, id);
     } else {
-      typeRef.doc(user?.uid).set({
-        userRef: db.collection('users').doc(user?.uid),
+      offSwitch(typeRef, favUserIncrement, type, id);
+    }
+  };
+
+  const onSwitch = (
+    typeRef: firebase.firestore.CollectionReference<
+      firebase.firestore.DocumentData
+    >,
+    decrement: (num: number) => void,
+    type: 'favUsers' | 'laterReadUsers',
+    id: string
+  ) => {
+    typeRef.doc(user?.uid).delete();
+    if (type === 'favUsers') decrement(-1);
+    if (type === 'laterReadUsers') {
+      const findId = blog.find((data) => data.otherUserBlogId === id)?.id;
+      db.doc(`blog/${findId}`).delete();
+    }
+  };
+
+  const offSwitch = async (
+    typeRef: firebase.firestore.CollectionReference<
+      firebase.firestore.DocumentData
+    >,
+    increment: (num: number) => void,
+    type: 'favUsers' | 'laterReadUsers',
+    id: string
+  ) => {
+    typeRef.doc(user?.uid).set({
+      userRef: db.collection('users').doc(user?.uid),
+    });
+    if (type === 'favUsers') increment(1);
+    if (type === 'laterReadUsers') {
+      const findBlog = blog.find((blogId) => blogId.id === id);
+      await db.collection('blog').add({
+        title: findBlog?.title,
+        url: findBlog?.url,
+        memo: '',
+        category: findBlog?.category,
+        tag: [],
+        isPrivate: false,
+        postedUser: user?.uid,
+        postedAt: firebase.firestore.Timestamp.now(),
+        otherUserBlogId: id,
       });
-      if (type === 'favUsers') favUserIncrement(1);
-      if (type === 'laterReadUsers') {
-        const findBlog = blog.find((blogId) => blogId.id === id);
-        await db.collection('blog').add({
-          title: findBlog?.title,
-          url: findBlog?.url,
-          memo: findBlog?.memo,
-          category: findBlog?.category,
-          tag: [],
-          isPrivate: false,
-          postedUser: user?.uid,
-          postedAt: firebase.firestore.Timestamp.now(),
-          otherUserBlogId: id,
-        });
-      }
     }
   };
 
@@ -107,9 +129,9 @@ const Main: FC = () => {
             data={
               user && activePage === 'my'
                 ? filterBlog
-                : blog
-                    ?.filter((display) => !display?.isPrivate)
-                    ?.filter((display) => !display.otherUserBlogId)
+                : blog?.filter(
+                    (display) => !display?.isPrivate && !display.otherUserBlogId
+                  )
             }
             iconSwitch={iconSwitch}
             isDisplay={user && activePage === 'my' ? true : false}
@@ -118,7 +140,7 @@ const Main: FC = () => {
           <CategoryList
             activePage={activePage}
             blogData={activePage === 'my' ? filterBlog : blog}
-            data={activePage === 'my' ? myCategory && myCategory : categoryList}
+            data={activePage === 'my' ? myCategory : categoryList}
           />
         )}
       </main>
