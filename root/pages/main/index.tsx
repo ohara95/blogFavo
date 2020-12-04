@@ -26,7 +26,8 @@ const Main: FC = () => {
   const categoryList = useCollection<Category>('categoryList');
   const currentDisplay = useRecoilValue(currentDisplayData);
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
-  const [filterBlog, setFilterBlog] = useState<FormValues[]>([]);
+  const [onlyMyBlog, setOnlyMyBlog] = useState<FormValues[]>([]);
+  const [selectCategory, setSelectCategory] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -39,7 +40,7 @@ const Main: FC = () => {
               id: doc.id,
             };
           });
-          setFilterBlog(docData);
+          setOnlyMyBlog(docData);
         });
     }
   }, [user]);
@@ -119,19 +120,57 @@ const Main: FC = () => {
       : ADD_CATEGORY
     : RECOMMEND_REGISTER;
 
+  const switchMyPageDisplay = (
+    currentPage: 'list' | 'yet' | 'done' | 'userCategoryBlog' | 'myCategoryBlog'
+  ) => {
+    switch (currentPage) {
+      case 'yet':
+        return onlyMyBlog.filter((item) => !item.isDone);
+      case 'done':
+        return onlyMyBlog.filter((item) => item.isDone);
+      case 'myCategoryBlog':
+        return onlyMyBlog.filter((item) => item.myCategory === selectCategory);
+      case 'list':
+        return onlyMyBlog;
+      default:
+        return;
+    }
+  };
+
+  const switchUserPageDisplay = (
+    currentPage: 'list' | 'yet' | 'done' | 'userCategoryBlog' | 'myCategoryBlog'
+  ) => {
+    switch (currentPage) {
+      case 'userCategoryBlog':
+        return blog?.filter(
+          (display) =>
+            !display?.isPrivate &&
+            !display.otherUserBlogId &&
+            display.category === selectCategory
+        );
+      default:
+        return blog?.filter(
+          (display) => !display?.isPrivate && !display.otherUserBlogId
+        );
+    }
+  };
+
   return (
     <>
       <Header />
       <main>
-        <PageTop title={currentDisplay} />
-        {currentDisplay === 'list' ? (
+        <PageTop
+          title={currentDisplay}
+          categoryLength={myCategory.length}
+          yetBlogLength={onlyMyBlog.filter((item) => !item.isDone).length}
+          doneBlogLength={onlyMyBlog.filter((item) => item.isDone).length}
+        />
+        {currentDisplay !== 'category' ? (
           <BlogList
             data={
               user && activePage === 'my'
-                ? filterBlog
-                : blog?.filter(
-                    (display) => !display?.isPrivate && !display.otherUserBlogId
-                  )
+                ? switchMyPageDisplay(currentDisplay)
+                : switchUserPageDisplay(currentDisplay)
             }
             iconSwitch={iconSwitch}
             isDisplay={user && activePage === 'my' ? true : false}
@@ -139,8 +178,9 @@ const Main: FC = () => {
         ) : (
           <CategoryList
             activePage={activePage}
-            blogData={activePage === 'my' ? filterBlog : blog}
+            blogData={activePage === 'my' ? onlyMyBlog : blog}
             data={activePage === 'my' ? myCategory : categoryList}
+            setSelectCategory={setSelectCategory}
           />
         )}
       </main>

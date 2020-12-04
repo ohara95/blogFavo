@@ -23,6 +23,7 @@ export const DeleteButton: FC<Props> = ({ id, type }) => {
       const res = await db.doc(`${type}/${id}`).get();
       const otherUserBlogId: string = res.data()?.otherUserBlogId;
       db.doc(`blog/${otherUserBlogId}/laterReadUsers/${user?.uid}`).delete();
+
       await db.collection(type).doc(id).delete();
 
       if (type === 'myCategory') {

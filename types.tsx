@@ -13,6 +13,7 @@ export type FormValues = {
   postedUser?: string;
   favCount: number;
   otherUserBlogId?: string;
+  isDone: boolean;
 };
 
 export type Tags = {
