@@ -1,9 +1,8 @@
+import React, { useEffect } from 'react';
+import { useResetRecoilState, useRecoilValue } from 'recoil';
+import { toastState } from '../../recoil/root';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import React, { useEffect } from 'react';
-import { useResetRecoilState } from 'recoil';
-import { useRecoilValue } from 'recoil';
-import { toastState } from '../../recoil/root';
 
 export const Toast = () => {
   const [text, severity] = useRecoilValue(toastState);

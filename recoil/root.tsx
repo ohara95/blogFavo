@@ -1,6 +1,8 @@
 import { atom } from 'recoil';
 
-export const currentDisplayData = atom<'list' | 'category'>({
+export const currentDisplayData = atom<
+  'list' | 'category' | 'yet' | 'done' | 'userCategoryBlog' | 'myCategoryBlog'
+>({
   key: 'currentDisplayData',
   default: 'list',
 });

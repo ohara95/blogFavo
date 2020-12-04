@@ -78,6 +78,7 @@ export const AddCategoryDialog = () => {
           accept="image/*"
           multiple
           type="file"
+          id="contained-button-file"
           onChange={handleImageUpload}
         />
         <label htmlFor="contained-button-file">

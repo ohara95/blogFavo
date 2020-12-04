@@ -1,17 +1,25 @@
 import React, { FC } from 'react';
-import { useRecoilState } from 'recoil';
-import { currentDisplayData } from '../../../../recoil/root';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  currentDisplayData,
+  activeDisplayData,
+  toastState,
+} from '../../../../recoil/root';
 //material
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
+import {
+  Button,
+  Grid,
+  Container,
+  Paper,
+  InputBase,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
+import { cyan } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
-import Typography from '@material-ui/core/Typography';
-import { cyan } from '@material-ui/core/colors';
+import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
+import LocalLibraryRoundedIcon from '@material-ui/icons/LocalLibraryRounded';
 
 const useStyles = makeStyles((theme) => ({
   heroContent: {
@@ -21,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
   heroButtons: {
     marginTop: theme.spacing(4),
   },
-
   inputRoot: {
     padding: '2px 4px',
     display: 'flex',
@@ -38,21 +45,32 @@ const useStyles = makeStyles((theme) => ({
   themeColor: {
     backgroundColor: cyan[700],
     color: 'white',
-  },
-  currentColor: {
-    backgroundColor: cyan[500],
+    border: '1px solid white',
+    '&:hover': {
+      backgroundColor: cyan[600],
+    },
   },
 }));
 
 type Props = {
   title: string;
+  categoryLength?: number;
+  yetBlogLength?: number;
+  doneBlogLength?: number;
 };
 
-export const PageTop: FC<Props> = ({ title }) => {
+export const PageTop: FC<Props> = ({
+  title,
+  categoryLength,
+  yetBlogLength,
+  doneBlogLength,
+}) => {
   const classes = useStyles();
   const [currentDisplay, setCurrentDisplay] = useRecoilState(
     currentDisplayData
   );
+  const activePage = useRecoilValue(activeDisplayData);
+  const setToast = useSetRecoilState(toastState);
 
   return (
     <div className={classes.heroContent}>
@@ -82,34 +100,68 @@ export const PageTop: FC<Props> = ({ title }) => {
           <Grid container spacing={2} justify="center">
             <Grid item>
               <Button
-                variant="contained"
-                className={
-                  currentDisplay === 'list'
-                    ? classes.themeColor
-                    : classes.currentColor
-                }
+                variant="outlined"
                 onClick={() => {
                   setCurrentDisplay('list');
                 }}
+                className={currentDisplay === 'list' ? classes.themeColor : ''}
               >
-                list
+                一覧
               </Button>
             </Grid>
             <Grid item>
               <Button
-                variant="contained"
-                className={
-                  currentDisplay === 'category'
-                    ? classes.themeColor
-                    : classes.currentColor
-                }
+                variant="outlined"
                 onClick={() => {
                   setCurrentDisplay('category');
+                  if (!categoryLength && activePage === 'my')
+                    setToast(['カテゴリーがありません', 'warning']);
                 }}
+                className={
+                  currentDisplay === 'category' ? classes.themeColor : ''
+                }
               >
-                category
+                カテゴリー別
               </Button>
             </Grid>
+          </Grid>
+          <Grid container spacing={2} justify="center">
+            {activePage === 'my' && (
+              <>
+                <Grid item>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setCurrentDisplay('yet');
+                      if (!yetBlogLength && activePage === 'my')
+                        setToast(['未読ブログはありません', 'warning']);
+                    }}
+                    className={
+                      currentDisplay === 'yet' ? classes.themeColor : ''
+                    }
+                  >
+                    未読
+                    <LocalLibraryRoundedIcon />
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setCurrentDisplay('done');
+                      if (!doneBlogLength && activePage === 'my')
+                        setToast(['読み終えたブログはありません', 'warning']);
+                    }}
+                    className={
+                      currentDisplay === 'done' ? classes.themeColor : ''
+                    }
+                  >
+                    読了
+                    <CheckCircleOutlineRoundedIcon />
+                  </Button>
+                </Grid>
+              </>
+            )}
           </Grid>
         </div>
       </Container>

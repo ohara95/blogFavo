@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { FormValues } from '../../../../types';
 import Link from 'next/link';
+import { useSetRecoilState } from 'recoil';
+import { currentDisplayData, toastState } from '../../../../recoil/root';
 // material
 import {
   Button,
@@ -29,6 +31,12 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
+  moveCard: {
+    transitionDuration: '0.5s',
+    '&:hover': {
+      transform: 'scale(1.1,1.1)',
+    },
+  },
 }));
 
 type Props = {
@@ -37,6 +45,7 @@ type Props = {
   id: string;
   imageUrl: string;
   name: string;
+  setSelectCategory: (param: string) => void;
 };
 
 export const CategoryItem: FC<Props> = ({
@@ -45,18 +54,33 @@ export const CategoryItem: FC<Props> = ({
   id,
   imageUrl,
   name,
+  setSelectCategory,
 }) => {
   const classes = useStyles();
+  const setCurrentPage = useSetRecoilState(currentDisplayData);
+  const setToast = useSetRecoilState(toastState);
 
-  const categoryHoldBlog = blogData
-    .filter((blog) => blog.category === name)
-    .filter((blog) => !blog.otherUserBlogId);
+  const categoryHoldBlog = blogData.filter(
+    (blog) => blog.category === name && !blog.otherUserBlogId && !blog.isPrivate
+  );
   const myCategoryHoldBlog = blogData.filter(
     (blog) => blog.myCategory === name
   );
 
+  const categoryHasBlog = (name: string) => {
+    if (activePage === 'user' && categoryHoldBlog.length) {
+      setCurrentPage('userCategoryBlog');
+      setSelectCategory(name);
+    } else if (activePage === 'my' && myCategoryHoldBlog.length) {
+      setCurrentPage('myCategoryBlog');
+      setSelectCategory(name);
+    } else {
+      return setToast(['ブログはありません', 'error']);
+    }
+  };
+
   return (
-    <Grid item key={id} xs={12} sm={6} md={4}>
+    <Grid item key={id} xs={12} sm={6} md={4} className={classes.moveCard}>
       <Card className={classes.card}>
         <CardMedia
           className={classes.cardMedia}
@@ -74,7 +98,13 @@ export const CategoryItem: FC<Props> = ({
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" color="primary">
+          <Button
+            size="small"
+            color="primary"
+            onClick={() => {
+              categoryHasBlog(name);
+            }}
+          >
             list
           </Button>
           {activePage === 'my' && (

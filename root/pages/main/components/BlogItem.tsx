@@ -15,6 +15,8 @@ import {
   CardMedia,
   Grid,
   Typography,
+  Checkbox,
+  Tooltip,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { purple } from '@material-ui/core/colors';
@@ -24,9 +26,6 @@ import StarRoundedIcon from '@material-ui/icons/StarRounded';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 
 const useStyles = makeStyles((theme) => ({
-  icon: {
-    marginRight: theme.spacing(2),
-  },
   card: {
     height: '100%',
     display: 'flex',
@@ -38,9 +37,11 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
-  ButtonColor: {
-    color: purple[200],
-    border: `1px ${purple[200]} solid`,
+  moveCard: {
+    transitionDuration: '0.5s',
+    '&:hover': {
+      transform: 'scale(1.1,1.1)',
+    },
   },
 }));
 
@@ -49,6 +50,7 @@ type Props = {
   iconSwitch: (id: string, type: 'favUsers' | 'laterReadUsers') => void;
   id: string;
   isDisplay: boolean;
+  isDone: boolean;
   memo: string;
   tag: string[];
   title: string;
@@ -59,6 +61,7 @@ export const BlogItem: FC<Props> = ({
   iconSwitch,
   id,
   isDisplay,
+  isDone,
   memo,
   tag,
   title,
@@ -68,6 +71,7 @@ export const BlogItem: FC<Props> = ({
   const setDialog = useSetRecoilState(dialogData);
   const [isFav, setIsFav] = useState(false);
   const [isHoldLaterRead, setIsHoldLaterRead] = useState(false);
+  const [isReadCheck, setIsReadCheck] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -80,8 +84,12 @@ export const BlogItem: FC<Props> = ({
     }
   }, [user]);
 
+  const isDoneUpdate = (id: string) => {
+    setIsReadCheck(!isReadCheck);
+    db.collection('blog').doc(id).update({ isDone: !isReadCheck });
+  };
   return (
-    <Grid item key={id} xs={12} sm={6} md={4}>
+    <Grid item key={id} xs={12} sm={6} md={4} className={classes.moveCard}>
       <Card className={classes.card}>
         <CardMedia
           className={classes.cardMedia}
@@ -111,6 +119,16 @@ export const BlogItem: FC<Props> = ({
                   edit
                 </Button>
               </Link>
+              <Tooltip title={isReadCheck ? 'read' : 'Not read'}>
+                <Checkbox
+                  size="small"
+                  color="default"
+                  checked={isDone}
+                  onClick={() => {
+                    isDoneUpdate(id);
+                  }}
+                />
+              </Tooltip>
               <DeleteButton type="blog" id={id} />
             </>
           )}
@@ -163,11 +181,12 @@ const StyleTag = styled.div`
   margin: 2px;
   display: inline-block;
   padding: 4px 12px;
-  border: 1px solid ${COLOR.MAIN};
   text-transform: uppercase;
   font-family: sans-serif;
   font-size: 8px;
+  color: white;
   font-weight: 800;
   letter-spacing: 1px;
   background: linear-gradient(45deg, #afeeee 10%, #40e0d0 30%, #20b2aa 80%);
+  border-radius: 50px;
 `;

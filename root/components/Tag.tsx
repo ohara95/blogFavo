@@ -15,7 +15,7 @@ type Props = {
   autoOption?: FormValues[];
 };
 
-export const Tag: FC<Props> = ({ tag, setTag, autoOption }) => {
+export const Tag: FC<Props> = ({ tag, setTag }) => {
   const tags = useCollection<Tags>('tags');
   const [inputValue, setInputValue] = useState('');
 

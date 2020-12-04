@@ -16,9 +16,15 @@ type Props = {
   activePage: 'my' | 'user';
   blogData: FormValues[];
   data: Category[];
+  setSelectCategory: (param: string) => void;
 };
 
-export const CategoryList: FC<Props> = ({ activePage, blogData, data }) => {
+export const CategoryList: FC<Props> = ({
+  activePage,
+  blogData,
+  data,
+  setSelectCategory,
+}) => {
   const classes = useStyles();
 
   return (
@@ -32,6 +38,7 @@ export const CategoryList: FC<Props> = ({ activePage, blogData, data }) => {
             id={card.id}
             imageUrl={card.imageUrl}
             name={card.name}
+            setSelectCategory={setSelectCategory}
           />
         ))}
       </Grid>

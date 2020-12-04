@@ -1,11 +1,10 @@
 import React, { FC } from 'react';
 import { auth } from '../utils/firebase';
 import { useRouter } from 'next/dist/client/router';
-//material
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { toastState } from '../../recoil/root';
 import { useSetRecoilState } from 'recoil';
+//material
+import { Menu, MenuItem } from '@material-ui/core';
 
 type Props = {
   open: null | HTMLElement;

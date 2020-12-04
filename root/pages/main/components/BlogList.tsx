@@ -30,6 +30,7 @@ export const BlogList: FC<Props> = ({ data, iconSwitch, isDisplay }) => {
             iconSwitch={iconSwitch}
             id={card.id}
             isDisplay={isDisplay}
+            isDone={card.isDone}
             memo={card.memo}
             tag={card.tag}
             title={card.title}
