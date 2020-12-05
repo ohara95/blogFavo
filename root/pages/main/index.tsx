@@ -21,7 +21,7 @@ import { Grid } from '@material-ui/core';
 
 const Main: FC = () => {
   const user = auth.currentUser;
-  const blog = useCollection<FormValues>('blog');
+  const blog = useOrderby<FormValues>('blog', 'favCount', 'desc');
   const myCategory = useOrderby<Category>(
     `users/${user?.uid}/myCategory`,
     'name',
