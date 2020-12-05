@@ -3,7 +3,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
 import firebase, { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
-import { useCollection } from '../../utils/hooks';
+import { useCollection, useOrderby } from '../../utils/hooks';
 import {
   ADD_BLOG,
   ADD_CATEGORY,
@@ -21,9 +21,13 @@ import { Grid } from '@material-ui/core';
 
 const Main: FC = () => {
   const user = auth.currentUser;
-  const blog = useCollection<FormValues>('blog');
-  const myCategory = useCollection<Category>(`users/${user?.uid}/myCategory`);
-  const categoryList = useCollection<Category>('categoryList');
+  const blog = useOrderby<FormValues>('blog', 'favCount', 'desc');
+  const myCategory = useOrderby<Category>(
+    `users/${user?.uid}/myCategory`,
+    'name',
+    'asc'
+  );
+  const categoryList = useOrderby<Category>('categoryList', 'name', 'asc');
   const currentDisplay = useRecoilValue(currentDisplayData);
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [onlyMyBlog, setOnlyMyBlog] = useState<FormValues[]>([]);
@@ -32,6 +36,7 @@ const Main: FC = () => {
   useEffect(() => {
     if (user) {
       db.collection('blog')
+        .orderBy('priority', 'desc')
         .where('postedUser', '==', user.uid)
         .onSnapshot((snap) => {
           const docData = snap.docs.map((doc) => {

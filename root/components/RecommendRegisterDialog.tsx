@@ -11,11 +11,13 @@ export const RecommendRegisterDialog = () => {
       <p>ログインするとこんな機能が使えます</p>
       <div css="display: flex">
         <ol>
-          <li>ブログを書いて、それを共有できます</li>
           <li>お気に入りの記事を保存できます</li>
+          <li>他のユーザーのお気に入り記事を保存できます</li>
+          <li>お気に入りの記事を整理できます</li>
         </ol>
         <img
-          src="https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg"
+          src="https://firebasestorage.googleapis.com/v0/b/blogfavo.appspot.com/o/Bibliophile-pana.png?alt=media&token=afd3a2d9-ad4a-4dcc-94dc-289fd998e114"
+          // src="https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg"
           alt="マスコットキャラクターの写真"
           width="300px"
           height="200px"
