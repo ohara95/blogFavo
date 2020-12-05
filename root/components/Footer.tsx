@@ -1,7 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
+import styled from 'styled-components';
+import { COLOR } from '../../styles/color';
 
 const Copyright = () => (
   <Typography variant="body2" color="textSecondary" align="center">
@@ -14,17 +15,9 @@ const Copyright = () => (
   </Typography>
 );
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(6),
-  },
-}));
-
 export const Footer = () => {
-  const classes = useStyles();
   return (
-    <footer className={classes.root}>
+    <FooterContainer>
       <Typography variant="h6" align="center" gutterBottom>
         Footer
       </Typography>
@@ -37,6 +30,11 @@ export const Footer = () => {
         Something here to give the footer a purpose!
       </Typography>
       <Copyright />
-    </footer>
+    </FooterContainer>
   );
 };
+
+const FooterContainer = styled.footer`
+  padding: 48px;
+  background-color: ${COLOR.WHITE};
+`;

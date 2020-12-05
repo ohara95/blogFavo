@@ -27,13 +27,7 @@ export const EditBase: FC<Props> = ({ handleSubmit, children, title }) => {
               justify="flex-end"
               alignItems="center"
             >
-              <Button
-                onClick={() => {
-                  router.back();
-                }}
-              >
-                キャンセル
-              </Button>
+              <Button onClick={() => router.back()}>キャンセル</Button>
               <Button type="submit">送信</Button>
             </Grid>
           </form>
