@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FormValues, InputType } from '../../types';
-import { Label, LabelText } from '../../styles/common';
+import { FormValues, InputType, PriorityType } from '../../types';
 //recoil
 import { useSetRecoilState } from 'recoil';
 import { ADD_BLOG } from '../../recoil/dialog';
@@ -11,21 +10,23 @@ import { DialogBase } from '../components/DialogBase';
 import { Tag } from '../components/Tag';
 import { InputWithLabel } from '../components/InputWithLabel';
 import { CategorySelector } from './CategorySelector';
+import { PrioritySelector } from './PrioritySelector';
+import { PrivateCheck } from './PrivateCheck';
 //utils
 import firebase, { auth, db } from '../utils/firebase';
 import { NORMAL_VALIDATION, REQUIRED_VALIDATION } from '../utils/validation';
 //material
-import { Checkbox } from '@material-ui/core';
 
 export const AddBlogDialog = () => {
   const { register, errors, handleSubmit, reset } = useForm<FormValues>({
     mode: 'onBlur',
   });
-  const [tag, setTag] = useState<string[]>([]);
-  const [isPrivate, setIsPrivate] = useState(false);
   const user = auth.currentUser;
   const setToast = useSetRecoilState(toastState);
+  const [tag, setTag] = useState<string[]>([]);
+  const [isPrivate, setIsPrivate] = useState(false);
   const [publicCategory, setPublicCategory] = useState('');
+  const [priority, setPriority] = useState<PriorityType>(null);
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -40,6 +41,7 @@ export const AddBlogDialog = () => {
         postedUser: user?.uid,
         postedAt: firebase.firestore.Timestamp.now(),
         isDone: false,
+        priority: priority ? parseInt(priority) : 2,
       });
 
       const res = await db.collection('tags').get();
@@ -49,6 +51,7 @@ export const AddBlogDialog = () => {
       setTag([]);
       setIsPrivate(false);
       reset();
+      setPriority('0');
     } catch (error) {
       console.log(error);
       setToast(['追加に失敗しました', 'error']);
@@ -96,16 +99,12 @@ export const AddBlogDialog = () => {
       ))}
       <CategorySelector setPublicCategory={setPublicCategory} />
       <Tag tag={tag} setTag={setTag} />
-      <Label>
+      {user && (
         <label css="display: flex">
-          <LabelText>非公開</LabelText>
-          <Checkbox
-            color="primary"
-            checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
-          />
+          <PrivateCheck {...{ isPrivate, setIsPrivate }} />
+          <PrioritySelector {...{ priority, setPriority }} />
         </label>
-      </Label>
+      )}
     </DialogBase>
   );
 };

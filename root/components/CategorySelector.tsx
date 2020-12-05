@@ -1,20 +1,10 @@
 import React, { FC } from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { useFirebase } from '../utils/hooks/useFirebase';
 import { Category } from '../../types';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    formControl: {
-      margin: 20,
-      minWidth: 120,
-      width: '88%',
-    },
-  })
-);
+import styled from 'styled-components';
 
 type Props = {
   publicCategory?: string;
@@ -26,9 +16,8 @@ export const CategorySelector: FC<Props> = ({
   setPublicCategory,
 }) => {
   const categoryList = useFirebase<Category>('categoryList');
-  const classes = useStyles();
   return (
-    <FormControl className={classes.formControl} fullWidth variant="outlined">
+    <StyledFormControl fullWidth variant="outlined">
       <InputLabel htmlFor="age-native-simple">Category</InputLabel>
       <Select
         label="Category"
@@ -47,6 +36,12 @@ export const CategorySelector: FC<Props> = ({
           );
         })}
       </Select>
-    </FormControl>
+    </StyledFormControl>
   );
 };
+
+const StyledFormControl = styled(FormControl)`
+  margin: 20px;
+  min-width: 120px;
+  width: 88%;
+`;

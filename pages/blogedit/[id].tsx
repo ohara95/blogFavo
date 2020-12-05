@@ -3,19 +3,18 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../recoil/root';
-import { Category, FormValues, InputType } from '../../types';
-import { Label, LabelText } from '../../styles/common';
+import { Category, FormValues, InputType, PriorityType } from '../../types';
 //component
 import { CategorySelector } from '../../root/components/CategorySelector';
 import { InputWithLabel } from '../../root/components/InputWithLabel';
 import { Tag } from '../../root/components/Tag';
 import { EditBase } from '../../root/components/EditBase';
+import { PrioritySelector } from '../../root/components/PrioritySelector';
+import { PrivateCheck } from '../../root/components/PrivateCheck';
 //utils
 import { db } from '../../root/utils/firebase';
 import { useCollection } from '../../root/utils/hooks';
 import { NORMAL_VALIDATION, URL_VALIDATION } from '../../root/utils/validation';
-//material
-import { Checkbox } from '@material-ui/core';
 
 const EditBlog = () => {
   const router = useRouter();
@@ -23,14 +22,15 @@ const EditBlog = () => {
   const { register, errors, handleSubmit, reset } = useForm<FormValues>({
     mode: 'onBlur',
   });
-
   const blog = useCollection<FormValues>('blog');
   const categoryList = useCollection<Category>('categoryList');
   const [tag, setTag] = useState<string[]>([]);
   const [category, setCategory] = useState<Category | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
   const [publicCategory, setPublicCategory] = useState('');
+  const [priority, setPriority] = useState<PriorityType>(null);
   const setToast = useSetRecoilState(toastState);
+
   const targetBlog = blog.find((db) => db.id === id);
   const targetCategory = categoryList.find((category) =>
     blog.find((db) => db.category === category.name)
@@ -39,12 +39,9 @@ const EditBlog = () => {
   // -----useEffect[start]-----
   useEffect(() => {
     if (targetBlog) {
-      reset({
-        title: targetBlog?.title,
-        url: targetBlog?.url,
-        memo: targetBlog?.memo,
-      });
-      setPublicCategory(targetBlog.category);
+      const { title, url, memo, category } = targetBlog;
+      reset({ title, url, memo });
+      setPublicCategory(category);
     }
   }, [targetBlog, reset]);
 
@@ -52,18 +49,20 @@ const EditBlog = () => {
     if (targetBlog) {
       setIsPrivate(targetBlog.isPrivate);
       setTag(targetBlog.tag);
+      setPriority(targetBlog.priority);
     }
   }, [targetBlog]);
 
   useEffect(() => {
     if (targetCategory) setCategory(targetCategory);
   }, [targetCategory]);
+
   // ------useEffect[end]------
 
   const upDateValidation = (data: FormValues) => {
     const dataDetail = ['title', 'url', 'memo'] as const;
     try {
-      dataDetail.map(async (type) => {
+      dataDetail.forEach(async (type) => {
         if (data[type])
           if (typeof id === 'string')
             await db
@@ -83,12 +82,14 @@ const EditBlog = () => {
       upDateValidation(data);
 
       if (typeof id === 'string') {
-        if (category)
+        if (category) {
           await db.collection('blog').doc(id).update({
             category: publicCategory,
           });
+        }
         await db.collection('blog').doc(id).update({
           isPrivate,
+          priority,
         });
       }
       setToast(['変更出来ました！']);
@@ -131,16 +132,10 @@ const EditBlog = () => {
         publicCategory={publicCategory}
       />
       <Tag tag={tag} setTag={setTag} />
-      <Label>
-        <label css="display: flex">
-          <LabelText>非公開</LabelText>
-          <Checkbox
-            color="primary"
-            checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
-          />
-        </label>
-      </Label>
+      <label css="display: flex">
+        <PrivateCheck {...{ isPrivate, setIsPrivate }} />
+        <PrioritySelector {...{ priority, setPriority }} />
+      </label>
     </EditBase>
   );
 };

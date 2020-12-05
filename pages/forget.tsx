@@ -9,6 +9,7 @@ import { useSetRecoilState } from 'recoil';
 import { toastState } from '../recoil/root';
 import { LoadingButton } from '../root/components/LoadingButton';
 import { EMAIL_VALIDATION } from '../root/utils/validation';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 type FormData = {
   email: string;
@@ -35,7 +36,9 @@ export default function ForgetPassword() {
       <h1>パスワード再設定</h1>
       <form onSubmit={handleSubmit(handleSend)}>
         <p css="font-size: 16px; line-height: 1.75">
-          アカウントに関連付けられているメールアドレスを入力すると、パスワードをリセットするためのリンクが記載されたメールが送信されます。
+          登録されたアドレスを入力してください。
+          <br />
+          パスワードをリセットする為のリンクが記載されたメールが送信されます。
         </p>
         <InputWithLabel
           label="メールアドレス"
@@ -52,7 +55,9 @@ export default function ForgetPassword() {
         >
           送信
         </LoadingButton>
-        <Link href="/signin">戻る</Link>
+        <Link href="/signin">
+          <ArrowBackIcon css="cursor: pointer" />
+        </Link>
       </form>
     </AuthenticateContainer>
   );

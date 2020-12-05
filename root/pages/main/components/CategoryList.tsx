@@ -2,15 +2,8 @@ import React, { FC } from 'react';
 import { Category, FormValues } from '../../../../types';
 import { CategoryItem } from './CategoryItem';
 // material
-import { Grid, Container } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-  cardGrid: {
-    paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(8),
-  },
-}));
+import { Grid } from '@material-ui/core';
+import { ListContainer } from '../../../../styles/common';
 
 type Props = {
   activePage: 'my' | 'user';
@@ -24,24 +17,20 @@ export const CategoryList: FC<Props> = ({
   blogData,
   data,
   setSelectCategory,
-}) => {
-  const classes = useStyles();
-
-  return (
-    <Container className={classes.cardGrid} maxWidth="md">
-      <Grid container spacing={4}>
-        {data?.map((card) => (
-          <CategoryItem
-            key={card.id}
-            activePage={activePage}
-            blogData={blogData}
-            id={card.id}
-            imageUrl={card.imageUrl}
-            name={card.name}
-            setSelectCategory={setSelectCategory}
-          />
-        ))}
-      </Grid>
-    </Container>
-  );
-};
+}) => (
+  <ListContainer maxWidth="md">
+    <Grid container spacing={4}>
+      {data.map((card) => (
+        <CategoryItem
+          key={card.id}
+          activePage={activePage}
+          blogData={blogData}
+          id={card.id}
+          imageUrl={card.imageUrl}
+          name={card.name}
+          setSelectCategory={setSelectCategory}
+        />
+      ))}
+    </Grid>
+  </ListContainer>
+);

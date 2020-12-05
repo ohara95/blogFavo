@@ -33,7 +33,7 @@ export const SettingMenu: FC<Props> = ({ open, onClose }) => {
       id="simple-menu"
       keepMounted
       anchorEl={open}
-      open={Boolean(open)}
+      open={!!open}
       onClose={onClose}
     >
       <MenuItem>Profile</MenuItem>
