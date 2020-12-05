@@ -3,7 +3,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
 import firebase, { db, auth } from '../../utils/firebase';
 import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
-import { useCollection, useOrderby } from '../../utils/hooks';
+import { useOrderby } from '../../utils/hooks';
 import {
   ADD_BLOG,
   ADD_CATEGORY,
@@ -32,6 +32,7 @@ const Main: FC = () => {
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [onlyMyBlog, setOnlyMyBlog] = useState<FormValues[]>([]);
   const [selectCategory, setSelectCategory] = useState('');
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (user) {
@@ -51,6 +52,40 @@ const Main: FC = () => {
       setActivePage('user');
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!user) setActivePage('user');
+  }, [user]);
+
+  useEffect(() => {
+    if (page !== 1) setPage(1);
+  }, [currentDisplay, activePage]);
+
+  const paginate = (data?: any[]) => {
+    const arr = [];
+    const NUM = 12;
+    if (!data) return [];
+    for (let i = 0; i < Math.ceil(data.length / NUM); i++) {
+      arr.push(data.slice(i * NUM, i * NUM + NUM));
+    }
+    return arr[page - 1];
+  };
+
+  const pageCount = () => {
+    const NUM = 12;
+    switch (currentDisplay) {
+      case 'category':
+        return Math.ceil(
+          (activePage === 'my' ? myCategory : categoryList).length / NUM
+        );
+      default:
+        return Math.ceil(
+          activePage === 'my'
+            ? switchMyPageDisplay(currentDisplay)!.length / NUM
+            : switchUserPageDisplay(currentDisplay).length / NUM
+        );
+    }
+  };
 
   const iconSwitch = async (
     id: string,
@@ -168,8 +203,8 @@ const Main: FC = () => {
           <BlogList
             data={
               user && activePage === 'my'
-                ? switchMyPageDisplay(currentDisplay)
-                : switchUserPageDisplay(currentDisplay)
+                ? paginate(switchMyPageDisplay(currentDisplay))
+                : paginate(switchUserPageDisplay(currentDisplay))
             }
             iconSwitch={iconSwitch}
             isDisplay={user && activePage === 'my' ? true : false}
@@ -178,14 +213,28 @@ const Main: FC = () => {
           <CategoryList
             activePage={activePage}
             blogData={activePage === 'my' ? onlyMyBlog : blog}
-            data={activePage === 'my' ? myCategory : categoryList}
+            data={
+              activePage === 'my'
+                ? paginate(myCategory)
+                : paginate(categoryList)
+            }
             setSelectCategory={setSelectCategory}
           />
         )}
       </main>
-      <Grid container direction="row" justify="center" alignItems="center">
-        <Pagination count={10} size="large" css="margin-Bottom: 20px" />
-      </Grid>
+      {pageCount() > 0 && (
+        <Grid container direction="row" justify="center" alignItems="center">
+          <Pagination
+            count={pageCount()}
+            size="large"
+            css="margin-Bottom: 20px"
+            page={page}
+            onChange={(_, value: number) => {
+              setPage(value);
+            }}
+          />
+        </Grid>
+      )}
       <Footer />
       {(activePage !== 'user' || currentDisplay !== 'category') && (
         <AddButton dialogKey={dialogKey} />
