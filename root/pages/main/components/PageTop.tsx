@@ -20,6 +20,7 @@ import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutline
 import LocalLibraryRoundedIcon from '@material-ui/icons/LocalLibraryRounded';
 import styled from 'styled-components';
 import { COLOR } from '../../../../styles/color';
+import { sp } from '../../../../styles/media';
 
 type Props = {
   title: string;
@@ -98,7 +99,7 @@ export const PageTop: FC<Props> = ({
           </InputRoot>
         </Grid>
         <HeroButtons>
-          <Grid container spacing={2} justify="center">
+          <StyledGrid container spacing={2} justify="center">
             {buttonList.map(({ text, icon, ...otherProps }, i) => {
               if (activePage !== 'my' && i >= 2) return;
               return (
@@ -110,7 +111,7 @@ export const PageTop: FC<Props> = ({
                 </Grid>
               );
             })}
-          </Grid>
+          </StyledGrid>
         </HeroButtons>
       </Container>
     </HeroContent>
@@ -153,4 +154,11 @@ const StyledButton = styled(Button)<{ isThemeColor: boolean }>`
       background-color: ${COLOR.MAIN_HOVER};
     }
   `}
+`;
+
+const StyledGrid = styled(Grid)`
+  ${sp`
+    width: 300px;
+    margin: 0 auto;
+  `};
 `;
