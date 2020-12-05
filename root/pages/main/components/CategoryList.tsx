@@ -30,7 +30,7 @@ export const CategoryList: FC<Props> = ({
   return (
     <Container className={classes.cardGrid} maxWidth="md">
       <Grid container spacing={4}>
-        {data.map((card) => (
+        {data?.map((card) => (
           <CategoryItem
             key={card.id}
             activePage={activePage}
