@@ -8,40 +8,21 @@ import { DeleteButton } from '../../../components/DeleteButton';
 //material
 import {
   Button,
-  Card,
   CardActions,
-  CardContent,
-  CardMedia,
-  Grid,
   Typography,
   Checkbox,
   Tooltip,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
-
-const useStyles = makeStyles(() => ({
-  card: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  cardMedia: {
-    paddingTop: '56.25%', // 16:9
-  },
-  cardContent: {
-    flexGrow: 1,
-  },
-  moveCard: {
-    transitionDuration: '0.5s',
-    '&:hover': {
-      transform: 'scale(1.1,1.1)',
-    },
-  },
-}));
+import {
+  MoveCardGrid,
+  StyledCard,
+  StyledCardContent,
+  StyledCardMedia,
+} from '../../../../styles/common';
 
 type Props = {
   favCount: number;
@@ -64,7 +45,6 @@ export const BlogItem: FC<Props> = ({
   tag,
   title,
 }) => {
-  const classes = useStyles();
   const user = auth.currentUser;
   const setDialog = useSetRecoilState(dialogData);
   const [isFav, setIsFav] = useState(false);
@@ -87,14 +67,13 @@ export const BlogItem: FC<Props> = ({
     db.collection('blog').doc(id).update({ isDone: !isReadCheck });
   };
   return (
-    <Grid item key={id} xs={12} sm={6} md={4} className={classes.moveCard}>
-      <Card className={classes.card}>
-        <CardMedia
-          className={classes.cardMedia}
+    <MoveCardGrid item key={id} xs={12} sm={6} md={4}>
+      <StyledCard>
+        <StyledCardMedia
           image="https://source.unsplash.com/random"
           title="blogImage"
         />
-        <CardContent className={classes.cardContent}>
+        <StyledCardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {title}
           </Typography>
@@ -104,13 +83,13 @@ export const BlogItem: FC<Props> = ({
               <StyleTag key={id.toString()}>{name}</StyleTag>
             ))}
           </Typography>
-        </CardContent>
+        </StyledCardContent>
         <CardActions>
           <Button size="small" color="primary">
             blog
           </Button>
 
-          {isDisplay && (
+          {isDisplay ? (
             <>
               <Link href={`/blogedit/${id}`}>
                 <Button size="small" color="primary">
@@ -129,8 +108,7 @@ export const BlogItem: FC<Props> = ({
               </Tooltip>
               <DeleteButton type="blog" id={id} />
             </>
-          )}
-          {!isDisplay && (
+          ) : (
             <>
               <Button
                 onClick={() => {
@@ -145,7 +123,7 @@ export const BlogItem: FC<Props> = ({
                 color="primary"
               >
                 {isFav ? <StarRoundedIcon /> : <StarBorderRoundedIcon />}
-                {favCount === 0 ? '' : favCount}
+                {favCount !== 0 && favCount}
               </Button>
 
               <Button
@@ -169,8 +147,8 @@ export const BlogItem: FC<Props> = ({
             </>
           )}
         </CardActions>
-      </Card>
-    </Grid>
+      </StyledCard>
+    </MoveCardGrid>
   );
 };
 

@@ -39,12 +39,9 @@ const EditBlog = () => {
   // -----useEffect[start]-----
   useEffect(() => {
     if (targetBlog) {
-      reset({
-        title: targetBlog?.title,
-        url: targetBlog?.url,
-        memo: targetBlog?.memo,
-      });
-      setPublicCategory(targetBlog.category);
+      const { title, url, memo, category } = targetBlog;
+      reset({ title, url, memo });
+      setPublicCategory(category);
     }
   }, [targetBlog, reset]);
 
@@ -65,7 +62,7 @@ const EditBlog = () => {
   const upDateValidation = (data: FormValues) => {
     const dataDetail = ['title', 'url', 'memo'] as const;
     try {
-      dataDetail.map(async (type) => {
+      dataDetail.forEach(async (type) => {
         if (data[type])
           if (typeof id === 'string')
             await db

@@ -1,4 +1,11 @@
-import { TextField } from '@material-ui/core';
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Container,
+  Grid,
+  TextField,
+} from '@material-ui/core';
 import styled, { css } from 'styled-components';
 import { COLOR } from './color';
 import { sp } from './media';
@@ -47,4 +54,29 @@ export const AuthenticateContainer = styled.div`
   ${sp`
     width: 250px;
   `}
+`;
+
+export const StyledCard = styled(Card)`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const MoveCardGrid = styled(Grid)`
+  transition-duration: 0.5s;
+  :hover {
+    transform: scale(1.1, 1.1);
+  }
+`;
+
+export const StyledCardMedia = styled(CardMedia)`
+  padding-top: 56.25%;
+`;
+
+export const StyledCardContent = styled(CardContent)`
+  flex-grow: 1;
+`;
+
+export const ListContainer = styled(Container)`
+  padding: 64px 0;
 `;

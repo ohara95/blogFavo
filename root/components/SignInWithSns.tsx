@@ -16,11 +16,11 @@ export const SignInWithSns = () => {
   const snsLogin = async (provider: firebase.auth.AuthProvider) => {
     try {
       const res = await auth.signInWithPopup(provider);
-      const user = res.user as firebase.User;
-      return await db.collection('users').doc(user.uid).set({
-        name: user.displayName,
-        icon: user.photoURL,
-        id: user?.uid,
+      const { displayName, photoURL, uid } = res.user as firebase.User;
+      return await db.collection('users').doc(uid).set({
+        name: displayName,
+        icon: photoURL,
+        id: uid,
       });
     } catch (error) {
       setToast(['ログインに失敗しました', 'error']);

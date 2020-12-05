@@ -47,11 +47,9 @@ const Main: FC = () => {
           });
           setOnlyMyBlog(docData);
         });
+    } else {
+      setActivePage('user');
     }
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) setActivePage('user');
   }, [user]);
 
   const iconSwitch = async (
@@ -76,9 +74,7 @@ const Main: FC = () => {
   };
 
   const onSwitch = (
-    typeRef: firebase.firestore.CollectionReference<
-      firebase.firestore.DocumentData
-    >,
+    typeRef: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>,
     decrement: (num: number) => void,
     type: 'favUsers' | 'laterReadUsers',
     id: string
@@ -92,9 +88,7 @@ const Main: FC = () => {
   };
 
   const offSwitch = async (
-    typeRef: firebase.firestore.CollectionReference<
-      firebase.firestore.DocumentData
-    >,
+    typeRef: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>,
     increment: (num: number) => void,
     type: 'favUsers' | 'laterReadUsers',
     id: string

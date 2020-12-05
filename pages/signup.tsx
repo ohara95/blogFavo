@@ -21,9 +21,13 @@ type FormData = {
 };
 
 export default function SignUp() {
-  const { register, handleSubmit, reset, errors, formState } = useForm<
-    FormData
-  >();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    errors,
+    formState,
+  } = useForm<FormData>();
   const [isError, setIsError] = useState(false);
   const router = useRouter();
   const setToast = useSetRecoilState(toastState);
@@ -40,7 +44,7 @@ export default function SignUp() {
       icon: 'https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg',
       id: user?.uid,
     });
-    return user.updateProfile({
+    user.updateProfile({
       displayName: name,
       photoURL:
         'https://wired.jp/app/uploads/2018/01/GettyImages-522585140.jpg',
