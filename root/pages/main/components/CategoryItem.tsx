@@ -75,7 +75,7 @@ export const CategoryItem: FC<Props> = ({
       setCurrentPage('myCategoryBlog');
       setSelectCategory(name);
     } else {
-      return setToast(['ブログはありません', 'error']);
+      return setToast(['ブログはありません', 'warning']);
     }
   };
 

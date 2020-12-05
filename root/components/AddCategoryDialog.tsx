@@ -50,7 +50,7 @@ export const AddCategoryDialog = () => {
       }
       await db.collection(`users/${user?.uid}/myCategory`).add({
         name: data.category,
-        imageUrl: '',
+        imageUrl,
       });
       setToast(['追加出来ました！']);
       reset();

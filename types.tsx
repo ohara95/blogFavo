@@ -14,6 +14,7 @@ export type FormValues = {
   favCount: number;
   otherUserBlogId?: string;
   isDone: boolean;
+  priority: '0' | '1' | '2' | '3' | null;
 };
 
 export type Tags = {

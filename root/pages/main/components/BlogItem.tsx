@@ -4,7 +4,6 @@ import { auth, db } from '../../../utils/firebase';
 import { useSetRecoilState } from 'recoil';
 import { dialogData, RECOMMEND_REGISTER } from '../../../../recoil/dialog';
 import styled from 'styled-components';
-import { COLOR } from '../../../../styles/color';
 import { DeleteButton } from '../../../components/DeleteButton';
 //material
 import {
@@ -19,13 +18,12 @@ import {
   Tooltip,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { purple } from '@material-ui/core/colors';
 import StarBorderRoundedIcon from '@material-ui/icons/StarBorderRounded';
 import TurnedInNotRoundedIcon from '@material-ui/icons/TurnedInNotRounded';
 import StarRoundedIcon from '@material-ui/icons/StarRounded';
 import BookmarkRoundedIcon from '@material-ui/icons/BookmarkRounded';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   card: {
     height: '100%',
     display: 'flex',

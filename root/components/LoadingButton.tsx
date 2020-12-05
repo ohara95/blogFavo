@@ -1,7 +1,7 @@
-import { Button, CircularProgress } from '@material-ui/core';
 import React, { FC } from 'react';
 import styled from 'styled-components';
 import { COLOR } from '../../styles/color';
+import { Button, CircularProgress } from '@material-ui/core';
 
 type Props = {
   loading?: boolean;
