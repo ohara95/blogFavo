@@ -1,5 +1,7 @@
 import firebase from './root/utils/firebase';
 
+export type PriorityType = '0' | '1' | '2' | '3' | null;
+
 export type FormValues = {
   title: string;
   url: string;
@@ -14,7 +16,7 @@ export type FormValues = {
   favCount: number;
   otherUserBlogId?: string;
   isDone: boolean;
-  priority: '0' | '1' | '2' | '3' | null;
+  priority: PriorityType;
 };
 
 export type Tags = {

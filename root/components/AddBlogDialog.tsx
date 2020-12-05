@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { FormValues, InputType } from '../../types';
+import { FormValues, InputType, PriorityType } from '../../types';
 //recoil
 import { useSetRecoilState } from 'recoil';
 import { ADD_BLOG } from '../../recoil/dialog';
@@ -26,7 +26,7 @@ export const AddBlogDialog = () => {
   const [tag, setTag] = useState<string[]>([]);
   const [isPrivate, setIsPrivate] = useState(false);
   const [publicCategory, setPublicCategory] = useState('');
-  const [priority, setPriority] = useState<'0' | '1' | '2' | '3' | null>(null);
+  const [priority, setPriority] = useState<PriorityType>(null);
 
   const onSubmit = async (data: FormValues) => {
     try {

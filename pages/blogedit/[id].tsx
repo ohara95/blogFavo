@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { toastState } from '../../recoil/root';
-import { Category, FormValues, InputType } from '../../types';
+import { Category, FormValues, InputType, PriorityType } from '../../types';
 //component
 import { CategorySelector } from '../../root/components/CategorySelector';
 import { InputWithLabel } from '../../root/components/InputWithLabel';
@@ -28,7 +28,7 @@ const EditBlog = () => {
   const [category, setCategory] = useState<Category | null>(null);
   const [isPrivate, setIsPrivate] = useState(false);
   const [publicCategory, setPublicCategory] = useState('');
-  const [priority, setPriority] = useState<'0' | '1' | '2' | '3' | null>(null);
+  const [priority, setPriority] = useState<PriorityType>(null);
   const setToast = useSetRecoilState(toastState);
 
   const targetBlog = blog.find((db) => db.id === id);
@@ -85,12 +85,14 @@ const EditBlog = () => {
       upDateValidation(data);
 
       if (typeof id === 'string') {
-        if (category)
+        if (category) {
           await db.collection('blog').doc(id).update({
             category: publicCategory,
           });
+        }
         await db.collection('blog').doc(id).update({
           isPrivate,
+          priority,
         });
       }
       setToast(['変更出来ました！']);
