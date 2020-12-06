@@ -2,10 +2,8 @@ import React, { FC } from 'react';
 import { FormValues } from '../../types';
 import { Label, LabelText, BaseTextField } from '../../styles/common';
 import styled from 'styled-components';
-import { COLOR } from '../../styles/color';
 //material
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Chip } from '@material-ui/core';
 
 type Props = {
   setBlog: (param: FormValues[]) => void;
@@ -23,15 +21,13 @@ export const AddBlogSelector: FC<Props> = ({ setBlog, options }) => {
         }}
         options={options}
         getOptionLabel={(option) => (option as FormValues).title}
-        renderInput={(params) => {
-          return (
-            <BaseTextField
-              {...params}
-              variant="standard"
-              placeholder="選択してください"
-            />
-          );
-        }}
+        renderInput={(params) => (
+          <BaseTextField
+            {...params}
+            variant="standard"
+            placeholder="選択してください"
+          />
+        )}
       />
     </Label>
   );
@@ -41,8 +37,4 @@ const StyledAutocomplete = styled(Autocomplete)`
   .MuiFormControl-root {
     flex-direction: row;
   }
-`;
-
-const StyledChip = styled(Chip)`
-  background-color: ${COLOR.MAIN};
 `;

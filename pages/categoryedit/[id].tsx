@@ -36,9 +36,9 @@ const EditCategory = () => {
   const [addBlog, setAddBlog] = useState<FormValues[] | null>(null);
 
   const findCategory = myCategory.find((db) => db.id === id);
-  const notDivideMyCategory = blog
-    .filter((item) => item.postedUser === user?.uid)
-    .filter((item) => item.myCategory === '');
+  const notDivideMyCategory = blog.filter(
+    (item) => item.postedUser === user?.uid && !item.myCategory
+  );
 
   useEffect(() => {
     if (findCategory?.imageUrl) setImageUrl(findCategory.imageUrl);

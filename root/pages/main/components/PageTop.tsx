@@ -15,43 +15,13 @@ import {
   InputBase,
   Typography,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
-import { cyan } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
 import LocalLibraryRoundedIcon from '@material-ui/icons/LocalLibraryRounded';
-
-const useStyles = makeStyles((theme) => ({
-  heroContent: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6),
-  },
-  heroButtons: {
-    marginTop: theme.spacing(4),
-  },
-  inputRoot: {
-    padding: '2px 4px',
-    display: 'flex',
-    alignItems: 'center',
-    width: 400,
-  },
-  input: {
-    marginLeft: theme.spacing(1),
-    flex: 1,
-  },
-  iconButton: {
-    padding: 10,
-  },
-  themeColor: {
-    backgroundColor: cyan[700],
-    color: 'white',
-    border: '1px solid white',
-    '&:hover': {
-      backgroundColor: cyan[600],
-    },
-  },
-}));
+import styled from 'styled-components';
+import { COLOR } from '../../../../styles/color';
+import { sp } from '../../../../styles/media';
 
 type Props = {
   title: string;
@@ -66,7 +36,6 @@ export const PageTop: FC<Props> = ({
   yetBlogLength,
   doneBlogLength,
 }) => {
-  const classes = useStyles();
   const [currentDisplay, setCurrentDisplay] = useRecoilState(
     currentDisplayData
   );
@@ -74,8 +43,45 @@ export const PageTop: FC<Props> = ({
   const activePage = useRecoilValue(activeDisplayData);
   const setToast = useSetRecoilState(toastState);
 
+  const buttonList = [
+    {
+      text: '一覧',
+      isThemeColor: currentDisplay === 'list',
+      onClick: () => setCurrentDisplay('list'),
+    },
+    {
+      text: 'カテゴリー別',
+      isThemeColor: currentDisplay === 'category',
+      onClick: () => {
+        setCurrentDisplay('category');
+        if (!categoryLength && activePage === 'my')
+          setToast(['カテゴリーがありません', 'warning']);
+      },
+    },
+    {
+      text: '未読',
+      isThemeColor: currentDisplay === 'yet',
+      onClick: () => {
+        setCurrentDisplay('yet');
+        if (!yetBlogLength && activePage === 'my')
+          setToast(['未読ブログはありません', 'warning']);
+      },
+      icon: <LocalLibraryRoundedIcon />,
+    },
+    {
+      text: '読了',
+      isThemeColor: currentDisplay === 'done',
+      onClick: () => {
+        setCurrentDisplay('done');
+        if (!doneBlogLength && activePage === 'my')
+          setToast(['読み終えたブログはありません', 'warning']);
+      },
+      icon: <CheckCircleOutlineRoundedIcon />,
+    },
+  ];
+
   return (
-    <div className={classes.heroContent}>
+    <HeroContent>
       <Container maxWidth="sm">
         <Typography
           component="h1"
@@ -87,8 +93,8 @@ export const PageTop: FC<Props> = ({
           {title}
         </Typography>
         <Grid container direction="row" justify="center" alignItems="center">
-          <Paper component="form" className={classes.inputRoot}>
-            <InputBase
+          <InputRoot component="form">
+            <StyledInput
               className={classes.input}
               placeholder="検索"
               value={searchValue}
@@ -96,84 +102,76 @@ export const PageTop: FC<Props> = ({
                 setSearchValue(e.target.value);
               }}
             />
-            <IconButton
+            <StyledIconButton
               type="submit"
               className={classes.iconButton}
               aria-label="search"
             >
               <SearchIcon />
-            </IconButton>
-          </Paper>
+            </StyledIconButton>
+          </InputRoot>
         </Grid>
-        <div className={classes.heroButtons}>
-          <Grid container spacing={2} justify="center">
-            <Grid item>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setCurrentDisplay('list');
-                }}
-                className={currentDisplay === 'list' ? classes.themeColor : ''}
-              >
-                一覧
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  setCurrentDisplay('category');
-                  if (!categoryLength && activePage === 'my')
-                    setToast(['カテゴリーがありません', 'warning']);
-                }}
-                className={
-                  currentDisplay === 'category' ? classes.themeColor : ''
-                }
-              >
-                カテゴリー別
-              </Button>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} justify="center">
-            {activePage === 'my' && (
-              <>
-                <Grid item>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setCurrentDisplay('yet');
-                      if (!yetBlogLength && activePage === 'my')
-                        setToast(['未読ブログはありません', 'warning']);
-                    }}
-                    className={
-                      currentDisplay === 'yet' ? classes.themeColor : ''
-                    }
-                  >
-                    未読
-                    <LocalLibraryRoundedIcon />
-                  </Button>
+        <HeroButtons>
+          <StyledGrid container spacing={2} justify="center">
+            {buttonList.map(({ text, icon, ...otherProps }, i) => {
+              if (activePage !== 'my' && i >= 2) return;
+              return (
+                <Grid item key={text}>
+                  <StyledButton variant="outlined" {...otherProps}>
+                    {text}
+                    {icon}
+                  </StyledButton>
                 </Grid>
-                <Grid item>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setCurrentDisplay('done');
-                      if (!doneBlogLength && activePage === 'my')
-                        setToast(['読み終えたブログはありません', 'warning']);
-                    }}
-                    className={
-                      currentDisplay === 'done' ? classes.themeColor : ''
-                    }
-                  >
-                    読了
-                    <CheckCircleOutlineRoundedIcon />
-                  </Button>
-                </Grid>
-              </>
-            )}
-          </Grid>
-        </div>
+              );
+            })}
+          </StyledGrid>
+        </HeroButtons>
       </Container>
-    </div>
+    </HeroContent>
   );
 };
+
+const HeroContent = styled.div`
+  background-color: ${COLOR.WHITE};
+  padding: 64px 0 48px;
+`;
+
+const HeroButtons = styled.div`
+  margin-top: 32px;
+`;
+
+const InputRoot = styled(Paper)`
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  width: 400px;
+`;
+
+const StyledInput = styled(InputBase)`
+  margin-left: 8px;
+  flex: 1;
+`;
+
+const StyledIconButton = styled(IconButton)`
+  padding: 10px;
+`;
+
+const StyledButton = styled(Button)<{ isThemeColor: boolean }>`
+  ${({ isThemeColor }) =>
+    isThemeColor &&
+    `
+    background-color: ${COLOR.MAIN};
+    color: ${COLOR.WHITE};
+    border: 1px solid ${COLOR.WHITE};
+    :hover {
+      background-color: ${COLOR.MAIN_HOVER};
+    }
+  `}
+`;
+
+const StyledGrid = styled(Grid)`
+  ${sp`
+    width: 300px;
+    margin: 0 auto;
+  `};
+`;
