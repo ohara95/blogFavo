@@ -69,7 +69,6 @@ export const BlogItem: FC<Props> = ({
   const setDialog = useSetRecoilState(dialogData);
   const [isFav, setIsFav] = useState(false);
   const [isHoldLaterRead, setIsHoldLaterRead] = useState(false);
-  const [isReadCheck, setIsReadCheck] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -83,9 +82,9 @@ export const BlogItem: FC<Props> = ({
   }, [user]);
 
   const isDoneUpdate = (id: string) => {
-    setIsReadCheck(!isReadCheck);
-    db.collection('blog').doc(id).update({ isDone: !isReadCheck });
+    db.collection('blog').doc(id).update({ isDone: !isDone });
   };
+
   return (
     <Grid item key={id} xs={12} sm={6} md={4} className={classes.moveCard}>
       <Card className={classes.card}>
@@ -117,7 +116,7 @@ export const BlogItem: FC<Props> = ({
                   edit
                 </Button>
               </Link>
-              <Tooltip title={isReadCheck ? 'read' : 'Not read'}>
+              <Tooltip title={isDone ? 'read' : 'Not read'}>
                 <Checkbox
                   size="small"
                   color="default"

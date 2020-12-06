@@ -4,6 +4,7 @@ import {
   currentDisplayData,
   activeDisplayData,
   toastState,
+  searchData,
 } from '../../../../recoil/root';
 //material
 import {
@@ -69,6 +70,7 @@ export const PageTop: FC<Props> = ({
   const [currentDisplay, setCurrentDisplay] = useRecoilState(
     currentDisplayData
   );
+  const [searchValue, setSearchValue] = useRecoilState(searchData);
   const activePage = useRecoilValue(activeDisplayData);
   const setToast = useSetRecoilState(toastState);
 
@@ -86,7 +88,14 @@ export const PageTop: FC<Props> = ({
         </Typography>
         <Grid container direction="row" justify="center" alignItems="center">
           <Paper component="form" className={classes.inputRoot}>
-            <InputBase className={classes.input} placeholder="検索" />
+            <InputBase
+              className={classes.input}
+              placeholder="検索"
+              value={searchValue}
+              onChange={(e) => {
+                setSearchValue(e.target.value);
+              }}
+            />
             <IconButton
               type="submit"
               className={classes.iconButton}

@@ -1,8 +1,14 @@
 import { atom } from 'recoil';
 
-export const currentDisplayData = atom<
-  'list' | 'category' | 'yet' | 'done' | 'userCategoryBlog' | 'myCategoryBlog'
->({
+type CurrentDisplay =
+  | 'list'
+  | 'category'
+  | 'yet'
+  | 'done'
+  | 'userCategoryBlog'
+  | 'myCategoryBlog';
+
+export const currentDisplayData = atom<CurrentDisplay>({
   key: 'currentDisplayData',
   default: 'list',
 });
@@ -17,4 +23,9 @@ export type ToastType = [string, ('error' | 'info' | 'success' | 'warning')?];
 export const toastState = atom<ToastType>({
   key: 'toastState',
   default: [''],
+});
+
+export const searchData = atom({
+  key: 'searchData',
+  default: '',
 });

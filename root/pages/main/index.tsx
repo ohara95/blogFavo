@@ -1,14 +1,21 @@
 import React, { FC, useState, useEffect } from 'react';
-import { useRecoilValue, useRecoilState } from 'recoil';
 import { Category, FormValues } from '../../../types';
-import firebase, { db, auth } from '../../utils/firebase';
-import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
-import { useCollection, useOrderby } from '../../utils/hooks';
+//recoil
+import { useRecoilValue, useRecoilState } from 'recoil';
 import {
   ADD_BLOG,
   ADD_CATEGORY,
   RECOMMEND_REGISTER,
 } from '../../../recoil/dialog';
+import {
+  currentDisplayData,
+  activeDisplayData,
+  searchData,
+} from '../../../recoil/root';
+//utils
+import firebase, { db, auth } from '../../utils/firebase';
+import { useOrderby } from '../../utils/hooks';
+//components
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { AddButton } from '../../components/AddButton';
@@ -29,6 +36,7 @@ const Main: FC = () => {
   );
   const categoryList = useOrderby<Category>('categoryList', 'name', 'asc');
   const currentDisplay = useRecoilValue(currentDisplayData);
+  const searchValue = useRecoilValue(searchData);
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [onlyMyBlog, setOnlyMyBlog] = useState<FormValues[]>([]);
   const [selectCategory, setSelectCategory] = useState('');
@@ -76,9 +84,7 @@ const Main: FC = () => {
   };
 
   const onSwitch = (
-    typeRef: firebase.firestore.CollectionReference<
-      firebase.firestore.DocumentData
-    >,
+    typeRef: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>,
     decrement: (num: number) => void,
     type: 'favUsers' | 'laterReadUsers',
     id: string
@@ -92,9 +98,7 @@ const Main: FC = () => {
   };
 
   const offSwitch = async (
-    typeRef: firebase.firestore.CollectionReference<
-      firebase.firestore.DocumentData
-    >,
+    typeRef: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>,
     increment: (num: number) => void,
     type: 'favUsers' | 'laterReadUsers',
     id: string
@@ -130,13 +134,18 @@ const Main: FC = () => {
   ) => {
     switch (currentPage) {
       case 'yet':
-        return onlyMyBlog.filter((item) => !item.isDone);
+        const yetBlog = onlyMyBlog.filter((item) => !item.isDone);
+        return searchBlogResult(yetBlog);
       case 'done':
-        return onlyMyBlog.filter((item) => item.isDone);
+        const doneBlog = onlyMyBlog.filter((item) => item.isDone);
+        return searchBlogResult(doneBlog);
       case 'myCategoryBlog':
-        return onlyMyBlog.filter((item) => item.myCategory === selectCategory);
+        const categoryBlog = onlyMyBlog.filter(
+          (item) => item.myCategory === selectCategory
+        );
+        return searchBlogResult(categoryBlog);
       case 'list':
-        return onlyMyBlog;
+        return searchBlogResult(onlyMyBlog);
       default:
         return;
     }
@@ -147,17 +156,32 @@ const Main: FC = () => {
   ) => {
     switch (currentPage) {
       case 'userCategoryBlog':
-        return blog?.filter(
-          (display) =>
-            !display?.isPrivate &&
-            !display.otherUserBlogId &&
-            display.category === selectCategory
+        const displayCategoryBlog = blog?.filter(
+          (item) =>
+            !item?.isPrivate &&
+            !item.otherUserBlogId &&
+            item.category === selectCategory
         );
+        return searchBlogResult(displayCategoryBlog);
       default:
-        return blog?.filter(
-          (display) => !display?.isPrivate && !display.otherUserBlogId
+        const displayBlog = blog?.filter(
+          (item) => !item?.isPrivate && !item.otherUserBlogId
         );
+        return searchBlogResult(displayBlog);
     }
+  };
+  //* カテゴリーの検索フィルター **/
+  const searchCategoryResult = (searchItem: Category[]) => {
+    return searchItem.filter((item) => item.name.includes(searchValue));
+  };
+  //** ブログの検索フィルター*/
+  const searchBlogResult = (searchItem: FormValues[]) => {
+    return searchItem.filter(
+      (item) =>
+        item.title.includes(searchValue) ||
+        item.memo.includes(searchValue) ||
+        item.tag.includes(searchValue)
+    );
   };
 
   return (
@@ -184,7 +208,11 @@ const Main: FC = () => {
           <CategoryList
             activePage={activePage}
             blogData={activePage === 'my' ? onlyMyBlog : blog}
-            data={activePage === 'my' ? myCategory : categoryList}
+            data={
+              activePage === 'my'
+                ? searchCategoryResult(myCategory)
+                : searchCategoryResult(categoryList)
+            }
             setSelectCategory={setSelectCategory}
           />
         )}
