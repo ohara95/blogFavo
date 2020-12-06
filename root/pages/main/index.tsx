@@ -1,14 +1,21 @@
 import React, { FC, useState, useEffect } from 'react';
+import { Category, FormValues, CurrentDisplay } from '../../../types';
+//recoil
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { Category, FormValues } from '../../../types';
-import firebase, { db, auth } from '../../utils/firebase';
-import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
-import { useOrderby } from '../../utils/hooks';
 import {
   ADD_BLOG,
   ADD_CATEGORY,
   RECOMMEND_REGISTER,
 } from '../../../recoil/dialog';
+import {
+  currentDisplayData,
+  activeDisplayData,
+  searchData,
+} from '../../../recoil/root';
+//utils
+import firebase, { db, auth } from '../../utils/firebase';
+import { useOrderby } from '../../utils/hooks';
+//components
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
 import { AddButton } from '../../components/AddButton';
@@ -29,6 +36,7 @@ const Main: FC = () => {
   );
   const categoryList = useOrderby<Category>('categoryList', 'name', 'asc');
   const currentDisplay = useRecoilValue(currentDisplayData);
+  const searchValue = useRecoilValue(searchData);
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [onlyMyBlog, setOnlyMyBlog] = useState<FormValues[]>([]);
   const [selectCategory, setSelectCategory] = useState('');
@@ -154,39 +162,55 @@ const Main: FC = () => {
       : ADD_CATEGORY
     : RECOMMEND_REGISTER;
 
-  const switchMyPageDisplay = (
-    currentPage: 'list' | 'yet' | 'done' | 'userCategoryBlog' | 'myCategoryBlog'
-  ) => {
+  const switchMyPageDisplay = (currentPage: CurrentDisplay) => {
     switch (currentPage) {
       case 'yet':
-        return onlyMyBlog.filter((item) => !item.isDone);
+        const yetBlog = onlyMyBlog.filter((item) => !item.isDone);
+        return searchBlogResult(yetBlog);
       case 'done':
-        return onlyMyBlog.filter((item) => item.isDone);
+        const doneBlog = onlyMyBlog.filter((item) => item.isDone);
+        return searchBlogResult(doneBlog);
       case 'myCategoryBlog':
-        return onlyMyBlog.filter((item) => item.myCategory === selectCategory);
+        const categoryBlog = onlyMyBlog.filter(
+          (item) => item.myCategory === selectCategory
+        );
+        return searchBlogResult(categoryBlog);
       case 'list':
-        return onlyMyBlog;
+        return searchBlogResult(onlyMyBlog);
       default:
         return;
     }
   };
 
-  const switchUserPageDisplay = (
-    currentPage: 'list' | 'yet' | 'done' | 'userCategoryBlog' | 'myCategoryBlog'
-  ) => {
+  const switchUserPageDisplay = (currentPage: CurrentDisplay) => {
     switch (currentPage) {
       case 'userCategoryBlog':
-        return blog?.filter(
-          (display) =>
-            !display?.isPrivate &&
-            !display.otherUserBlogId &&
-            display.category === selectCategory
+        const displayCategoryBlog = blog?.filter(
+          (item) =>
+            !item?.isPrivate &&
+            !item.otherUserBlogId &&
+            item.category === selectCategory
         );
+        return searchBlogResult(displayCategoryBlog);
       default:
-        return blog?.filter(
-          (display) => !display?.isPrivate && !display.otherUserBlogId
+        const displayBlog = blog?.filter(
+          (item) => !item?.isPrivate && !item.otherUserBlogId
         );
+        return searchBlogResult(displayBlog);
     }
+  };
+  //* カテゴリーの検索フィルター **/
+  const searchCategoryResult = (searchItem: Category[]) => {
+    return searchItem.filter((item) => item.name.includes(searchValue));
+  };
+  //** ブログの検索フィルター*/
+  const searchBlogResult = (searchItem: FormValues[]) => {
+    return searchItem.filter(
+      (item) =>
+        item.title.includes(searchValue) ||
+        item.memo.includes(searchValue) ||
+        item.tag.includes(searchValue)
+    );
   };
 
   return (
@@ -215,8 +239,8 @@ const Main: FC = () => {
             blogData={activePage === 'my' ? onlyMyBlog : blog}
             data={
               activePage === 'my'
-                ? paginate(myCategory)
-                : paginate(categoryList)
+                ? paginate(searchCategoryResult(myCategory))
+                : paginate(searchCategoryResult(categoryList))
             }
             setSelectCategory={setSelectCategory}
           />
