@@ -24,6 +24,7 @@ export const BlogList: FC<Props> = ({ data, iconSwitch, isDisplay }) => (
           memo={card.memo}
           tag={card.tag}
           title={card.title}
+          url={card.url}
         />
       ))}
     </Grid>

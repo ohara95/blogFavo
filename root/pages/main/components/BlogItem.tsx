@@ -33,6 +33,7 @@ type Props = {
   memo: string;
   tag: string[];
   title: string;
+  url: string;
 };
 
 export const BlogItem: FC<Props> = ({
@@ -44,6 +45,7 @@ export const BlogItem: FC<Props> = ({
   memo,
   tag,
   title,
+  url,
 }) => {
   const user = auth.currentUser;
   const setDialog = useSetRecoilState(dialogData);
@@ -85,7 +87,9 @@ export const BlogItem: FC<Props> = ({
         </StyledCardContent>
         <CardActions>
           <Button size="small" color="primary">
-            blog
+            <StyledLink href={url} target="_blank" rel="noopener">
+              blog
+            </StyledLink>
           </Button>
 
           {isDisplay ? (
@@ -164,4 +168,9 @@ const StyleTag = styled.div`
   letter-spacing: 1px;
   background: linear-gradient(45deg, #afeeee 10%, #40e0d0 30%, #20b2aa 80%);
   border-radius: 50px;
+`;
+
+const StyledLink = styled.a`
+  color: #3f51b5;
+  text-decoration: none;
 `;
