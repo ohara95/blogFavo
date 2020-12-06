@@ -65,7 +65,7 @@ export const StyledCard = styled(Card)`
 export const MoveCardGrid = styled(Grid)`
   transition-duration: 0.5s;
   :hover {
-    transform: scale(1.1, 1.1);
+    transform: scale(1.03, 1.03);
   }
 `;
 

@@ -95,18 +95,13 @@ export const PageTop: FC<Props> = ({
         <Grid container direction="row" justify="center" alignItems="center">
           <InputRoot component="form">
             <StyledInput
-              className={classes.input}
               placeholder="検索"
               value={searchValue}
               onChange={(e) => {
                 setSearchValue(e.target.value);
               }}
             />
-            <StyledIconButton
-              type="submit"
-              className={classes.iconButton}
-              aria-label="search"
-            >
+            <StyledIconButton type="submit" aria-label="search">
               <SearchIcon />
             </StyledIconButton>
           </InputRoot>

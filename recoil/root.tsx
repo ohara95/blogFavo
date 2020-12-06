@@ -1,12 +1,5 @@
 import { atom } from 'recoil';
-
-type CurrentDisplay =
-  | 'list'
-  | 'category'
-  | 'yet'
-  | 'done'
-  | 'userCategoryBlog'
-  | 'myCategoryBlog';
+import { CurrentDisplay } from '../types';
 
 export const currentDisplayData = atom<CurrentDisplay>({
   key: 'currentDisplayData',

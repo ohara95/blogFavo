@@ -1,10 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Category, FormValues } from '../../../types';
+import { Category, FormValues, CurrentDisplay } from '../../../types';
 //recoil
 import { useRecoilValue, useRecoilState } from 'recoil';
-import firebase, { db, auth } from '../../utils/firebase';
-import { currentDisplayData, activeDisplayData } from '../../../recoil/root';
-import { useOrderby } from '../../utils/hooks';
 import {
   ADD_BLOG,
   ADD_CATEGORY,
@@ -165,9 +162,7 @@ const Main: FC = () => {
       : ADD_CATEGORY
     : RECOMMEND_REGISTER;
 
-  const switchMyPageDisplay = (
-    currentPage: 'list' | 'yet' | 'done' | 'userCategoryBlog' | 'myCategoryBlog'
-  ) => {
+  const switchMyPageDisplay = (currentPage: CurrentDisplay) => {
     switch (currentPage) {
       case 'yet':
         const yetBlog = onlyMyBlog.filter((item) => !item.isDone);
@@ -187,9 +182,7 @@ const Main: FC = () => {
     }
   };
 
-  const switchUserPageDisplay = (
-    currentPage: 'list' | 'yet' | 'done' | 'userCategoryBlog' | 'myCategoryBlog'
-  ) => {
+  const switchUserPageDisplay = (currentPage: CurrentDisplay) => {
     switch (currentPage) {
       case 'userCategoryBlog':
         const displayCategoryBlog = blog?.filter(

@@ -49,3 +49,11 @@ export type InputType = {
   rows?: number;
   placeholder?: string;
 };
+
+export type CurrentDisplay =
+  | 'list'
+  | 'category'
+  | 'yet'
+  | 'done'
+  | 'userCategoryBlog'
+  | 'myCategoryBlog';
