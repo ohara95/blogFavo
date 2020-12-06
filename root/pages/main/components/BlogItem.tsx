@@ -87,7 +87,7 @@ export const BlogItem: FC<Props> = ({
         </StyledCardContent>
         <CardActions>
           <Button size="small" color="primary">
-            <StyledLink href={url} target="_blank">
+            <StyledLink href={url} target="_blank" rel="noopener">
               blog
             </StyledLink>
           </Button>
