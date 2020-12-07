@@ -33,46 +33,67 @@ export const SignInWithSns = () => {
 
   return (
     <Container>
-      <StyledImage
-        src="/images/google.jpg"
-        alt="Googleログイン"
-        width="80px"
-        height="80px"
-        onClick={() => snsLogin(providerGoogle)}
-      />
-      <StyledImage
-        src="/images/twitter.jpeg"
-        alt="Twitterログイン"
-        width="70px"
-        height="70px"
-        onClick={() => snsLogin(providerTwitter)}
-      />
-      <StyledImage
-        src="/images/github.png"
-        alt="Githubログイン"
-        width="70px"
-        height="70px"
-        onClick={() => snsLogin(providerGithub)}
-      />
+      <StyledImage>
+        <Image
+          src="/images/google.jpg"
+          alt="Googleログイン"
+          width="30px"
+          height="30px"
+          onClick={() => snsLogin(providerGoogle)}
+        />
+        <span>SignIn With Google</span>
+      </StyledImage>
+      <StyledImage>
+        <Image
+          src="/images/twitter.jpeg"
+          alt="Twitterログイン"
+          width="30px"
+          height="30px"
+          onClick={() => snsLogin(providerTwitter)}
+          css="border-radius:30px"
+        />
+        <span>SignIn With Twitter</span>
+      </StyledImage>
+      <StyledImage>
+        <Image
+          src="/images/github.png"
+          alt="Githubログイン"
+          width="30px"
+          height="30px"
+          onClick={() => snsLogin(providerGithub)}
+        />
+        <span>SignIn With Github</span>
+      </StyledImage>
     </Container>
   );
 };
 
 const Container = styled.div`
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
   align-items: center;
-  height: 100px;
+  height: 150px;
   // Imageが外側にdivを含むため
   > div {
     margin-bottom: 10px;
   }
 `;
 
-const StyledImage = styled(Image)`
-  cursor: pointer;
-  border-radius: 500px;
+const StyledImage = styled.div`
+  border: 1px solid black;
+  background-color:white;
+  display: flex;
+  align-items: center;
+  width: 200px;
+  border-radius: 5px;
+  padding: 2px;
   &:hover {
     opacity: 0.6;
+  };
+  cursor: pointer;
+  > span {
+    margin: 0 auto;
+    font-family: 'Roboto', sans-serif;
   }
+}
 `;
