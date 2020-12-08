@@ -87,10 +87,14 @@ const EditBlog = () => {
             category: publicCategory,
           });
         }
-        await db.collection('blog').doc(id).update({
-          isPrivate,
-          priority,
-        });
+        await db
+          .collection('blog')
+          .doc(id)
+          .update({
+            isPrivate,
+            priority: parseInt(priority as string),
+            tag,
+          });
       }
       setToast(['変更出来ました！']);
       router.back();

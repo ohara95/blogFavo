@@ -20,17 +20,18 @@ export const CategoryList: FC<Props> = ({
 }) => (
   <ListContainer maxWidth="md">
     <Grid container spacing={4}>
-      {data.map((card) => (
-        <CategoryItem
-          key={card.id}
-          activePage={activePage}
-          blogData={blogData}
-          id={card.id}
-          imageUrl={card.imageUrl}
-          name={card.name}
-          setSelectCategory={setSelectCategory}
-        />
-      ))}
+      {data &&
+        data.map((card) => (
+          <CategoryItem
+            key={card.id}
+            activePage={activePage}
+            blogData={blogData}
+            id={card.id}
+            imageUrl={card.imageUrl}
+            name={card.name}
+            setSelectCategory={setSelectCategory}
+          />
+        ))}
     </Grid>
   </ListContainer>
 );

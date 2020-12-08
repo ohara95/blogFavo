@@ -42,6 +42,7 @@ export const AddBlogDialog = () => {
         postedAt: firebase.firestore.Timestamp.now(),
         isDone: false,
         priority: priority ? parseInt(priority) : 2,
+        favCount: 0,
       });
 
       const res = await db.collection('tags').get();
