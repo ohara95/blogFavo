@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Category, FormValues, CurrentDisplay } from '../../../types';
+import { Category, FormValues } from '../../../types';
 //recoil
 import { useRecoilValue, useRecoilState } from 'recoil';
 import {
@@ -13,8 +13,11 @@ import {
   searchData,
 } from '../../../recoil/root';
 //utils
-import firebase, { db, auth } from '../../utils/firebase';
+import { db, auth } from '../../utils/firebase';
 import { useOrderby } from '../../utils/hooks';
+import { useIconSwitch } from './utils/hooks/useIconSwitch';
+import { displayPage } from './utils/displayPage';
+import { usePagination } from './utils/hooks/usePagination';
 //components
 import { Header } from '../../components/Header';
 import { Footer } from '../../components/Footer';
@@ -37,16 +40,31 @@ const Main: FC = () => {
   const categoryList = useOrderby<Category>('categoryList', 'name', 'asc');
   const currentDisplay = useRecoilValue(currentDisplayData);
   const searchValue = useRecoilValue(searchData);
+  const iconSwitch = useIconSwitch(blog);
   const [activePage, setActivePage] = useRecoilState(activeDisplayData);
   const [onlyMyBlog, setOnlyMyBlog] = useState<FormValues[]>([]);
   const [selectCategory, setSelectCategory] = useState('');
-  const [page, setPage] = useState(1);
+
+  const {
+    switchMyPageDisplay,
+    switchUserPageDisplay,
+    searchCategoryResult,
+  } = displayPage(searchValue, onlyMyBlog, selectCategory, blog);
+
+  const { page, setPage, paginate, pageCount } = usePagination(
+    currentDisplay,
+    activePage,
+    myCategory,
+    categoryList,
+    switchMyPageDisplay,
+    switchUserPageDisplay
+  );
 
   useEffect(() => {
     if (user) {
       db.collection('blog')
-        .orderBy('priority', 'desc')
         .where('postedUser', '==', user.uid)
+        .orderBy('priority', 'desc')
         .onSnapshot((snap) => {
           const docData = snap.docs.map((doc) => {
             return {
@@ -65,153 +83,11 @@ const Main: FC = () => {
     if (!user) setActivePage('user');
   }, [user]);
 
-  useEffect(() => {
-    if (page !== 1) setPage(1);
-  }, [currentDisplay, activePage]);
-
-  const paginate = (data?: any[]) => {
-    const arr = [];
-    const NUM = 12;
-    if (!data) return [];
-    for (let i = 0; i < Math.ceil(data.length / NUM); i++) {
-      arr.push(data.slice(i * NUM, i * NUM + NUM));
-    }
-    return arr[page - 1];
-  };
-
-  const pageCount = () => {
-    const NUM = 12;
-    switch (currentDisplay) {
-      case 'category':
-        return Math.ceil(
-          (activePage === 'my' ? myCategory : categoryList).length / NUM
-        );
-      default:
-        return Math.ceil(
-          activePage === 'my'
-            ? switchMyPageDisplay(currentDisplay)!.length / NUM
-            : switchUserPageDisplay(currentDisplay).length / NUM
-        );
-    }
-  };
-
-  const iconSwitch = async (
-    id: string,
-    type: 'favUsers' | 'laterReadUsers'
-  ) => {
-    const typeRef = db.collection(`blog/${id}/${type}`);
-    const res = await typeRef.get();
-    const userIdArr = res.docs.map((doc) => doc.id);
-    const favUserIncrement = (num: number) => {
-      db.doc(`blog/${id}`).update({
-        favCount: firebase.firestore.FieldValue.increment(num),
-      });
-    };
-    const isExistUser = userIdArr.find((id) => id === user?.uid);
-
-    if (isExistUser) {
-      onSwitch(typeRef, favUserIncrement, type, id);
-    } else {
-      offSwitch(typeRef, favUserIncrement, type, id);
-    }
-  };
-
-  const onSwitch = (
-    typeRef: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>,
-    decrement: (num: number) => void,
-    type: 'favUsers' | 'laterReadUsers',
-    id: string
-  ) => {
-    typeRef.doc(user?.uid).delete();
-    if (type === 'favUsers') decrement(-1);
-    if (type === 'laterReadUsers') {
-      const findId = blog.find((data) => data.otherUserBlogId === id)?.id;
-      db.doc(`blog/${findId}`).delete();
-    }
-  };
-
-  const offSwitch = async (
-    typeRef: firebase.firestore.CollectionReference<firebase.firestore.DocumentData>,
-    increment: (num: number) => void,
-    type: 'favUsers' | 'laterReadUsers',
-    id: string
-  ) => {
-    typeRef.doc(user?.uid).set({
-      userRef: db.collection('users').doc(user?.uid),
-    });
-    if (type === 'favUsers') increment(1);
-    if (type === 'laterReadUsers') {
-      const findBlog = blog.find((blogId) => blogId.id === id);
-      await db.collection('blog').add({
-        title: findBlog?.title,
-        url: findBlog?.url,
-        memo: '',
-        category: findBlog?.category,
-        tag: [],
-        isPrivate: false,
-        postedUser: user?.uid,
-        postedAt: firebase.firestore.Timestamp.now(),
-        otherUserBlogId: id,
-      });
-    }
-  };
-
   const dialogKey = user
     ? currentDisplay === 'list'
       ? ADD_BLOG
       : ADD_CATEGORY
     : RECOMMEND_REGISTER;
-
-  const switchMyPageDisplay = (currentPage: CurrentDisplay) => {
-    switch (currentPage) {
-      case 'yet':
-        const yetBlog = onlyMyBlog.filter((item) => !item.isDone);
-        return searchBlogResult(yetBlog);
-      case 'done':
-        const doneBlog = onlyMyBlog.filter((item) => item.isDone);
-        return searchBlogResult(doneBlog);
-      case 'myCategoryBlog':
-        const categoryBlog = onlyMyBlog.filter(
-          (item) => item.myCategory === selectCategory
-        );
-        return searchBlogResult(categoryBlog);
-      case 'list':
-        return searchBlogResult(onlyMyBlog);
-      default:
-        return;
-    }
-  };
-
-  const switchUserPageDisplay = (currentPage: CurrentDisplay) => {
-    switch (currentPage) {
-      case 'userCategoryBlog':
-        const displayCategoryBlog = blog?.filter(
-          (item) =>
-            !item?.isPrivate &&
-            !item.otherUserBlogId &&
-            item.category === selectCategory
-        );
-        return searchBlogResult(displayCategoryBlog);
-      default:
-        const displayBlog = blog?.filter(
-          (item) => !item?.isPrivate && !item.otherUserBlogId
-        );
-        return searchBlogResult(displayBlog);
-    }
-  };
-  //* カテゴリーの検索フィルター **/
-  const searchCategoryResult = (searchItem: Category[]) => {
-    return searchItem.filter((item) => item.name.includes(searchValue));
-  };
-  //** ブログの検索フィルター*/
-  const searchBlogResult = (searchItem: FormValues[]) => {
-    return searchItem.filter(
-      (item) =>
-        item.title.includes(searchValue) ||
-        item.memo.includes(searchValue) ||
-        item.tag.includes(searchValue)
-    );
-  };
 
   return (
     <>
@@ -236,7 +112,11 @@ const Main: FC = () => {
         ) : (
           <CategoryList
             activePage={activePage}
-            blogData={activePage === 'my' ? onlyMyBlog : blog}
+            blogData={
+              activePage === 'my'
+                ? onlyMyBlog
+                : blog?.filter((item) => !item?.isPrivate)
+            }
             data={
               activePage === 'my'
                 ? paginate(searchCategoryResult(myCategory))

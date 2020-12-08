@@ -33,9 +33,8 @@ export const CategoryItem: FC<Props> = ({
   const setCurrentPage = useSetRecoilState(currentDisplayData);
   const setToast = useSetRecoilState(toastState);
 
-  const categoryHoldBlog = blogData.filter(
-    (blog) => blog.category === name && !blog.otherUserBlogId && !blog.isPrivate
-  );
+  const categoryHoldBlog = blogData.filter((blog) => blog.category === name);
+
   const myCategoryHoldBlog = blogData.filter(
     (blog) => blog.myCategory === name
   );

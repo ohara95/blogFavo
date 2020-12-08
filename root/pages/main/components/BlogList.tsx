@@ -13,20 +13,21 @@ type Props = {
 export const BlogList: FC<Props> = ({ data, iconSwitch, isDisplay }) => (
   <ListContainer maxWidth="md">
     <Grid container spacing={4}>
-      {data?.map((card) => (
-        <BlogItem
-          key={card.id}
-          favCount={card.favCount}
-          iconSwitch={iconSwitch}
-          id={card.id}
-          isDisplay={isDisplay}
-          isDone={card.isDone}
-          memo={card.memo}
-          tag={card.tag}
-          title={card.title}
-          url={card.url}
-        />
-      ))}
+      {data &&
+        data?.map((card) => (
+          <BlogItem
+            key={card.id}
+            favCount={card.favCount}
+            iconSwitch={iconSwitch}
+            id={card.id}
+            isDisplay={isDisplay}
+            isDone={card.isDone}
+            memo={card.memo}
+            tag={card.tag}
+            title={card.title}
+            url={card.url}
+          />
+        ))}
     </Grid>
   </ListContainer>
 );
